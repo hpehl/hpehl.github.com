@@ -2,7 +2,7 @@
 layout: page
 title: "About"
 comments: false
-sharing: true
+sharing: flase
 footer: true
 ---
 # Harald Pehl
