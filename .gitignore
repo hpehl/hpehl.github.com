@@ -4,6 +4,8 @@
 .sass-cache
 .gist-cache
 .pygments-cache
+.themes/darkstripes
+.themes/hpehl
 _deploy
 public
 sass.old

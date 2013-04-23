@@ -1,0 +1,8 @@
+---
+layout: post
+title: "New Job"
+date: 2012-10-02 12:52
+comments: true
+categories: redhat
+---
+Today is my first day in my new job at RedHat. I'm excited to join the EAP core team and looking forward to the things to come...
