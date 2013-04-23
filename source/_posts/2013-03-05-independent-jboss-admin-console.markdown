@@ -90,9 +90,12 @@ protected url. This will trigger the authentication popup and once the user has 
 * Internet Explorer somewhat support CORS in IE8 and IE9 using the `XDomainRequest` object (but has limitations).
 
 Finally there's an issue related to preflighted `OPTIONS` requests on the server side. According to the specification
-those requests must
+those requests must exclude user credentials:
 
-> exclude user credentials.
+{% blockquote W3C CORS specification http://www.w3.org/TR/cors/#cross-origin-request-with-preflight-0 %}
+Otherwise, make a preflight request [...] with the following additional constraints:
+    - Exclude user credentials.
+{% endblockquote %}
 
 Hence these requests are blocked by the server with "401 Unauthorized". As a workaround the authenticators in the AS
 code base must let pass preflighted `OPTIONS` requests.
