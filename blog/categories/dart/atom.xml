@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: dart | Harald Pehl]]></title>
+  <link href="http://hpehl.github.io/blog/categories/dart/atom.xml" rel="self"/>
+  <link href="http://hpehl.github.io/"/>
+  <updated>2013-04-23T09:26:16+02:00</updated>
+  <id>http://hpehl.github.io/</id>
+  <author>
+    <name><![CDATA[Harald Pehl]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Playing around with Dart Isolates]]></title>
+    <link href="http://hpehl.github.io/playing-around-with-dart-isolates.html"/>
+    <updated>2013-04-08T22:26:00+02:00</updated>
+    <id>http://hpehl.github.io/playing-around-with-dart-isolates</id>
+    <content type="html"><![CDATA[<p>I was looking for a way to implement some kind of dynamic plug-in system in Dart. The idea was to load Dart code on
+demand into an isolate using <a href="http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnUri">spawnUri()</a>.
+It turns out that this function is implemented in the Dart VM but neither in Dartium nor does it compile down to
+JavaScript.</p>
+
+<p>Falling back to <a href="http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnFunction">spawnFunction()</a> works
+as expected in the browser but it turns out that isolates are not allowed to access / change the DOM. This reduces
+isolates to dumb worker functions. Plug-ins which make contributions to the UI are not possible using this approach.</p>
+
+<p>I created some test scripts for the browser and the VM to test the possibilities you have with isolates. You can
+find them at GitHub: <a href="https://github.com/hpehl/dart-isolates">https://github.com/hpehl/dart-isolates</a>. Let me know what
+you think.</p>
+]]></content>
+  </entry>
+  
+</feed>

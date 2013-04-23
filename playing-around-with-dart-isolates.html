@@ -5,14 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog Archive - Harald Pehl</title>
+  <title>Playing around with Dart Isolates - Harald Pehl</title>
   <meta name="author" content="Harald Pehl">
 
   
-  <meta name="description" content="Blog Archive 2013 Hosted CI Services
-Apr 09 2013 Playing around with Dart Isolates
-Apr 08 2013 posted in dart Independent JBoss Admin Console
-Mar 05 &hellip;">
+  <meta name="description" content="I was looking for a way to implement some kind of dynamic plug-in system in Dart. The idea was to load Dart code on
+demand into an isolate using &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +19,7 @@ Mar 05 &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://hpehl.github.io/blog/archives/index.html">
+  <link rel="canonical" href="http://hpehl.github.io/playing-around-with-dart-isolates.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -74,91 +72,110 @@ Mar 05 &hellip;">
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Blog Archive</h1>
+    
+      
+        <h1 class="entry-title">Playing Around With Dart Isolates</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-08T22:26:00+02:00" pubdate data-updated="true">08.04.2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives">
 
 
+<div class="entry-content"><p>I was looking for a way to implement some kind of dynamic plug-in system in Dart. The idea was to load Dart code on
+demand into an isolate using <a href="http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnUri">spawnUri()</a>.
+It turns out that this function is implemented in the Dart VM but neither in Dartium nor does it compile down to
+JavaScript.</p>
 
-  
-  <h2>2013</h2>
+<p>Falling back to <a href="http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnFunction">spawnFunction()</a> works
+as expected in the browser but it turns out that isolates are not allowed to access / change the DOM. This reduces
+isolates to dumb worker functions. Plug-ins which make contributions to the UI are not possible using this approach.</p>
 
-<article>
-  
-<h1><a href="/hosted-ci-services.html">Hosted CI Services</a></h1>
-<time datetime="2013-04-09T15:31:00+02:00" pubdate><span class='month'>Apr</span> <span class='day'>09</span> <span class='year'>2013</span></time>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/playing-around-with-dart-isolates.html">Playing around with Dart Isolates</a></h1>
-<time datetime="2013-04-08T22:26:00+02:00" pubdate><span class='month'>Apr</span> <span class='day'>08</span> <span class='year'>2013</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/dart/'>dart</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/independent-jboss-admin-console.html">Independent JBoss Admin Console</a></h1>
-<time datetime="2013-03-05T21:43:00+01:00" pubdate><span class='month'>Mar</span> <span class='day'>05</span> <span class='year'>2013</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/console/'>console</a>, <a class='category' href='/blog/categories/jboss/'>jboss</a></span>
-</footer>
-
-
-</article>
-
-
-
-  
-  <h2>2012</h2>
-
-<article>
-  
-<h1><a href="/new-job.html">New Job</a></h1>
-<time datetime="2012-10-02T12:52:00+02:00" pubdate><span class='month'>Oct</span> <span class='day'>02</span> <span class='year'>2012</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/redhat/'>redhat</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/how-to-use-velocity-to-generate-code-in-gwt.html">How to use Velocity to generate code in GWT</a></h1>
-<time datetime="2012-01-28T21:44:00+01:00" pubdate><span class='month'>Jan</span> <span class='day'>28</span> <span class='year'>2012</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
-
+<p>I created some test scripts for the browser and the VM to test the possibilities you have with isolates. You can
+find them at GitHub: <a href="https://github.com/hpehl/dart-isolates">https://github.com/hpehl/dart-isolates</a>. Let me know what
+you think.</p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Harald Pehl</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-08T22:26:00+02:00" pubdate data-updated="true">08.04.2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/dart/'>dart</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://hpehl.github.io/playing-around-with-dart-isolates.html" data-via="haraldpehl" data-counturl="http://hpehl.github.io/playing-around-with-dart-isolates.html" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left articlenav" href="/independent-jboss-admin-console.html" title="Previous Post: Independent JBoss Admin Console">&laquo; Independent JBoss Admin Console</a>
+      
+      
+        <a class="basic-alignment right articlenav" href="/hosted-ci-services.html" title="Next Post: Hosted CI Services">Hosted CI Services &raquo;</a>
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -183,7 +200,10 @@ Mar 05 &hellip;">
       var disqus_shortname = 'hpehl';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://hpehl.github.io/playing-around-with-dart-isolates.html';
+        var disqus_url = 'http://hpehl.github.io/playing-around-with-dart-isolates.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

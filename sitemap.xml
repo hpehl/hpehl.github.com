@@ -1,16 +1,36 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
+        <loc>http://hpehl.github.io/how-to-use-velocity-to-generate-code-in-gwt.html</loc>
+        <lastmod>2013-04-23T09:11:21+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://hpehl.github.io/new-job.html</loc>
+        <lastmod>2013-04-23T08:53:25+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://hpehl.github.io/independent-jboss-admin-console.html</loc>
+        <lastmod>2013-04-22T23:32:03+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://hpehl.github.io/playing-around-with-dart-isolates.html</loc>
+        <lastmod>2013-04-22T23:14:21+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://hpehl.github.io/hosted-ci-services.html</loc>
+        <lastmod>2013-04-22T23:14:36+02:00</lastmod>
+    </url>
+    <url>
         <loc>http://hpehl.github.io/about/</loc>
-        <lastmod>2013-04-19T22:17:35+02:00</lastmod>
+        <lastmod>2013-04-22T16:51:17+02:00</lastmod>
     </url>
     <url>
         <loc>http://hpehl.github.io/blog/archives/</loc>
-        <lastmod>2013-04-19T20:58:05+02:00</lastmod>
+        <lastmod>2013-04-23T09:11:21+02:00</lastmod>
     </url>
     <url>
         <loc>http://hpehl.github.io/</loc>
-        <lastmod>2013-04-19T20:58:05+02:00</lastmod>
+        <lastmod>2013-04-23T09:11:21+02:00</lastmod>
     </url>
     <url>
         <loc>http://hpehl.github.io/robots.txt</loc>

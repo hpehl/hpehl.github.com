@@ -5,12 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Harald Pehl</title>
+  <title>How to use Velocity to generate code in GWT - Harald Pehl</title>
   <meta name="author" content="Harald Pehl">
 
   
-  <meta name="description" content="I was looking for a hosted continuous integration service to build my GitHub projects. My requirements are painless
-GitHub integration, easy setup &hellip;">
+  <meta name="description" content="The JSON/XML mapper Piriti is heavily based on deferred binding and code generation.
+As I started to implement code generators in Piriti I looked &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +19,7 @@ GitHub integration, easy setup &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://hpehl.github.io/index.html">
+  <link rel="canonical" href="http://hpehl.github.io/how-to-use-velocity-to-generate-code-in-gwt.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -71,366 +71,13 @@ GitHub integration, easy setup &hellip;">
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        <h1 class="entry-title"><a href="/hosted-ci-services.html">Hosted CI Services</a></h1>
       
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-09T15:31:00+02:00" pubdate data-updated="true">09.04.2013</time>
-        
-         | <a href="/hosted-ci-services.html#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I was looking for a hosted continuous integration service to build my GitHub projects. My requirements are painless
-GitHub integration, easy setup and a simple and straightforward UI. I looked at two services:
-<a href="http://drone.io/">Drone.io</a> and <a href="https://travis-ci.org/">Travis CI</a>. In this post I will outline my very personal
-experience with it.</p>
-
-<p>Both Drone.io and Travis CI offer very good GitHub integration. It&#8217;s fairly simple to connect your GitHub projects.
-Especially Drone.io does a very good job. Link your GitHub account, choose your project and language and you&#8217;re ready
-to go.</p>
-
-<p>Unfortunatley neither Drone.io nor Travis CI can deploy artifacts to external repositories like OSS Sonatype out of
-the box (though there&#8217;s a <a href="https://gist.github.com/neothemachine/4060735">workaround</a> for Travis). By now I&#8217;m building
-and deploying dependent projects manually from my box.</p>
-
-<p>To sum it up these are pros/cons for me:</p>
-
-<ol>
-<li>Drone.io
-
-<ul>
-<li>Pros
-
-<ul>
-<li>Very simple and easy to use UI.</li>
-<li>Great GitHub integration</li>
-<li>Supports alos BitBucket and GoogleCode</li>
-</ul>
-</li>
-<li>Cons
-
-<ul>
-<li>Once a job / project was setup you cannot delete it anymore (as least I don&#8217;t know how?)</li>
-<li>Limited configuration options</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Travis CI
-
-<ul>
-<li>Pros
-
-<ul>
-<li>Powerful configuration options (.travis.yml)</li>
-<li>Great range of supported languages</li>
-<li>Supports multiple JVM</li>
-</ul>
-</li>
-<li>Cons
-
-<ul>
-<li>Some extra configuration steps to get started</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
-
-
-<p>Feel free to totally disagree with me or comment your own experience.</p>
-
-<p><strong>Update</strong>
-You can delete a project in Drone.io by going to your project&#8217;s Settings &gt; Repository page. Thanks for the hint Brad.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        <h1 class="entry-title"><a href="/playing-around-with-dart-isolates.html">Playing Around With Dart Isolates</a></h1>
-      
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-08T22:26:00+02:00" pubdate data-updated="true">08.04.2013</time>
-        
-         | <a href="/playing-around-with-dart-isolates.html#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I was looking for a way to implement some kind of dynamic plug-in system in Dart. The idea was to load Dart code on
-demand into an isolate using <a href="http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnUri">spawnUri()</a>.
-It turns out that this function is implemented in the Dart VM but neither in Dartium nor does it compile down to
-JavaScript.</p>
-
-<p>Falling back to <a href="http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnFunction">spawnFunction()</a> works
-as expected in the browser but it turns out that isolates are not allowed to access / change the DOM. This reduces
-isolates to dumb worker functions. Plug-ins which make contributions to the UI are not possible using this approach.</p>
-
-<p>I created some test scripts for the browser and the VM to test the possibilities you have with isolates. You can
-find them at GitHub: <a href="https://github.com/hpehl/dart-isolates">https://github.com/hpehl/dart-isolates</a>. Let me know what
-you think.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        <h1 class="entry-title"><a href="/independent-jboss-admin-console.html">Independent JBoss Admin Console</a></h1>
-      
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-03-05T21:43:00+01:00" pubdate data-updated="true">05.03.2013</time>
-        
-         | <a href="/independent-jboss-admin-console.html#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>We&#8217;re currently working on a new feature for the JBoss Admin Console. The console should become independent from the
-rest of the JBoss AS distribution. As the console is built with GWT and &#8220;merely&#8221; consists of static resources like
-HTML, JavaScript and CSS, the idea is to have a dedicated host which serves these resources. When loading the console
-the user can manage a list of server instances and chooses the one he likes to connect to. The server instances are
-stored in the browsers <a href="http://www.w3.org/TR/webstorage/">local storage</a>, so they will be available the next time the
-console is launched:</p>
-
-<p><img src="/images/posts/select_server_instance.png"></p>
-
-<p>Using this kind of setup brings us several advantages:</p>
-
-<ul>
-<li>We can update the console independently from the rest of the AS code base</li>
-<li>We can deploy the console to various (web)app stores like Firefox Marketplace or Chrome Web Store</li>
-<li>We can have different console versions with different feature sets (nightly, beta, stable)</li>
-<li>Using one console you can connect to different server instances running different setups (development, staging, production)</li>
-</ul>
-
-
-<h1>CORS</h1>
-
-<p>The console talks to the domain controller (DC) using the HTTP management API. Now when the console and the DC live
-on different hosts, the <a href="http://en.wikipedia.org/wiki/Same_origin_policy">same origin policy</a> (SOP) throws a monkey
-wrench in our efforts. Luckily we&#8217;re not the first ones confronted with this problem. There are several ways to solve
-SOP restrictions:</p>
-
-<ul>
-<li>Server Side Proxies</li>
-<li><a href="http://en.wikipedia.org/wiki/JSONP">JSON with padding</a> (JSONP)</li>
-<li><a href="http://www.w3.org/TR/cors/">Cross-Origin Resource Sharing</a> (CORS)</li>
-</ul>
-
-
-<h2>Client</h2>
-
-<p>According to <a href="http://caniuse.com/#search=cors">caniuse.com</a> CORS is implemented in most of the browsers. CORS knows
-two different types of requests.</p>
-
-<ol>
-<li><p>Simple requests:</p>
-
-<p> A request that only uses <code>GET</code> or <code>POST</code>. If <code>POST</code> is used to send data to the server, the content type of the data
-sent to the server with the HTTP <code>POST</code> request is one of <code>application/x-www-form-urlencoded</code>, <code>multipart/form-data</code>
-or <code>text/plain</code>. The request must not contain custom headers (such as <code>X-Modified</code>, etc.)</p></li>
-<li><p>Preflighted requests</p>
-
-<p> A request that uses methods other than <code>GET</code> or <code>POST</code>. Also, if <code>POST</code> is used to send request data with a
-content type other than <code>application/x-www-form-urlencoded</code>, <code>multipart/form-data</code> or <code>text/plain</code>, e.g. if the
-<code>POST</code> request sends an XML payload to the server using <code>application/xml</code> or <code>text/xml</code>, then the request is a
-preflighted request. Furthermore if the request contains custom headers, it&#8217;s preflighted.</p></li>
-</ol>
-
-
-<p>Unlike simple requests, preflighted requests first send an HTTP <code>OPTIONS</code> request header to the resource on the other
-domain, in order to determine whether the actual request is safe to send. Since the console uses <code>POST</code> with a
-content type of <code>application/dmr-encoded</code> all requests are preflighted requests. This will be important when looking
-at the server side.</p>
-
-<p>Common to all requests is that the browser adds the request header <code>Origin</code>. The value of this header is the site
-that served the page. For example, suppose a page on http://www.example-social-network.com attempts to access a
-user&#8217;s data in online-personal-calendar.com. If the browser implements CORS, the following request header would be sent:</p>
-
-<pre><code>Origin: http://www.example-social-network.com
-</code></pre>
-
-<h2>Server</h2>
-
-<p>It is up to the server to decide which origins are allowed. When the server accepts cross-origin requests, it sends an
-<code>Access-Control-Allow-Origin</code> header in its response. The value of the header indicates what origin sites are allowed.
-For example, a response to the previous request would contain the following:</p>
-
-<pre><code>Access-Control-Allow-Origin: http://www.example-social-network.com.
-</code></pre>
-
-<p>For the JBoss AS this implies changes to the class <code>org.jboss.as.domain.http.server.DomainApiHandler</code>. This class
-handles HTTP requests to the management API. The modified version accepts preflighted <code>OPTIONS</code> requests and sets the
-relevant response headers.</p>
-
-<h2>Authentication</h2>
-
-<p>The console uses digest authentication. This must continue to work when doing cross-origin requests. By default,
-in cross-origin <code>XMLHttpRequest</code> invocations, browsers will not send credentials. A specific flag called
-<code>withCredentials</code> has to be set on the <code>XMLHttpRequest</code> object when it is invoked. Unfortunately GWTs implementation
-of the JavaScript <code>XMLHttpRequest</code> object does
-<a href="https://code.google.com/p/google-web-toolkit/issues/detail?id=7677">not yet implement</a> this flag. For the time being
-we need to include <code>withCredentials</code> by ourselves.</p>
-
-<p>The next challenge is to trigger the login dialog when accessing protected resources. Unfortunately when it comes to
-authentication browsers handle CORS quite differently. There are some workarounds depending on which browser is used:</p>
-
-<ul>
-<li>Chrome <a href="http://blog.chromium.org/2011/06/new-chromium-security-features-june.html">prevents basic authentication from a different origin as a phishing attack</a> period.
-The only way to get around that is to start Chrome using the command line option <code>--allow-cross-origin-auth-prompt</code>.</li>
-<li>Firefox makes no problems when it comes to display the login dialog (well done guys!)</li>
-<li>Safari won&#8217;t show the login dialog. You can get around that by inserting a hidden <code>&lt;iframe&gt;</code> element linking to the
-protected url. This will trigger the authentication popup and once the user has authenticated, you can execute direct
-<code>XMLHttpRequests</code> as usual.</li>
-<li>Internet Explorer somewhat support CORS in IE8 and IE9 using the <code>XDomainRequest</code> object (but has limitations).</li>
-</ul>
-
-
-<p>Finally there&#8217;s an issue related to preflighted <code>OPTIONS</code> requests on the server side. According to the specification
-those requests must</p>
-
-<blockquote><p>exclude user credentials.</p></blockquote>
-
-<p>Hence these requests are blocked by the server with &#8220;401 Unauthorized&#8221;. As a workaround the authenticators in the AS
-code base must let pass preflighted <code>OPTIONS</code> requests.</p>
-
-<h2>Status Quo</h2>
-
-<p>At the moment a first preview of an independent console is available at
-OpenShift: <a href="https://console-hpehl.rhcloud.com">https://console-hpehl.rhcloud.com</a>. Please note that you must have a
-CORS enabled server instance running in order to connect from the console. You can build one by yourself using the
-&#8220;cors&#8221; branch of the AS code base: <a href="https://github.com/hpehl/jboss-as/tree/cors">https://github.com/hpehl/jboss-as/tree/cors</a>.
-Follow the steps in the <a href="https://github.com/hpehl/jboss-as/tree/cors#readme">README</a> to build the server.</p>
-
-<p>Due to the limitations regarding authentication and CORS, the solution described here will only work in Firefox and
-Safari. If you want to use Chrome make sure to use the <code>--allow-cross-origin-auth-prompt</code> command line option.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        <h1 class="entry-title"><a href="/new-job.html">New Job</a></h1>
-      
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-10-02T12:52:00+02:00" pubdate data-updated="true">02.10.2012</time>
-        
-         | <a href="/new-job.html#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Today is my first day in my new job at RedHat. I&#8217;m excited to join the EAP core team and looking forward to the things to come&#8230;</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        <h1 class="entry-title"><a href="/how-to-use-velocity-to-generate-code-in-gwt.html">How to Use Velocity to Generate Code in GWT</a></h1>
+        <h1 class="entry-title">How to Use Velocity to Generate Code in GWT</h1>
       
     
     
@@ -449,14 +96,14 @@ Safari. If you want to use Chrome make sure to use the <code>--allow-cross-origi
 
 <time datetime="2012-01-28T21:44:00+01:00" pubdate data-updated="true">28.01.2012</time>
         
-         | <a href="/how-to-use-velocity-to-generate-code-in-gwt.html#disqus_thread">Comments</a>
+         | <a href="#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>The JSON/XML mapper <a href="https://github.com/hpehl/piriti">Piriti</a> is heavily based on deferred binding and code generation.
+<div class="entry-content"><p>The JSON/XML mapper <a href="https://github.com/hpehl/piriti">Piriti</a> is heavily based on deferred binding and code generation.
 As I started to implement code generators in Piriti I looked around how other projects deal with it and read through
 the <a href="https://developers.google.com/web-toolkit/doc/latest/DevGuideCodingBasicsDeferred">official documentation</a> on the
 GWT site. The usual way to generate code is to extend <code>com.google.gwt.core.ext.Generator</code> and then call
@@ -643,23 +290,73 @@ template. In Piriti the engine is configured with the following properties:</p>
 <p>If you want to delve deeper into the code generation process in <a href="https://github.com/hpehl/piriti">Piriti</a>, check out
 the trunk and take a look into the code.</p>
 </div>
+
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Harald Pehl</span></span>
+
+      
+
+
+
+
+
+
+
+
   
 
 
-    </article>
+<time datetime="2012-01-28T21:44:00+01:00" pubdate data-updated="true">28.01.2012</time>
+      
+
+<span class="categories">
   
-  <div class="pagination">
+    <a class='category' href='/blog/categories/piriti/'>piriti</a>
+  
+</span>
+
+
+    </p>
     
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://hpehl.github.io/how-to-use-velocity-to-generate-code-in-gwt.html" data-via="haraldpehl" data-counturl="http://hpehl.github.io/how-to-use-velocity-to-generate-code-in-gwt.html" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
 </div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right articlenav" href="/new-job.html" title="Next Post: New Job">New Job &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
 <aside class="sidebar">
   
     
   
 </aside>
+
 
     </div>
   </div>
@@ -675,7 +372,10 @@ the trunk and take a look into the code.</p>
       var disqus_shortname = 'hpehl';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://hpehl.github.io/how-to-use-velocity-to-generate-code-in-gwt.html';
+        var disqus_url = 'http://hpehl.github.io/how-to-use-velocity-to-generate-code-in-gwt.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
