@@ -1,19 +1,7 @@
-<header>
-    <h1 id="headerTitles">
-        <span class="title">{{ site.title }}</span>
-        <span class="subtitle">{{ site.subtitle }}</span>
-    </h1>
-    <div id="menu">
-        <nav>
-            <ul>
-                <li><a href="{{ root_url }}/">Blog</a></li>
-                <li><a href="{{ root_url }}/blog/archives">Archives</a></li>
-                <li><a href="{{ root_url }}/projects">Projects</a></li>
-                <li><a href="{{ root_url }}/about">About</a></li>
-            </ul>
-        </nav>
-        <div class="edging">
-            <a id="backToTop" href="#"></a>
-        </div>
-    </div>
-</header>
+<hgroup>
+  <h1><a href="{{ root_url }}/">{{ site.title }}</a></h1>
+  {% if site.subtitle %}
+    <h2>{{ site.subtitle }}</h2>
+  {% endif %}
+  <div class="clear"></div>
+</hgroup>

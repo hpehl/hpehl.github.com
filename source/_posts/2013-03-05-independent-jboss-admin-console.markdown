@@ -12,7 +12,7 @@ the user can manage a list of server instances and chooses the one he likes to c
 stored in the browsers [local storage](http://www.w3.org/TR/webstorage/), so they will be available the next time the
 console is launched:
 
-{% img /images/posts/select_server_instance.png %}
+{% img centered /images/posts/select_server_instance.png Connect to server %}
 
 Using this kind of setup brings us several advantages:
 

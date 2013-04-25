@@ -4,3 +4,9 @@
   custom/_style.scss which is loaded after all plugin stylesheets.
 */
 
+figure.centered {
+  text-align: center;
+  > img {
+    margin: 0 auto;
+  }
+}

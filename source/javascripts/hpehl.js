@@ -1,14 +1,11 @@
-var // const
-    FIXED = "fixed",
-
+var FIXED = "fixed",
     _window = $(window),
     _body = $('body'),
     _bodyHtml = $('body, html'),
-    $header = $('header')
-    $menu = $('header #menu'),
+    $header = $('header'),
+    $menu = $('#menu'),
     $menuHeight = $menu.height(),
-    $menuOffsetTop = $header.height() - $menu.height(),
-    $backToTop = $('#backToTop'),
+    $menuOffsetTop = $header.height() - $menu.height();
 
 _window.bind('scroll.global', _resizeMenu);
 
@@ -18,7 +15,7 @@ function _resizeMenu()
         _scrollTop = _window.scrollTop() || _body.scrollTop || _bodyHtml.scrollTop;
 
     // Header - menu
-    if ((_scrollTop >= $menuOffsetTop && !_navIsFix) || (_scrollTop<$menuOffsetTop && _navIsFix)) {
+    if ((_scrollTop >= $menuOffsetTop && !_navIsFix) || (_scrollTop < $menuOffsetTop && _navIsFix)) {
         _navIsFix ? $menu.removeClass(FIXED) : $menu.addClass(FIXED);
     }
 }

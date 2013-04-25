@@ -12,13 +12,14 @@ $sidebar-pad-medium: 15px !default;
 $sidebar-pad-wide: 20px !default;
 $sidebar-width-wide: 286px !default;
 
-$indented-lists: false !default;
+$indented-lists: true !default;
 
-$header-font-size: 1em !default;
-$header-padding-top: 1.5em !default;
-$header-padding-bottom: 0.7em !default;
+$header-font-size: 1.5em !default;
+$header-padding-top: 2em !default;
+$header-padding-bottom: 2em !default;
 
 .group { @include pie-clearfix; }
+.automargin {  margin: 0 auto; }
 
 @mixin collapse-sidebar {
   float: none;
@@ -45,9 +46,12 @@ $header-padding-bottom: 0.7em !default;
 
 body {
   -webkit-text-size-adjust: none;
-  max-width: $max-width;
   position: relative;
-  margin: 0 auto;
+  margin: 0;
+  > nav, > footer, #content > article, #content > div > article, #content > div > section {
+    max-width: $max-width;
+    @extend .automargin;
+  }
   > header, > nav, > footer, #content > article, #content > div > article, #content > div > section {
     @extend .group;
     padding-left: $pad-min;
