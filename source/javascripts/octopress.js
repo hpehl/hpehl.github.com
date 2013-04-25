@@ -17,8 +17,6 @@ function lockNav() {
   var FIXED = "fixed",
       _offset = $('#menu').offset().top;
 
-  alert("menu.top: " + _offset);
-
   $(window).bind('scroll.global', function () {
     var _navIsFix = $('#menu').hasClass(FIXED),
         _scrollTop = $(window).scrollTop() || $('body').scrollTop() || $('body, html').scrollTop();
