@@ -2,22 +2,22 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: redhat | Harald Pehl]]></title>
-  <link href="http://hpehl.github.io/blog/categories/redhat/atom.xml" rel="self"/>
-  <link href="http://hpehl.github.io/"/>
-  <updated>2013-04-23T09:34:23+02:00</updated>
-  <id>http://hpehl.github.io/</id>
+  <link href="http://hpehl.info/blog/categories/redhat/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-04-25T23:19:59+02:00</updated>
+  <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
-    
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
   
   <entry>
     <title type="html"><![CDATA[New Job]]></title>
-    <link href="http://hpehl.github.io/new-job.html"/>
+    <link href="http://hpehl.info/new-job.html"/>
     <updated>2012-10-02T12:52:00+02:00</updated>
-    <id>http://hpehl.github.io/new-job</id>
+    <id>http://hpehl.info/new-job</id>
     <content type="html"><![CDATA[<p>Today is my first day in my new job at RedHat. I'm excited to join the EAP core team and looking forward to the things to come...</p>
 ]]></content>
   </entry>

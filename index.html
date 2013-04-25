@@ -19,7 +19,7 @@ GitHub integration, easy setup &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://hpehl.github.io/index.html">
+  <link rel="canonical" href="http://hpehl.info/index.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -32,41 +32,55 @@ GitHub integration, easy setup &hellip;">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 
   
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-40396539-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
 
 </head>
 
 <body    class="collapse-sidebar sidebar-footer" >
   <header role="banner"><hgroup>
-  <div id="logo">
-  	<div id="logoLeft">{</div>
-  	<div id="logoText">mob</div>
-  	<div id="logoRight">}</div>
-  	<div class="clear"></div>
-  </div>
   <h1><a href="/">Harald Pehl</a></h1>
   
-    <h2>Developer notes written down, before they get lost.</h2>
+    <h2>Developer notes written down before they get lost.</h2>
   
   <div class="clear"></div>
 </hgroup>
 
 </header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <nav id="menu" role="navigation"><!-- TODO Move to footer
+<ul class="subscription" data-subscription="rss">
   <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
   
 </ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:hpehl.github.io" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
+-->
+<div class="table">
+    <ul class="main-navigation">
+        <li><a href="/">Blog</a></li>
+        <li><a href="/blog/archives">Archives</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/about">About</a></li>
+    </ul>
+</div>
+<!--
+    
+    <form action="http://google.com/search" method="get">
+        <fieldset role="search">
+            <input type="hidden" name="q" value="site:hpehl.info" />
+            <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+        </fieldset>
+    </form>
+    
+-->
 
 </nav>
   <div id="main">
@@ -98,8 +112,6 @@ GitHub integration, easy setup &hellip;">
 
 
 <time datetime="2013-04-09T15:31:00+02:00" pubdate data-updated="true">09.04.2013</time>
-        
-         | <a href="/hosted-ci-services.html#disqus_thread">Comments</a>
         
       </p>
     
@@ -200,8 +212,6 @@ You can delete a project in Drone.io by going to your project&#8217;s Settings &
 
 <time datetime="2013-04-08T22:26:00+02:00" pubdate data-updated="true">08.04.2013</time>
         
-         | <a href="/playing-around-with-dart-isolates.html#disqus_thread">Comments</a>
-        
       </p>
     
   </header>
@@ -251,8 +261,6 @@ you think.</p>
 
 <time datetime="2013-03-05T21:43:00+01:00" pubdate data-updated="true">05.03.2013</time>
         
-         | <a href="/independent-jboss-admin-console.html#disqus_thread">Comments</a>
-        
       </p>
     
   </header>
@@ -265,7 +273,7 @@ the user can manage a list of server instances and chooses the one he likes to c
 stored in the browsers <a href="http://www.w3.org/TR/webstorage/">local storage</a>, so they will be available the next time the
 console is launched:</p>
 
-<p><img src="/images/posts/select_server_instance.png"></p>
+<p><figure class="centered"><img src="/images/posts/select_server_instance.png" title="Connect to server" ></figure></p>
 
 <p>Using this kind of setup brings us several advantages:</p>
 
@@ -360,9 +368,10 @@ protected url. This will trigger the authentication popup and once the user has 
 
 
 <p>Finally there&#8217;s an issue related to preflighted <code>OPTIONS</code> requests on the server side. According to the specification
-those requests must</p>
+those requests must exclude user credentials:</p>
 
-<blockquote><p>exclude user credentials.</p></blockquote>
+<blockquote><p>Otherwise, make a preflight request [&#8230;] with the following additional constraints:<br/>    - Exclude user credentials.</p><footer><strong>W3C CORS specification</strong> <cite><a href='http://www.w3.org/TR/cors/#cross-origin-request-with-preflight-0'>www.w3.org/TR/cors/&hellip;</a></cite></footer></blockquote>
+
 
 <p>Hence these requests are blocked by the server with &#8220;401 Unauthorized&#8221;. As a workaround the authenticators in the AS
 code base must let pass preflighted <code>OPTIONS</code> requests.</p>
@@ -409,8 +418,6 @@ Safari. If you want to use Chrome make sure to use the <code>--allow-cross-origi
 
 <time datetime="2012-10-02T12:52:00+02:00" pubdate data-updated="true">02.10.2012</time>
         
-         | <a href="/new-job.html#disqus_thread">Comments</a>
-        
       </p>
     
   </header>
@@ -448,8 +455,6 @@ Safari. If you want to use Chrome make sure to use the <code>--allow-cross-origi
 
 
 <time datetime="2012-01-28T21:44:00+01:00" pubdate data-updated="true">28.01.2012</time>
-        
-         | <a href="/how-to-use-velocity-to-generate-code-in-gwt.html#disqus_thread">Comments</a>
         
       </p>
     
@@ -655,11 +660,6 @@ the trunk and take a look into the code.</p>
     
   </div>
 </div>
-<aside class="sidebar">
-  
-    
-  
-</aside>
 
     </div>
   </div>
@@ -685,6 +685,15 @@ the trunk and take a look into the code.</p>
 </script>
 
 
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
 
 

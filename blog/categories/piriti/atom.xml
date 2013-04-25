@@ -2,22 +2,22 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: piriti | Harald Pehl]]></title>
-  <link href="http://hpehl.github.io/blog/categories/piriti/atom.xml" rel="self"/>
-  <link href="http://hpehl.github.io/"/>
-  <updated>2013-04-23T09:34:23+02:00</updated>
-  <id>http://hpehl.github.io/</id>
+  <link href="http://hpehl.info/blog/categories/piriti/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-04-25T23:19:59+02:00</updated>
+  <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
-    
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
   
   <entry>
     <title type="html"><![CDATA[How to use Velocity to generate code in GWT]]></title>
-    <link href="http://hpehl.github.io/how-to-use-velocity-to-generate-code-in-gwt.html"/>
+    <link href="http://hpehl.info/how-to-use-velocity-to-generate-code-in-gwt.html"/>
     <updated>2012-01-28T21:44:00+01:00</updated>
-    <id>http://hpehl.github.io/how-to-use-velocity-to-generate-code-in-gwt</id>
+    <id>http://hpehl.info/how-to-use-velocity-to-generate-code-in-gwt</id>
     <content type="html"><![CDATA[<p>The JSON/XML mapper <a href="https://github.com/hpehl/piriti">Piriti</a> is heavily based on deferred binding and code generation.
 As I started to implement code generators in Piriti I looked around how other projects deal with it and read through
 the <a href="https://developers.google.com/web-toolkit/doc/latest/DevGuideCodingBasicsDeferred">official documentation</a> on the

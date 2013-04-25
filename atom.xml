@@ -2,22 +2,22 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Harald Pehl]]></title>
-  <link href="http://hpehl.github.io/atom.xml" rel="self"/>
-  <link href="http://hpehl.github.io/"/>
-  <updated>2013-04-23T09:34:23+02:00</updated>
-  <id>http://hpehl.github.io/</id>
+  <link href="http://hpehl.info/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-04-25T23:19:59+02:00</updated>
+  <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
-    
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
   
   <entry>
     <title type="html"><![CDATA[Hosted CI Services]]></title>
-    <link href="http://hpehl.github.io/hosted-ci-services.html"/>
+    <link href="http://hpehl.info/hosted-ci-services.html"/>
     <updated>2013-04-09T15:31:00+02:00</updated>
-    <id>http://hpehl.github.io/hosted-ci-services</id>
+    <id>http://hpehl.info/hosted-ci-services</id>
     <content type="html"><![CDATA[<p>I was looking for a hosted continuous integration service to build my GitHub projects. My requirements are painless
 GitHub integration, easy setup and a simple and straightforward UI. I looked at two services:
 <a href="http://drone.io/">Drone.io</a> and <a href="https://travis-ci.org/">Travis CI</a>. In this post I will outline my very personal
@@ -85,9 +85,9 @@ You can delete a project in Drone.io by going to your project&#8217;s Settings &
   
   <entry>
     <title type="html"><![CDATA[Playing around with Dart Isolates]]></title>
-    <link href="http://hpehl.github.io/playing-around-with-dart-isolates.html"/>
+    <link href="http://hpehl.info/playing-around-with-dart-isolates.html"/>
     <updated>2013-04-08T22:26:00+02:00</updated>
-    <id>http://hpehl.github.io/playing-around-with-dart-isolates</id>
+    <id>http://hpehl.info/playing-around-with-dart-isolates</id>
     <content type="html"><![CDATA[<p>I was looking for a way to implement some kind of dynamic plug-in system in Dart. The idea was to load Dart code on
 demand into an isolate using <a href="http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnUri">spawnUri()</a>.
 It turns out that this function is implemented in the Dart VM but neither in Dartium nor does it compile down to
@@ -105,9 +105,9 @@ you think.</p>
   
   <entry>
     <title type="html"><![CDATA[Independent JBoss Admin Console]]></title>
-    <link href="http://hpehl.github.io/independent-jboss-admin-console.html"/>
+    <link href="http://hpehl.info/independent-jboss-admin-console.html"/>
     <updated>2013-03-05T21:43:00+01:00</updated>
-    <id>http://hpehl.github.io/independent-jboss-admin-console</id>
+    <id>http://hpehl.info/independent-jboss-admin-console</id>
     <content type="html"><![CDATA[<p>We&#8217;re currently working on a new feature for the JBoss Admin Console. The console should become independent from the
 rest of the JBoss AS distribution. As the console is built with GWT and &#8220;merely&#8221; consists of static resources like
 HTML, JavaScript and CSS, the idea is to have a dedicated host which serves these resources. When loading the console
@@ -115,7 +115,7 @@ the user can manage a list of server instances and chooses the one he likes to c
 stored in the browsers <a href="http://www.w3.org/TR/webstorage/">local storage</a>, so they will be available the next time the
 console is launched:</p>
 
-<p><img src="http://hpehl.github.io/images/posts/select_server_instance.png"></p>
+<p><figure class="centered"><img src="http://hpehl.info/images/posts/select_server_instance.png" title="Connect to server" ></figure></p>
 
 <p>Using this kind of setup brings us several advantages:</p>
 
@@ -210,9 +210,10 @@ protected url. This will trigger the authentication popup and once the user has 
 
 
 <p>Finally there&#8217;s an issue related to preflighted <code>OPTIONS</code> requests on the server side. According to the specification
-those requests must</p>
+those requests must exclude user credentials:</p>
 
-<blockquote><p>exclude user credentials.</p></blockquote>
+<blockquote><p>Otherwise, make a preflight request [&#8230;] with the following additional constraints:<br/>    - Exclude user credentials.</p><footer><strong>W3C CORS specification</strong> <cite><a href='http://www.w3.org/TR/cors/#cross-origin-request-with-preflight-0'>www.w3.org/TR/cors/&hellip;</a></cite></footer></blockquote>
+
 
 <p>Hence these requests are blocked by the server with &#8220;401 Unauthorized&#8221;. As a workaround the authenticators in the AS
 code base must let pass preflighted <code>OPTIONS</code> requests.</p>
@@ -232,18 +233,18 @@ Safari. If you want to use Chrome make sure to use the <code>--allow-cross-origi
   
   <entry>
     <title type="html"><![CDATA[New Job]]></title>
-    <link href="http://hpehl.github.io/new-job.html"/>
+    <link href="http://hpehl.info/new-job.html"/>
     <updated>2012-10-02T12:52:00+02:00</updated>
-    <id>http://hpehl.github.io/new-job</id>
+    <id>http://hpehl.info/new-job</id>
     <content type="html"><![CDATA[<p>Today is my first day in my new job at RedHat. I&#8217;m excited to join the EAP core team and looking forward to the things to come&#8230;</p>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[How to use Velocity to generate code in GWT]]></title>
-    <link href="http://hpehl.github.io/how-to-use-velocity-to-generate-code-in-gwt.html"/>
+    <link href="http://hpehl.info/how-to-use-velocity-to-generate-code-in-gwt.html"/>
     <updated>2012-01-28T21:44:00+01:00</updated>
-    <id>http://hpehl.github.io/how-to-use-velocity-to-generate-code-in-gwt</id>
+    <id>http://hpehl.info/how-to-use-velocity-to-generate-code-in-gwt</id>
     <content type="html"><![CDATA[<p>The JSON/XML mapper <a href="https://github.com/hpehl/piriti">Piriti</a> is heavily based on deferred binding and code generation.
 As I started to implement code generators in Piriti I looked around how other projects deal with it and read through
 the <a href="https://developers.google.com/web-toolkit/doc/latest/DevGuideCodingBasicsDeferred">official documentation</a> on the

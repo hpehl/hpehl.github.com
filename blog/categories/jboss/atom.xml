@@ -2,22 +2,22 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: jboss | Harald Pehl]]></title>
-  <link href="http://hpehl.github.io/blog/categories/jboss/atom.xml" rel="self"/>
-  <link href="http://hpehl.github.io/"/>
-  <updated>2013-04-23T09:34:23+02:00</updated>
-  <id>http://hpehl.github.io/</id>
+  <link href="http://hpehl.info/blog/categories/jboss/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-04-25T23:19:59+02:00</updated>
+  <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
-    
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
   
   <entry>
     <title type="html"><![CDATA[Independent JBoss Admin Console]]></title>
-    <link href="http://hpehl.github.io/independent-jboss-admin-console.html"/>
+    <link href="http://hpehl.info/independent-jboss-admin-console.html"/>
     <updated>2013-03-05T21:43:00+01:00</updated>
-    <id>http://hpehl.github.io/independent-jboss-admin-console</id>
+    <id>http://hpehl.info/independent-jboss-admin-console</id>
     <content type="html"><![CDATA[<p>We're currently working on a new feature for the JBoss Admin Console. The console should become independent from the
 rest of the JBoss AS distribution. As the console is built with GWT and "merely" consists of static resources like
 HTML, JavaScript and CSS, the idea is to have a dedicated host which serves these resources. When loading the console
@@ -25,7 +25,7 @@ the user can manage a list of server instances and chooses the one he likes to c
 stored in the browsers <a href="http://www.w3.org/TR/webstorage/">local storage</a>, so they will be available the next time the
 console is launched:</p>
 
-<p><img src="/images/posts/select_server_instance.png"></p>
+<p><figure class="centered"><img src="/images/posts/select_server_instance.png" title="Connect to server" ></figure></p>
 
 <p>Using this kind of setup brings us several advantages:</p>
 
@@ -120,9 +120,9 @@ protected url. This will trigger the authentication popup and once the user has 
 
 
 <p>Finally there's an issue related to preflighted <code>OPTIONS</code> requests on the server side. According to the specification
-those requests must</p>
+those requests must exclude user credentials:</p>
 
-<blockquote><p>exclude user credentials.</p></blockquote>
+<p><blockquote><p>Otherwise, make a preflight request [...] with the following additional constraints:</p></p><p><pre><code>- Exclude user credentials.<br/></code></pre></p><p><p></p><footer><strong>W3C CORS specification</strong> <cite><a href='http://www.w3.org/TR/cors/#cross-origin-request-with-preflight-0'>www.w3.org/TR/cors/&hellip;</a></cite></footer></blockquote></p>
 
 <p>Hence these requests are blocked by the server with "401 Unauthorized". As a workaround the authenticators in the AS
 code base must let pass preflighted <code>OPTIONS</code> requests.</p>
