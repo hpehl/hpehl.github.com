@@ -48,11 +48,11 @@ body {
   -webkit-text-size-adjust: none;
   position: relative;
   margin: 0;
-  > nav, > footer, #content > article, #content > div > article, #content > div > section {
+  > #content > article, #content > div > article, #content > div > section {
     max-width: $max-width;
     @extend .automargin;
   }
-  > header, > nav, > footer, #content > article, #content > div > article, #content > div > section {
+  > header, > footer, #content > article, #content > div > article, #content > div > section {
     @extend .group;
     padding-left: $pad-min;
     padding-right: $pad-min;
