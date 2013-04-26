@@ -171,3 +171,39 @@ article + article {
     }
   }
 }
+
+time.date {
+  display: block;
+  float: right;
+  margin-left: 1em;
+  margin-bottom: .5em;
+  width: 71px;
+  padding: 5px 0;
+  background: #fff;
+  line-height: 1;
+  text-align: center;
+  border: 4px solid rgba(130, 152, 166, 0.3);
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  -ms-border-radius: 50px;
+  -o-border-radius: 50px;
+  border-radius: 50px;
+  > span {
+    display: block;
+  }
+  .day {
+    font-weight: bold;
+    font-size: 23pt;
+    line-height: 0.9;
+  }
+  .month {
+    font-weight: bold;
+    line-height: 1.2;
+    text-transform: uppercase;
+    font-size: 13pt;
+  }
+  .year {
+    font-weight: bold;
+    font-size: 11pt;
+  }
+}

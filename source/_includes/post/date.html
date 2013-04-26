@@ -1,4 +1,7 @@
 {% capture date %}{{ page.date }}{{ post.date }}{% endcapture %}
+{% capture day %}{{ page.day }}{{ post.day }}{% endcapture %}
+{% capture month %}{{ page.month }}{{ post.month }}{% endcapture %}
+{% capture year %}{{ page.year }}{{ post.year }}{% endcapture %}
 {% capture date_formatted %}{{ page.date_formatted }}{{ post.date_formatted }}{% endcapture %}
 {% capture has_date %}{{ date | size }}{% endcapture %}
 
@@ -7,9 +10,10 @@
 {% capture was_updated %}{{ updated | size }}{% endcapture %}
 
 {% if has_date != '0' %}
-  {% capture time %}<time datetime="{{ date | datetime | date_to_xmlschema }}" pubdate{% if updated %} data-updated="true"{% endif %}>{{ date_formatted }}</time>{% endcapture %}
+  {% if was_updated == '1' %}
+    <time datetime="{{ updated | datetime | date_to_xmlschema }}" pubdate data-updated="true" class="date updated"><span class="day">{{ day }}</span><span class="month">{{ month }}</span><span class="year">{{ year }}</span></time>
+    {% assign updated = false %}
+  {% else %}
+    <time datetime="{{ date | datetime | date_to_xmlschema }}" pubdate class="date"><span class="day">{{ day }}</span><span class="month">{{ month }}</span><span class="year">{{ year }}</span></time>
+  {% endif %}
 {% endif %}
-
-{% if was_updated != '0' %}
-  {% capture updated %}<time datetime="{{ updated | datetime | date_to_xmlschema }}" class="updated">Updated {{ updated_formatted }}</time>{% endcapture %}
-{% else %}{% assign updated = false %}{% endif %}

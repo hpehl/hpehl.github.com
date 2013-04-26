@@ -10,7 +10,7 @@ rest of the JBoss AS distribution. As the console is built with GWT and "merely"
 HTML, JavaScript and CSS, the idea is to have a dedicated host which serves these resources. When loading the console
 the user can manage a list of server instances and chooses the one he likes to connect to. The server instances are
 stored in the browsers [local storage](http://www.w3.org/TR/webstorage/), so they will be available the next time the
-console is launched:
+console is launched:<!-- more -->
 
 {% img centered /images/posts/select_server_instance.png Connect to server %}
 

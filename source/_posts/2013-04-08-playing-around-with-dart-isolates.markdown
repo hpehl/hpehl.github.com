@@ -8,7 +8,7 @@ categories: dart
 I was looking for a way to implement some kind of dynamic plug-in system in Dart. The idea was to load Dart code on
 demand into an isolate using [spawnUri()](http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnUri).
 It turns out that this function is implemented in the Dart VM but neither in Dartium nor does it compile down to
-JavaScript.
+JavaScript.<!-- more -->
 
 Falling back to [spawnFunction()](http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnFunction) works
 as expected in the browser but it turns out that isolates are not allowed to access / change the DOM. This reduces

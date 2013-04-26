@@ -8,7 +8,7 @@ categories:
 I was looking for a hosted continuous integration service to build my GitHub projects. My requirements are painless
 GitHub integration, easy setup and a simple and straightforward UI. I looked at two services:
 [Drone.io](http://drone.io/) and [Travis CI](https://travis-ci.org/). In this post I will outline my very personal
-experience with it.
+experience with it.<!-- more -->
 
 Both Drone.io and Travis CI offer very good GitHub integration. It's fairly simple to connect your GitHub projects.
 Especially Drone.io does a very good job. Link your GitHub account, choose your project and language and you're ready

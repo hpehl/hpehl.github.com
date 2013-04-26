@@ -12,7 +12,7 @@ GWT site. The usual way to generate code is to extend `com.google.gwt.core.ext.G
 `GeneratorContext.tryCreate(TreeLogger, String, String)`. The returned PrintWriter is then often wrapped into
 some kind of [IndentedWriter](https://code.google.com/p/google-web-toolkit/source/browse/trunk/user/src/com/google/gwt/uibinder/rebind/IndentedWriter.java)
 like the one used by GWT itself. This class adds methods to indent and unindent code and supports `printf()` like
-behaviour. Finally the writer is used to generate all code. This in turn results in code which looks like that:
+behaviour. Finally the writer is used to generate all code. <!-- more -->This in turn results in code which looks like that:
 
 ``` java
 writer.write("%s %s = null;", parameterizedValueType, value);
