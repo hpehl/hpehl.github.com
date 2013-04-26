@@ -95,10 +95,10 @@ article {
         color: #555555;
         padding: .4em .8em;
         text-decoration: none;
+        @include transition(background-color .5s);
         &:hover{
-          background: #E0841B;
+          background: $base2;
           border: 1px solid #ffffff;
-          color: #FFFFFF;
         }
         @media only screen and (max-width: 550px) {
           float: none !important;
@@ -128,7 +128,10 @@ article + article {
     a { color: #555555; &:hover { text-decoration:none } }
   }
   a[rel=full-article] {
-    background: darken($main-bg, 5);
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    -moz-border-radius: 0.4em;
+    -webkit-border-radius: 0.4em;
     display: inline-block;
     padding: .4em .8em;
     margin-right: .5em;
@@ -137,9 +140,8 @@ article + article {
     @extend .serif;
     @include transition(background-color .5s);
     &:hover {
-      background: #E0841B;
+      background: $base2;
       text-shadow: none;
-      color: $main-bg;
     }
   }
   footer {
