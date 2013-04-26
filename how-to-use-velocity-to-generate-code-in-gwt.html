@@ -22,6 +22,7 @@ As I started to implement code generators in Piriti I looked &hellip;">
   <link rel="canonical" href="http://hpehl.info/how-to-use-velocity-to-generate-code-in-gwt.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/font-awesome.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="/javascripts/ender.js"></script>
   <script src="/javascripts/octopress.js" type="text/javascript"></script>
@@ -91,12 +92,10 @@ As I started to implement code generators in Piriti I looked &hellip;">
   <header>
     
       
-        <h1 class="entry-title">How to Use Velocity to Generate Code in GWT</h1>
-      
-    
-    
-      <p class="meta">
-        
+        <h1 class="entry-title">How to Use Velocity to Generate Code in GWT
+
+
+
 
 
 
@@ -106,23 +105,24 @@ As I started to implement code generators in Piriti I looked &hellip;">
 
 
   
+    <time datetime="2012-01-28T21:44:00+01:00" pubdate class="date"><span class="day">28</span><span class="month">Jan</span><span class="year">2012</span></time>
+  
 
-
-<time datetime="2012-01-28T21:44:00+01:00" pubdate data-updated="true">28.01.2012</time>
-        
-      </p>
+</h1>
+      
     
   </header>
 
 
-<div class="entry-content"><p>The JSON/XML mapper <a href="https://github.com/hpehl/piriti">Piriti</a> is heavily based on deferred binding and code generation.
+<div class="entry-content">
+    <p>The JSON/XML mapper <a href="https://github.com/hpehl/piriti">Piriti</a> is heavily based on deferred binding and code generation.
 As I started to implement code generators in Piriti I looked around how other projects deal with it and read through
 the <a href="https://developers.google.com/web-toolkit/doc/latest/DevGuideCodingBasicsDeferred">official documentation</a> on the
 GWT site. The usual way to generate code is to extend <code>com.google.gwt.core.ext.Generator</code> and then call
 <code>GeneratorContext.tryCreate(TreeLogger, String, String)</code>. The returned PrintWriter is then often wrapped into
 some kind of <a href="https://code.google.com/p/google-web-toolkit/source/browse/trunk/user/src/com/google/gwt/uibinder/rebind/IndentedWriter.java">IndentedWriter</a>
 like the one used by GWT itself. This class adds methods to indent and unindent code and supports <code>printf()</code> like
-behaviour. Finally the writer is used to generate all code. This in turn results in code which looks like that:</p>
+behaviour. Finally the writer is used to generate all code. <!-- more -->This in turn results in code which looks like that:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -301,36 +301,19 @@ template. In Piriti the engine is configured with the following properties:</p>
 
 <p>If you want to delve deeper into the code generation process in <a href="https://github.com/hpehl/piriti">Piriti</a>, check out
 the trunk and take a look into the code.</p>
+
 </div>
 
 
   <footer>
     <p class="meta">
       
-  
 
-<span class="byline author vcard">Posted by <span class="fn">Harald Pehl</span></span>
-
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-01-28T21:44:00+01:00" pubdate data-updated="true">28.01.2012</time>
-      
-
-<span class="categories">
+<i class="icon-tags">
   
     <a class='category' href='/blog/categories/piriti/'>piriti</a>
   
-</span>
+</i>
 
 
     </p>

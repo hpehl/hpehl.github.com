@@ -4,7 +4,7 @@
   <title><![CDATA[Category: piriti | Harald Pehl]]></title>
   <link href="http://hpehl.info/blog/categories/piriti/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-04-25T23:19:59+02:00</updated>
+  <updated>2013-04-26T14:18:33+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -25,7 +25,7 @@ GWT site. The usual way to generate code is to extend <code>com.google.gwt.core.
 <code>GeneratorContext.tryCreate(TreeLogger, String, String)</code>. The returned PrintWriter is then often wrapped into
 some kind of <a href="https://code.google.com/p/google-web-toolkit/source/browse/trunk/user/src/com/google/gwt/uibinder/rebind/IndentedWriter.java">IndentedWriter</a>
 like the one used by GWT itself. This class adds methods to indent and unindent code and supports <code>printf()</code> like
-behaviour. Finally the writer is used to generate all code. This in turn results in code which looks like that:</p>
+behaviour. Finally the writer is used to generate all code. <!-- more -->This in turn results in code which looks like that:</p>
 
 <p>``` java
 writer.write("%s %s = null;", parameterizedValueType, value);

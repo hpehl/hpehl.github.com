@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-04-25T23:19:59+02:00</updated>
+  <updated>2013-04-26T14:18:33+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -21,7 +21,7 @@
     <content type="html"><![CDATA[<p>I was looking for a hosted continuous integration service to build my GitHub projects. My requirements are painless
 GitHub integration, easy setup and a simple and straightforward UI. I looked at two services:
 <a href="http://drone.io/">Drone.io</a> and <a href="https://travis-ci.org/">Travis CI</a>. In this post I will outline my very personal
-experience with it.</p>
+experience with it.<!-- more --></p>
 
 <p>Both Drone.io and Travis CI offer very good GitHub integration. It&#8217;s fairly simple to connect your GitHub projects.
 Especially Drone.io does a very good job. Link your GitHub account, choose your project and language and you&#8217;re ready
@@ -91,7 +91,7 @@ You can delete a project in Drone.io by going to your project&#8217;s Settings &
     <content type="html"><![CDATA[<p>I was looking for a way to implement some kind of dynamic plug-in system in Dart. The idea was to load Dart code on
 demand into an isolate using <a href="http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnUri">spawnUri()</a>.
 It turns out that this function is implemented in the Dart VM but neither in Dartium nor does it compile down to
-JavaScript.</p>
+JavaScript.<!-- more --></p>
 
 <p>Falling back to <a href="http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnFunction">spawnFunction()</a> works
 as expected in the browser but it turns out that isolates are not allowed to access / change the DOM. This reduces
@@ -113,7 +113,7 @@ rest of the JBoss AS distribution. As the console is built with GWT and &#8220;m
 HTML, JavaScript and CSS, the idea is to have a dedicated host which serves these resources. When loading the console
 the user can manage a list of server instances and chooses the one he likes to connect to. The server instances are
 stored in the browsers <a href="http://www.w3.org/TR/webstorage/">local storage</a>, so they will be available the next time the
-console is launched:</p>
+console is launched:<!-- more --></p>
 
 <p><figure class="centered"><img src="http://hpehl.info/images/posts/select_server_instance.png" title="Connect to server" ></figure></p>
 
@@ -252,7 +252,7 @@ GWT site. The usual way to generate code is to extend <code>com.google.gwt.core.
 <code>GeneratorContext.tryCreate(TreeLogger, String, String)</code>. The returned PrintWriter is then often wrapped into
 some kind of <a href="https://code.google.com/p/google-web-toolkit/source/browse/trunk/user/src/com/google/gwt/uibinder/rebind/IndentedWriter.java">IndentedWriter</a>
 like the one used by GWT itself. This class adds methods to indent and unindent code and supports <code>printf()</code> like
-behaviour. Finally the writer is used to generate all code. This in turn results in code which looks like that:</p>
+behaviour. Finally the writer is used to generate all code. <!-- more -->This in turn results in code which looks like that:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
