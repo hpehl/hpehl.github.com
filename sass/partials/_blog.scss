@@ -96,7 +96,7 @@ article {
         padding: .4em .8em;
         text-decoration: none;
         &:hover{
-          background: #4e7cb2;
+          background: #E0841B;
           border: 1px solid #ffffff;
           color: #FFFFFF;
         }
@@ -137,7 +137,7 @@ article + article {
     @extend .serif;
     @include transition(background-color .5s);
     &:hover {
-      background: $link-color-hover;
+      background: #E0841B;
       text-shadow: none;
       color: $main-bg;
     }
@@ -189,6 +189,7 @@ time.date {
   -o-border-radius: 50px;
   border-radius: 50px;
   > span {
+    color: #666;
     display: block;
   }
   .day {
@@ -206,4 +207,7 @@ time.date {
     font-weight: bold;
     font-size: 11pt;
   }
+}
+time.updated > span {
+  color: #E0841B;
 }

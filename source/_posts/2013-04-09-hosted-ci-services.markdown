@@ -2,8 +2,8 @@
 layout: post
 title: "Hosted CI Services"
 date: 2013-04-09 15:31
+updated: 2013-04-12 15:31
 comments: true
-categories: 
 ---
 I was looking for a hosted continuous integration service to build my GitHub projects. My requirements are painless
 GitHub integration, easy setup and a simple and straightforward UI. I looked at two services:
@@ -38,5 +38,5 @@ To sum it up these are pros/cons for me:
 
 Feel free to totally disagree with me or comment your own experience.
 
-**Update**
+### Update
 You can delete a project in Drone.io by going to your project's Settings &gt; Repository page. Thanks for the hint Brad.
