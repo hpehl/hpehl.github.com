@@ -12,8 +12,8 @@
 {% if has_date != '0' %}
   {% if was_updated == '0' %}
     <time datetime="{{ date | datetime | date_to_xmlschema }}" pubdate class="date"><span class="day">{{ day }}</span><span class="month">{{ month }}</span><span class="year">{{ year }}</span></time>
-  {% else %}
+{% else %}
     <time datetime="{{ updated | datetime | date_to_xmlschema }}" pubdate data-updated="true" title="Updated!" class="date updated"><span class="day">{{ day }}</span><span class="month">{{ month }}</span><span class="year">{{ year }}</span></time>
-    {% assign updated = false %}
+{% assign updated = false %}
   {% endif %}
 {% endif %}

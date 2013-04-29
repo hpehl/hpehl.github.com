@@ -14,11 +14,11 @@ function getNav() {
 }
 
 function lockNav() {
-  var FIXED = "fixed",
-      _offset = $('#menu').offset().top;
+  var FIXED = "fixed";
 
   $(window).bind('scroll.global', function () {
     var _navIsFix = $('#menu').hasClass(FIXED),
+        _offset = $('header').offset().height - $('header #menu').offset().height
         _scrollTop = $(window).scrollTop() || $('body').scrollTop() || $('body, html').scrollTop();
 
     if ((_scrollTop >= _offset && !_navIsFix) || (_scrollTop < _offset && _navIsFix)) {

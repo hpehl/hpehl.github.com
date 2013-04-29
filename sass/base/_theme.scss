@@ -73,7 +73,10 @@ html {
   background: $main-bg;
 }
 body {
-  > header, > nav, > footer {
+  > header, > footer {
+    background-color: $header-bg;
+  }
+  #menu {
     background-color: $header-bg;
   }
   #main{

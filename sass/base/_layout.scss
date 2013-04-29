@@ -16,7 +16,7 @@ $indented-lists: true !default;
 
 $header-font-size: 1.5em !default;
 $header-padding-top: 2em !default;
-$header-padding-bottom: 2em !default;
+$header-padding-bottom: 0 !default;
 
 .group { @include pie-clearfix; }
 .automargin {  margin: 0 auto; }
@@ -52,7 +52,7 @@ body {
     max-width: $max-width;
     @extend .automargin;
   }
-  > header, > footer, #content > article, #content > div > article, #content > div > section {
+  > header, #menu, > footer, #content > article, #content > div > article, #content > div > section {
     @extend .group;
     padding-left: $pad-min;
     padding-right: $pad-min;
