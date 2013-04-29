@@ -1,6 +1,6 @@
 {% capture category %}{% if post %}{{ post.categories | category_links | size }}{% else %}{{ page.categories | category_links | size }}{% endif %}{% endcapture %}
 {% unless category == '0' %}
-<i class="icon-tags">
+<i class="icon-large icon-tags">
   {% if post %}
     {{ post.categories | category_links }}
   {% else %}
@@ -8,4 +8,3 @@
   {% endif %}
 </i>
 {% endunless %}
-

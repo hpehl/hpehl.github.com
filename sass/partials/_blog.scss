@@ -96,7 +96,7 @@ article {
         padding: .4em .8em;
         text-decoration: none;
         @include transition(background-color .5s);
-        &:hover{
+        &:hover {
           background: $base2;
           border: 1px solid #ffffff;
         }
@@ -112,7 +112,6 @@ article {
       @extend .separator;
     }
   }
-
 }
 article + article {
   .blog-index & {

@@ -1,8 +1,7 @@
 ---
 layout: page
 title: "disclaimer"
-date: 2013-04-23 14:50
-comments: true
-sharing: true
+comments: false
+sharing: false
 footer: true
 ---

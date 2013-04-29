@@ -9,10 +9,10 @@ single: true
   <footer>
     <p class="meta">
       {% include post/categories.html %}
+      {% unless page.sharing == false %}
+        {% include post/sharing.html %}
+      {% endunless %}
     </p>
-    {% unless page.sharing == false %}
-      {% include post/sharing.html %}
-    {% endunless %}
     <p class="meta">
       {% if page.previous.url %}
         <a class="basic-alignment left articlenav" href="{{page.previous.url}}" title="Previous Post: {{page.previous.title}}">&laquo; {{page.previous.title}}</a>
@@ -25,7 +25,6 @@ single: true
 </article>
 {% if site.disqus_short_name and page.comments == true %}
   <section>
-    <h1>Comments</h1>
     <div id="disqus_thread" aria-live="polite">{% include post/disqus_thread.html %}</div>
   </section>
 {% endif %}
