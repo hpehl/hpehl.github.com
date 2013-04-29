@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-04-26T14:18:33+02:00</updated>
+  <updated>2013-04-29T15:34:50+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -78,8 +78,9 @@ and deploying dependent projects manually from my box.</p>
 
 <p>Feel free to totally disagree with me or comment your own experience.</p>
 
-<p><strong>Update</strong>
-You can delete a project in Drone.io by going to your project&#8217;s Settings &gt; Repository page. Thanks for the hint Brad.</p>
+<h3>Update</h3>
+
+<p>You can delete a project in Drone.io by going to your project&#8217;s Settings &gt; Repository page. Thanks for the hint Brad.</p>
 ]]></content>
   </entry>
   

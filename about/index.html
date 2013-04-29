@@ -49,29 +49,22 @@ Google+ and Twitter: @haraldpehl This is a personal weblog. &hellip;">
 </head>
 
 <body    class="collapse-sidebar sidebar-footer" >
-  <header role="banner"><hgroup>
+  <header>
+<hgroup>
   <h1><a href="/">Harald Pehl</a></h1>
   
     <h2>Developer notes written down before they get lost.</h2>
   
-  <div class="clear"></div>
-</hgroup>
-
-</header>
-  <nav id="menu" role="navigation"><!-- TODO Move to footer
-<ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
--->
-<div class="table">
+  </hgroup>
+  <div id="menu">
+    <nav role="navigation">
     <ul class="main-navigation">
         <li><a href="/">Blog</a></li>
         <li><a href="/blog/archives">Archives</a></li>
         <li><a href="/projects">Projects</a></li>
         <li><a href="/about">About</a></li>
     </ul>
-</div>
+</nav>
 <!--
     
     <form action="http://google.com/search" method="get">
@@ -83,7 +76,11 @@ Google+ and Twitter: @haraldpehl This is a personal weblog. &hellip;">
     
 -->
 
-</nav>
+
+  </div>
+</header>
+
+
   <div id="main">
     <div id="content">
       <div>
@@ -113,10 +110,17 @@ Google+ and Twitter: @haraldpehl This is a personal weblog. &hellip;">
 
     </div>
   </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Harald Pehl -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
+  <footer role="contentinfo"><div>
+    <p>
+        Copyright &copy; 2013 - Harald Pehl
+    </p>
+</div>
+<!-- TODO Move to footer
+<ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+-->
 
 </footer>
   
@@ -144,15 +148,7 @@ Google+ and Twitter: @haraldpehl This is a personal weblog. &hellip;">
 
 
 
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 
 
 
