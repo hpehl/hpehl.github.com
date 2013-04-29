@@ -48,7 +48,7 @@ body {
   -webkit-text-size-adjust: none;
   position: relative;
   margin: 0;
-  > #content > article, #content > div > article, #content > div > section {
+  > #content > article, #content > div > article, #content > div > section, footer > div {
     max-width: $max-width;
     @extend .automargin;
   }

@@ -12,12 +12,10 @@
   border-bottom: 5px solid $nav-border-bottom;
   nav {
     padding: .8em 0;
-    display: table;
     ul {
       @include horizontal-list(0);
-      display: table-cell;
-      text-align: center;
-      vertical-align: middle;
+      display: table;
+      margin: 0 auto;
       li {
         margin: 0;
         font-size: 0.5em;
@@ -27,6 +25,7 @@
           text-decoration: none;
           font-size: 1.1em;
           line-height: 1.5em;
+          padding: 0 .5em;
           &:hover {
             text-decoration: underline;
           }
