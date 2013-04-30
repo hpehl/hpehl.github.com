@@ -9,8 +9,8 @@
   <meta name="author" content="Harald Pehl">
 
   
-  <meta name="description" content="The JSON/XML mapper Piriti is heavily based on deferred binding and code generation.
-As I started to implement code generators in Piriti I looked &hellip;">
+  <meta name="description" content="How to Use Velocity to Generate Code in GWT 28Jan2012 The JSON/XML mapper Piriti is heavily based on deferred binding and code generation.
+As I &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -23,15 +23,14 @@ As I started to implement code generators in Piriti I looked &hellip;">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/font-awesome.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href='http://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
+  <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="/javascripts/ender.js"></script>
   <script src="/javascripts/octopress.js" type="text/javascript"></script>
   <link href="/atom.xml" rel="alternate" title="Harald Pehl" type="application/atom+xml">
   <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-
   
   <script type="text/javascript">
     var _gaq = _gaq || [];
@@ -48,16 +47,16 @@ As I started to implement code generators in Piriti I looked &hellip;">
 
 </head>
 
-<body    class="collapse-sidebar sidebar-footer" >
+<body>
   <header>
-<hgroup>
-  <h1><a href="/">Harald Pehl</a></h1>
-  
-    <h2>Developer notes written down before they get lost.</h2>
-  
-  </hgroup>
-  <div id="menu">
-    <nav role="navigation">
+    <hgroup>
+        <h1><a href="/">Harald Pehl</a></h1>
+        
+        <h2>Developer notes written down before they get lost.</h2>
+        
+    </hgroup>
+    <div id="menu">
+        <nav role="navigation">
     <ul class="main-navigation">
         <li><a href="/">Blog</a></li>
         <li><a href="/blog/archives">Archives</a></li>
@@ -76,10 +75,8 @@ As I started to implement code generators in Piriti I looked &hellip;">
     
 -->
 
-
-  </div>
+    </div>
 </header>
-
 
   <div id="main">
     <div id="content">
@@ -302,44 +299,36 @@ the trunk and take a look into the code.</p>
 </div>
 
 
-  <footer>
+  <footer class="line">
     <p class="meta">
-      
+      <span>
+        
 
-<i class="icon-tags">
+<i class="categories icon-large icon-tags">
   
     <a class='category' href='/blog/categories/piriti/'>piriti</a>
   
 </i>
 
 
+        
+          <a class="sharing tweet" href="http://twitter.com/share?url=http://hpehl.info/how-to-use-velocity-to-generate-code-in-gwt.html"><i class="icon-large icon-twitter"></i></a>
+<a class="sharing gplus" href="https://plus.google.com/share?url=http://hpehl.info/how-to-use-velocity-to-generate-code-in-gwt.html"><i class="icon-large icon-google-plus-sign"></i></a>
+<a class="sharing facebook" href="http://www.facebook.com/sharer.php?u=http://hpehl.info/how-to-use-velocity-to-generate-code-in-gwt.html"><i class="icon-large icon-facebook"></i></a>
 
-    </p>
-    
-      <div class="sharing">
-  
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://hpehl.info/how-to-use-velocity-to-generate-code-in-gwt.html" data-via="haraldpehl" data-count="none" data-counturl="http://hpehl.info/how-to-use-velocity-to-generate-code-in-gwt.html" >Tweet</a>
-  
-  
-  <div class="g-plusone" data-size="medium"></div>
-  
-  
-    <div class="fb-like" data-width="450" data-show-faces="false"></div>
-  
-</div>
-
-    
-    <p class="meta">
-      
-      
-        <a class="basic-alignment right articlenav" href="/new-job.html" title="Next Post: New Job">New Job &raquo;</a>
-      
+        
+      </span>
+      <span>
+        
+        
+          <a class="articlenav" href="/new-job.html" title="Next Post: New Job">New Job &rarr;</a>
+        
+      </span>
     </p>
   </footer>
 </article>
 
   <section>
-    <h1>Comments</h1>
     <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
   </section>
@@ -348,18 +337,12 @@ the trunk and take a look into the code.</p>
 
     </div>
   </div>
-  <footer role="contentinfo"><div>
-    <p>
-        Copyright &copy; 2013 - Harald Pehl
-    </p>
-</div>
-<!-- TODO Move to footer
-<ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
--->
-
+  <footer role="contentinfo"><p>
+    Copyright &copy; 2013 - Harald Pehl - <a href="/disclaimer">Disclaimer</a>
+    <span class="basic-alignment right">
+        <a class="rss" href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS"><i class="icon-large icon-rss"></i></a>
+    </span>
+</p>
 </footer>
   
 
@@ -381,30 +364,60 @@ the trunk and take a look into the code.</p>
 
 
 
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) {return;}
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+<script>
+    $('a[class*=facebook]').on('click', function(e) {
+        e.preventDefault();
+        var width  = 575,
+                height = 400,
+                left   = window.screenLeft + (window.innerWidth - width) / 2,
+                top    = window.screenTop + (window.innerHeight - height) / 2,
+                url    = this.href,
+                opts   = 'status=1' +
+                        ',width='  + width  +
+                        ',height=' + height +
+                        ',top='    + top    +
+                        ',left='   + left;
+        window.open(url, 'twitter', opts);
+    });
+</script>
 
 
 
   <script type="text/javascript">
-    (function() {
-      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
-      script.src = 'https://apis.google.com/js/plusone.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
-    })();
+      $('a[class*=gplus]').on('click', function(e) {
+          e.preventDefault();
+          var width  = 650,
+                  height = 300,
+                  left   = window.screenLeft + (window.innerWidth - width) / 2,
+                  top    = window.screenTop + (window.innerHeight - height) / 2,
+                  url    = this.href,
+                  opts   = 'status=1' +
+                          ',width='  + width  +
+                          ',height=' + height +
+                          ',top='    + top    +
+                          ',left='   + left;
+          window.open(url, 'twitter', opts);
+      });
   </script>
 
 
 
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-
-
+<script>
+    $('a[class*=tweet]').on('click', function(e) {
+        e.preventDefault();
+        var width  = 575,
+            height = 400,
+            left   = window.screenLeft + (window.innerWidth - width) / 2,
+            top    = window.screenTop + (window.innerHeight - height) / 2,
+            url    = this.href,
+            opts   = 'status=1' +
+                    ',width='  + width  +
+                    ',height=' + height +
+                    ',top='    + top    +
+                    ',left='   + left;
+        window.open(url, 'twitter', opts);
+    });
+</script>
 
 
 
