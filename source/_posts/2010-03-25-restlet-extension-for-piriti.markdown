@@ -1,0 +1,126 @@
+---
+layout: post
+title: "Restlet Extension for Piriti"
+date: 2010-03-25 09:49
+comments: true
+categories: piriti rest
+---
+[Restlet](http://restlet.org) is a RESTful Web framework for Java. There's also a GWT edition available. The Piriti 
+Restlet extensions is built on top of that edition. Therefore the 2.x version of Restlet is used. There are two 
+representations available which use the Piriti readers to convert JSON and XML data to your model (POJOs and/or 
+GXT models).<!-- more -->
+
+### Read and convert JSON
+To read the JSON data you need an instance of JsonReader<T>:
+
+``` java 
+public class Book
+{
+    interface BookReader extends JsonReader<Book> {}
+    public static final BookReader JSON = GWT.create(BookReader.class);
+
+    // Fields annotated with @JsonField
+    ...
+}
+```
+
+Then you can read the JSON data like this:
+
+``` java 
+ClientResource clientResource = 
+    new ClientResource("/resource/with/json/representation");
+    
+clientResource.setOnResponse(new Uniform()
+{
+    @Override
+    public void handle(Request request, Response response)
+    {
+        PiritiJsonRepresentation<Book> representation = 
+            new PiritiJsonRepresentation<Book>(Book.JSON, response.getEntity());
+        try
+        {
+            // Depending whether there's one book or an array of books
+            // in your JSON data
+            List<Book> books = representation.getModels();
+            Book book = representation.getModel();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+});
+
+clientResource.get(MediaType.APPLICATION_JSON);
+```
+
+The entity returned by the resource has to be a valid JSON object. In case you want to read a list of books, the 
+JSON object has to contain one key (name does not matter) with the array of books:
+
+``` json
+{books: [{isbn: "0815", title: "Foo"}, {isbn: "1234", title: "Bar"}]}
+``` 
+
+### Read and convert XML
+To read the XML data you need an instance of XmlReader<T>
+
+``` 
+public class Book
+{
+    interface BookReader extends XmlReader<Book> {}
+    public static final BookReader XML = GWT.create(BookReader.class);
+
+    // Fields annotated with @XmlField
+    ...
+}
+``` 
+
+Then you can read the XML data like this:
+
+```
+ClientResource clientResource = 
+    new ClientResource("/resource/with/xml/representation");
+    
+clientResource.setOnResponse(new Uniform()
+{
+    @Override
+    public void handle(Request request, Response response)
+    {
+        PiritiXmlRepresentation<Book> representation = 
+            new PiritiXmlRepresentation<Book>(Book.XML, response.getEntity());
+        try
+        {
+            // Depending whether there's one book element or a list of book
+            // elements in your XML data
+            List<Book> books = representation.getModels();
+            Book book = representation.getModel();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+});
+
+clientResource.get(MediaType.TEXT_XML);
+```
+
+The entity returned by the resource has to be a valid XML document. In case you want to read a list of books, the 
+document must contain a list of book elements as direct children of the root element:
+
+``` xml
+<books>
+    <book>
+        <isbn>0815</isbn>
+        <title>Foo</title>
+    </book>
+    <book>
+        <isbn>1234</isbn>
+        <title>Bar</title>
+    </book>
+</books>
+``` 
+
+### Further information
+If you want to learn more about Piriti and its extensions, please feel free to take a look at it under 
+<https://github.com/hpehl/piriti>
