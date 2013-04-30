@@ -16,7 +16,7 @@ function getNav() {
 function lockNav() {
   var FIXED = "fixed";
 
-  $(window).bind('scroll.global', function () {
+  $(window).on('scroll.global', function () {
     var _navIsFix = $('#menu').hasClass(FIXED),
         _offset = $('header').offset().height - $('header #menu').offset().height
         _scrollTop = $(window).scrollTop() || $('body').scrollTop() || $('body, html').scrollTop();

@@ -130,6 +130,7 @@ article + article {
   footer {
     @extend .sans;
     margin-top: 1em;
+    margin-bottom: 1em;
   }
 }
 
@@ -195,4 +196,8 @@ time.date {
 }
 time.updated > span {
   color: $orange;
+}
+
+#disqus_thread {
+  margin-top: .5em;
 }

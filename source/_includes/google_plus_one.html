@@ -1,9 +1,18 @@
 {% if site.google_plus_one %}
   <script type="text/javascript">
-    (function() {
-      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
-      script.src = 'https://apis.google.com/js/plusone.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
-    })();
+      $('a[class*=gplus]').on('click', function(e) {
+          e.preventDefault();
+          var width  = 650,
+                  height = 300,
+                  left   = window.screenLeft + (window.innerWidth - width) / 2,
+                  top    = window.screenTop + (window.innerHeight - height) / 2,
+                  url    = this.href,
+                  opts   = 'status=1' +
+                          ',width='  + width  +
+                          ',height=' + height +
+                          ',top='    + top    +
+                          ',left='   + left;
+          window.open(url, 'twitter', opts);
+      });
   </script>
 {% endif %}
