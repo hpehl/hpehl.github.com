@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: piriti - Harald Pehl</title>
+  <title>Paging in Resources - Harald Pehl</title>
   <meta name="author" content="Harald Pehl">
 
   
-  <meta name="description" content="Category: piriti">
+  <meta name="description" content="Paging in Resources 13Sep2010 A common requirement for resources which return large collections of records is paging. Paging can be implemented in &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://hpehl.infoblog/categories/piriti/index.html">
+  <link rel="canonical" href="http://hpehl.info/paging-in-resources.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/font-awesome.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -80,154 +80,122 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: Piriti</h1>
+    
+      
+        <h1 class="entry-title">Paging in Resources
+
+
+
+
+
+
+
+
+
+
+
+  
+    <time datetime="2010-09-13T11:21:00+02:00" pubdate class="date"><span class="day">13</span><span class="month">Sep</span><span class="year">2010</span></time>
+
+
+</h1>
+      
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content">
+    <p>A common requirement for resources which return large collections of records is paging. Paging can be implemented in
+many different ways. <!-- more -->See the following pages as an entry point to the discussion:</p>
 
-  
-  <h2>2012</h2>
-
-<article>
-  
-<h1><a href="/how-to-use-velocity-to-generate-code-in-gwt.html">How to use Velocity to generate code in GWT</a></h1>
-<time datetime="2012-01-28T21:44:00+01:00" pubdate><span class='month'>Jan</span> <span class='day'>28</span> <span class='year'>2012</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
+<ul>
+<li><a href="http://stackoverflow.com/questions/924472/paging-in-a-rest-collection">Stackoverflow</a></li>
+<li><a href="http://docs.dojocampus.org/dojox/data/JsonRestStore#paging">DOJO</a></li>
+</ul>
 
 
-</article>
+<p>In the following sections I will introduce three different solutions. All of them are implemented in
+<a href="https://github.com/hpehl/taoki">Taoki</a> - a small extension for <a href="http://www.restlet.org">Restlet</a>.</p>
 
+<h3>Template Parameter</h3>
 
+<p>This implementation uses parts of the url to carry the paging information:</p>
 
-  
-  <h2>2011</h2>
+<pre><code>GET /books
+GET /books/0/50
+GET /books/0/50/author/asc
+</code></pre>
 
-<article>
-  
-<h1><a href="/announcement-piriti-0-70b1.html">Announcement: Piriti 0.7.0b1</a></h1>
-<time datetime="2011-05-09T23:12:00+02:00" pubdate><span class='month'>May</span> <span class='day'>09</span> <span class='year'>2011</span></time>
+<p>The advantage of this implementation is that the resource can be cached by proxies. The drawback is that a lot of
+template parameters are &#8220;wasted&#8221;. For example /books/report/{quarter} won&#8217;t be available as route, since it is
+occupied by /books/{offset}/{pageSize}</p>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
+<h3>Query Parameter</h3>
 
+<p>This implementation uses query parameter.</p>
 
-</article>
+<pre><code>GET /books
+GET /books?offset=0&amp;amp;limit=50
+GET /books?offset=0&amp;amp;limit=50&amp;amp;sortField=author&amp;amp;sortDir=asc
+</code></pre>
 
+<p>Most proxies won&#8217;t cache resources which include parameters, but there are no template parameters wasted.</p>
 
+<h3>Custom Header</h3>
 
-  
-  <h2>2010</h2>
+<p>This implementation uses the custom header Item-Range.</p>
 
-<article>
-  
-<h1><a href="/announcement-piriti-0-6.html">Announcement: Piriti 0.6</a></h1>
-<time datetime="2010-10-27T15:52:00+02:00" pubdate><span class='month'>Oct</span> <span class='day'>27</span> <span class='year'>2010</span></time>
+<pre><code>GET /books
+GET /books
+Item-Range: items=0-49
+GET /books
+Item-Range: items=0-49;author:desc
+</code></pre>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/announcement-piriti-0-4.html">Announcement: Piriti 0.4</a></h1>
-<time datetime="2010-07-07T16:28:00+02:00" pubdate><span class='month'>Jul</span> <span class='day'>07</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/announcement-piriti-0-35.html">Announcement: Piriti 0.3.5</a></h1>
-<time datetime="2010-06-18T17:19:00+02:00" pubdate><span class='month'>Jun</span> <span class='day'>18</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/announcement-piriti-0-31.html">Announcement: Piriti 0.3.1</a></h1>
-<time datetime="2010-03-26T14:07:00+01:00" pubdate><span class='month'>Mar</span> <span class='day'>26</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/restlet-extension-for-piriti.html">Restlet Extension for Piriti</a></h1>
-<time datetime="2010-03-25T09:49:00+01:00" pubdate><span class='month'>Mar</span> <span class='day'>25</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a>, <a class='category' href='/blog/categories/rest/'>rest</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/json-mapping-in-piriti.html">JSON Mapping in Piriti</a></h1>
-<time datetime="2010-03-22T12:11:00+01:00" pubdate><span class='month'>Mar</span> <span class='day'>22</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/xml-mapper-for-gwt.html">XML Mapper for GWT</a></h1>
-<time datetime="2010-01-14T17:41:00+01:00" pubdate><span class='month'>Jan</span> <span class='day'>14</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
+<p>It combines the advantages of the other two implementations. A minor drawback of this solution is that the paging
+information is no longer visible in the URL.</p>
 
 </div>
 
+
+  <footer class="line">
+    <p class="meta">
+      <span>
+        
+
+<i class="categories icon-large icon-tags">
   
+    <a class='category' href='/blog/categories/rest/'>rest</a>
+  
+</i>
+
+
+        
+          <a class="sharing tweet" href="http://twitter.com/share?url=http://hpehl.info/paging-in-resources.html"><i class="icon-large icon-twitter"></i></a>
+<a class="sharing gplus" href="https://plus.google.com/share?url=http://hpehl.info/paging-in-resources.html"><i class="icon-large icon-google-plus-sign"></i></a>
+<a class="sharing facebook" href="http://www.facebook.com/sharer.php?u=http://hpehl.info/paging-in-resources.html"><i class="icon-large icon-facebook"></i></a>
+
+        
+      </span>
+      <span>
+        
+          <a class="articlenav" href="/announcement-piriti-0-4.html" title="Previous Post: Announcement: Piriti 0.4">&larr; Announcement: Piriti 0.4</a>
+        
+        
+          <a class="articlenav" href="/karaka-time-recording-made-easy.html" title="Next Post: Karaka - Time recording made easy">Karaka - Time recording made easy &rarr;</a>
+        
+      </span>
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -246,7 +214,10 @@
       var disqus_shortname = 'hpehl';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://hpehl.info/paging-in-resources.html';
+        var disqus_url = 'http://hpehl.info/paging-in-resources.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: piriti - Harald Pehl</title>
+  <title>Announcement: Piriti 0.7.0b1 - Harald Pehl</title>
   <meta name="author" content="Harald Pehl">
 
   
-  <meta name="description" content="Category: piriti">
+  <meta name="description" content="Announcement: Piriti 0.7.0b1 09May2011 I&#8217;m pleased to announce the first beta of the upcoming Piriti 0.7.0 release. Piriti 0.7.0 is a major &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://hpehl.infoblog/categories/piriti/index.html">
+  <link rel="canonical" href="http://hpehl.info/announcement-piriti-0-70b1.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/font-awesome.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -80,154 +80,128 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: Piriti</h1>
+    
+      
+        <h1 class="entry-title">Announcement: Piriti 0.7.0b1
+
+
+
+
+
+
+
+
+
+
+
+  
+    <time datetime="2011-05-09T23:12:00+02:00" pubdate class="date"><span class="day">09</span><span class="month">May</span><span class="year">2011</span></time>
+
+
+</h1>
+      
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content">
+    <p>I&#8217;m pleased to announce the first beta of the upcoming Piriti 0.7.0 release. Piriti 0.7.0 is a major release with
+breaking API changes, lots of new features and bugfixes.<!-- more --></p>
 
-  
-  <h2>2012</h2>
+<h3>Breaking API Changes</h3>
 
-<article>
-  
-<h1><a href="/how-to-use-velocity-to-generate-code-in-gwt.html">How to use Velocity to generate code in GWT</a></h1>
-<time datetime="2012-01-28T21:44:00+01:00" pubdate><span class='month'>Jan</span> <span class='day'>28</span> <span class='year'>2012</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
+<ul>
+<li>Piriti requires GWT 2.2 and GIN 1.5</li>
+<li>Dropped GXT support</li>
+<li>Removed <code>@Json</code>, <code>@JsonMappings</code>, <code>@Xml</code> and <code>@XmlMappings</code> annotations</li>
+</ul>
 
 
+<h3>New Features</h3>
 
-  
-  <h2>2011</h2>
+<ul>
+<li>Devided Piriti into different modules:
 
-<article>
-  
-<h1><a href="/announcement-piriti-0-70b1.html">Announcement: Piriti 0.7.0b1</a></h1>
-<time datetime="2011-05-09T23:12:00+02:00" pubdate><span class='month'>May</span> <span class='day'>09</span> <span class='year'>2011</span></time>
+<ul>
+<li><code>name.pehl.piriti.commons.Commons</code></li>
+<li><code>name.pehl.piriti.converter.Converter</code></li>
+<li><code>name.pehl.piriti.json.JSON</code></li>
+<li><code>name.pehl.piriti.property.Property</code></li>
+<li><code>name.pehl.piriti.xml.XML</code></li>
+</ul>
+</li>
+<li>Simplified mapping setup: All properties in a POJO hirarchy are now mapped by default</li>
+<li>Added new annotations to overide default behaviour:
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
-
-
-
-  
-  <h2>2010</h2>
-
-<article>
-  
-<h1><a href="/announcement-piriti-0-6.html">Announcement: Piriti 0.6</a></h1>
-<time datetime="2010-10-27T15:52:00+02:00" pubdate><span class='month'>Oct</span> <span class='day'>27</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/announcement-piriti-0-4.html">Announcement: Piriti 0.4</a></h1>
-<time datetime="2010-07-07T16:28:00+02:00" pubdate><span class='month'>Jul</span> <span class='day'>07</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
+<ul>
+<li><code>@Order</code></li>
+<li><code>@Path</code></li>
+<li><code>@Format</code></li>
+<li><code>@Native</code></li>
+<li><code>@Transient</code></li>
+<li><code>@CreateWith</code></li>
+<li><code>@MapUpTo</code></li>
+</ul>
+</li>
+<li>Added <code>@Mappings</code> and <code>@Mapping</code> annotation for external mappings (JSON and XML)</li>
+<li>Added support for polymorhic assoziations</li>
+<li>Converters can now be used for any type</li>
+<li>Added XML serialisation (not yet implemented, but scheduled for the 0.7.0 release)</li>
+<li>Added support for IDs and IDREFs in JSON (not yet implemented, but scheduled for the 0.7.0 release)</li>
+</ul>
 
 
-</article>
+<h3>Bugfixes</h3>
 
+<ul>
+<li>Fixed problems when mapping collection implementations</li>
+<li><code>GWT.create()</code> is now used instead of new operator</li>
+<li>I also restructured the wiki and added a FAQ and a comparison to other JSON / XML mappers. Feel free to visit
+<a href="https://github.com/hpehl/piriti/">https://github.com/hpehl/piriti/</a> and test the new release.</li>
+</ul>
 
-
-<article>
-  
-<h1><a href="/announcement-piriti-0-35.html">Announcement: Piriti 0.3.5</a></h1>
-<time datetime="2010-06-18T17:19:00+02:00" pubdate><span class='month'>Jun</span> <span class='day'>18</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/announcement-piriti-0-31.html">Announcement: Piriti 0.3.1</a></h1>
-<time datetime="2010-03-26T14:07:00+01:00" pubdate><span class='month'>Mar</span> <span class='day'>26</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/restlet-extension-for-piriti.html">Restlet Extension for Piriti</a></h1>
-<time datetime="2010-03-25T09:49:00+01:00" pubdate><span class='month'>Mar</span> <span class='day'>25</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a>, <a class='category' href='/blog/categories/rest/'>rest</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/json-mapping-in-piriti.html">JSON Mapping in Piriti</a></h1>
-<time datetime="2010-03-22T12:11:00+01:00" pubdate><span class='month'>Mar</span> <span class='day'>22</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/xml-mapper-for-gwt.html">XML Mapper for GWT</a></h1>
-<time datetime="2010-01-14T17:41:00+01:00" pubdate><span class='month'>Jan</span> <span class='day'>14</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/piriti/'>piriti</a></span>
-</footer>
-
-
-</article>
 
 </div>
 
+
+  <footer class="line">
+    <p class="meta">
+      <span>
+        
+
+<i class="categories icon-large icon-tags">
   
+    <a class='category' href='/blog/categories/piriti/'>piriti</a>
+  
+</i>
+
+
+        
+          <a class="sharing tweet" href="http://twitter.com/share?url=http://hpehl.info/announcement-piriti-0-70b1.html"><i class="icon-large icon-twitter"></i></a>
+<a class="sharing gplus" href="https://plus.google.com/share?url=http://hpehl.info/announcement-piriti-0-70b1.html"><i class="icon-large icon-google-plus-sign"></i></a>
+<a class="sharing facebook" href="http://www.facebook.com/sharer.php?u=http://hpehl.info/announcement-piriti-0-70b1.html"><i class="icon-large icon-facebook"></i></a>
+
+        
+      </span>
+      <span>
+        
+          <a class="articlenav" href="/taoki-and-tire-mentioned-in-gwt-gae-book.html" title="Previous Post: Taoki and Karaka Mentioned in GWT-GAE-Book">&larr; Taoki and Karaka Mentioned in GWT-GAE-Book</a>
+        
+        
+          <a class="articlenav" href="/how-to-use-velocity-to-generate-code-in-gwt.html" title="Next Post: How to use Velocity to generate code in GWT">How to use Velocity to generate code in GWT &rarr;</a>
+        
+      </span>
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -246,7 +220,10 @@
       var disqus_shortname = 'hpehl';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://hpehl.info/announcement-piriti-0-70b1.html';
+        var disqus_url = 'http://hpehl.info/announcement-piriti-0-70b1.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

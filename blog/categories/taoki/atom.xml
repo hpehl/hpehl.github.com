@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: taoki | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/taoki/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-04-30T17:59:40+02:00</updated>
+  <id>http://hpehl.info/</id>
+  <author>
+    <name><![CDATA[Harald Pehl]]></name>
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Taoki and Karaka Mentioned in GWT-GAE-Book]]></title>
+    <link href="http://hpehl.info/taoki-and-tire-mentioned-in-gwt-gae-book.html"/>
+    <updated>2010-12-03T08:48:00+01:00</updated>
+    <id>http://hpehl.info/taoki-and-tire-mentioned-in-gwt-gae-book</id>
+    <content type="html"><![CDATA[<p><a href="https://github.com/hpehl/taoki">Taoki</a> and <a href="https://github.com/hpehl/karaka">Karaka</a> are mentioned in the free online
+book on GWT and AppEngine development by Marius Andreiana.</p>
+
+<p>The book covers also a lot of <a href="https://github.com/ArcBees/GWTP">GWTP</a> and its core examples are great illustrations
+for many features of the framework! It also makes use of Gin, Guice, Twig-Persist, Mockito and many other useful tools.</p>
+
+<p>Go check it out: <a href="http://code.google.com/p/gwt-gae-book/">http://code.google.com/p/gwt-gae-book/</a></p>
+
+<p>Many thanks to Marius for such a valuable resource, and congratulations on publishing it!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Restlet and Google Guice]]></title>
+    <link href="http://hpehl.info/restlet-and-google-guice.html"/>
+    <updated>2010-02-15T17:33:00+01:00</updated>
+    <id>http://hpehl.info/restlet-and-google-guice</id>
+    <content type="html"><![CDATA[<p>In an earlier <a href="/google-appengine-restlet-guice.html">post</a> I described how to configure resources with Google Guice.
+I decided to move the relevant code to a small library called "Taoki" (Maori for "rest").</p>
+
+<p>Besides the features described in the initial post, I added the possibility to configure security for resources.
+The details will be described in a separated post.</p>
+
+<p>For those interested, take a look at <a href="https://github.com/hpehl/taoki">https://github.com/hpehl/taoki</a></p>
+]]></content>
+  </entry>
+  
+</feed>

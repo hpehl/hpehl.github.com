@@ -1,0 +1,370 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>XML Mapper for GWT - Harald Pehl</title>
+  <meta name="author" content="Harald Pehl">
+
+  
+  <meta name="description" content="XML Mapper for GWT 14Jan2010 I&#8217;m a big fan of RESTful architectures. When using REST resources with XML representations in combination with &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://hpehl.info/xml-mapper-for-gwt.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/font-awesome.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href='http://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
+  <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Harald Pehl" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-40396539-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body>
+  <header>
+    <hgroup>
+        <h1><a href="/">Harald Pehl</a></h1>
+        
+        <h2>Developer notes written down before they get lost.</h2>
+        
+    </hgroup>
+    <div id="menu">
+        <nav role="navigation">
+    <ul class="main-navigation">
+        <li><a href="/">Blog</a></li>
+        <li><a href="/blog/archives">Archives</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/about">About</a></li>
+    </ul>
+</nav>
+<!--
+    
+    <form action="http://google.com/search" method="get">
+        <fieldset role="search">
+            <input type="hidden" name="q" value="site:hpehl.info" />
+            <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+        </fieldset>
+    </form>
+    
+-->
+
+    </div>
+</header>
+
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">XML Mapper for GWT
+
+
+
+
+
+
+
+
+
+
+
+  
+    <time datetime="2010-01-14T17:41:00+01:00" pubdate class="date"><span class="day">14</span><span class="month">Jan</span><span class="year">2010</span></time>
+
+
+</h1>
+      
+    
+  </header>
+
+
+<div class="entry-content">
+    <p>I&#8217;m a big fan of RESTful architectures. When using REST resources with XML representations in combination with GWT
+you have to parse the XML and map it to the model used in the GWT client. The code therefore is tedious and
+error-prone. So I decided to start a little framework called &#8220;piriti&#8221; (Maori for bridge). It is hosted on goolge code
+under <a href="https://github.com/hpehl/piriti">https://github.com/hpehl/piriti</a>. The basic idea behind piriti is to use annotations on your model and generate
+the parsing / mapping code with the help of deferred binding.<!-- more --></p>
+
+<p>Let&#8217;s assume you have a REST resource for a book which produces the following XML representation</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;book&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;isbn&gt;</span>978-0345417954<span class="nt">&lt;/isbn&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;pages&gt;</span>432<span class="nt">&lt;/pages&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;title&gt;</span>The Hotel New Hampshire<span class="nt">&lt;/title&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;author&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;firstname&gt;</span>John<span class="nt">&lt;/firstname&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;surname&gt;</span>Irving<span class="nt">&lt;/surname&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/author&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;reviews&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;review&gt;</span>A hectic gaudy saga with the verve of a Marx Brothers movie.<span class="nt">&lt;/review&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;review&gt;</span>Rejoice! John Irving has written another book according to your world. You must read this book.<span class="nt">&lt;/review&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;review&gt;</span>Spellbinding, intensely human, a high-wire act of dazzling virtuosity.<span class="nt">&lt;/review&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/reviews&gt;</span>
+</span><span class='line'><span class="nt">&lt;/book&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>On the GWT client you have the following model classes</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Book</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="n">String</span> <span class="n">isbn</span><span class="o">;</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">pages</span><span class="o">;</span>
+</span><span class='line'>    <span class="n">String</span> <span class="n">title</span><span class="o">;</span>
+</span><span class='line'>    <span class="n">Author</span> <span class="n">author</span><span class="o">;</span>
+</span><span class='line'>    <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">reviews</span><span class="o">;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Author</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="n">String</span> <span class="n">firstname</span><span class="o">;</span>
+</span><span class='line'>    <span class="n">String</span> <span class="n">surname</span><span class="o">;</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To map the XML to your model, all you have to do is annotate the relevant fields in your model and define an interface
+of type XmlReader<T></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Book</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kd">interface</span> <span class="nc">BookReader</span> <span class="kd">extends</span> <span class="n">XmlReader</span><span class="o">&lt;</span><span class="n">Book</span><span class="o">&gt;</span> <span class="o">{}</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">BookReader</span> <span class="n">XML</span> <span class="o">=</span> <span class="n">GWT</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">BookReader</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@XmlField</span> <span class="n">String</span> <span class="n">isbn</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@XmlField</span> <span class="kt">int</span> <span class="n">pages</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@XmlField</span> <span class="n">String</span> <span class="n">title</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@XmlField</span> <span class="n">Author</span> <span class="n">author</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@XmlField</span><span class="o">(</span><span class="s">&quot;reviews/review&quot;</span><span class="o">)</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">reviews</span><span class="o">;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Author</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kd">interface</span> <span class="nc">AuthorReader</span> <span class="kd">extends</span> <span class="n">XmlReader</span><span class="o">&lt;</span><span class="n">Author</span><span class="o">&gt;</span> <span class="o">{}</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">AuthorReader</span> <span class="n">XML</span> <span class="o">=</span> <span class="n">GWT</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">AuthorReader</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@XmlField</span> <span class="n">String</span> <span class="n">firstname</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@XmlField</span> <span class="n">String</span> <span class="n">surname</span><span class="o">;</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you can map the XML to your model by calling</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Document</span> <span class="n">document</span> <span class="o">=</span> <span class="o">...;</span> <span class="c1">// XML representation of the book resource</span>
+</span><span class='line'><span class="n">Book</span> <span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="o">.</span><span class="na">XML</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="n">document</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>To learn more about piriti take a look at <a href="https://github.com/hpehl/piriti">https://github.com/hpehl/piriti</a>.</p>
+
+</div>
+
+
+  <footer class="line">
+    <p class="meta">
+      <span>
+        
+
+<i class="categories icon-large icon-tags">
+  
+    <a class='category' href='/blog/categories/piriti/'>piriti</a>
+  
+</i>
+
+
+        
+          <a class="sharing tweet" href="http://twitter.com/share?url=http://hpehl.info/xml-mapper-for-gwt.html"><i class="icon-large icon-twitter"></i></a>
+<a class="sharing gplus" href="https://plus.google.com/share?url=http://hpehl.info/xml-mapper-for-gwt.html"><i class="icon-large icon-google-plus-sign"></i></a>
+<a class="sharing facebook" href="http://www.facebook.com/sharer.php?u=http://hpehl.info/xml-mapper-for-gwt.html"><i class="icon-large icon-facebook"></i></a>
+
+        
+      </span>
+      <span>
+        
+          <a class="articlenav" href="/google-appengine-restlet-security.html" title="Previous Post: Google AppEngine, Restlet & Security">&larr; Google AppEngine, Restlet & Security</a>
+        
+        
+          <a class="articlenav" href="/restlet-and-google-guice.html" title="Next Post: Restlet and Google Guice">Restlet and Google Guice &rarr;</a>
+        
+      </span>
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    Copyright &copy; 2013 - Harald Pehl - <a href="/disclaimer">Disclaimer</a>
+    <span class="basic-alignment right">
+        <a class="rss" href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS"><i class="icon-large icon-rss"></i></a>
+    </span>
+</p>
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'hpehl';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://hpehl.info/xml-mapper-for-gwt.html';
+        var disqus_url = 'http://hpehl.info/xml-mapper-for-gwt.html';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<script>
+    $('a[class*=facebook]').on('click', function(e) {
+        e.preventDefault();
+        var width  = 575,
+                height = 400,
+                left   = window.screenLeft + (window.innerWidth - width) / 2,
+                top    = window.screenTop + (window.innerHeight - height) / 2,
+                url    = this.href,
+                opts   = 'status=1' +
+                        ',width='  + width  +
+                        ',height=' + height +
+                        ',top='    + top    +
+                        ',left='   + left;
+        window.open(url, 'twitter', opts);
+    });
+</script>
+
+
+
+  <script type="text/javascript">
+      $('a[class*=gplus]').on('click', function(e) {
+          e.preventDefault();
+          var width  = 650,
+                  height = 300,
+                  left   = window.screenLeft + (window.innerWidth - width) / 2,
+                  top    = window.screenTop + (window.innerHeight - height) / 2,
+                  url    = this.href,
+                  opts   = 'status=1' +
+                          ',width='  + width  +
+                          ',height=' + height +
+                          ',top='    + top    +
+                          ',left='   + left;
+          window.open(url, 'twitter', opts);
+      });
+  </script>
+
+
+
+<script>
+    $('a[class*=tweet]').on('click', function(e) {
+        e.preventDefault();
+        var width  = 575,
+            height = 400,
+            left   = window.screenLeft + (window.innerWidth - width) / 2,
+            top    = window.screenTop + (window.innerHeight - height) / 2,
+            url    = this.href,
+            opts   = 'status=1' +
+                    ',width='  + width  +
+                    ',height=' + height +
+                    ',top='    + top    +
+                    ',left='   + left;
+        window.open(url, 'twitter', opts);
+    });
+</script>
+
+
+
+</body>
+</html>

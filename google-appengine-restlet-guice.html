@@ -1,0 +1,569 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Google AppEngine, Restlet & Guice - Harald Pehl</title>
+  <meta name="author" content="Harald Pehl">
+
+  
+  <meta name="description" content="Google AppEngine, Restlet & Guice 09Nov2009 Currently I&#8217;m developing an application for time recording called Karaka. Karaka is deloyed on the &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://hpehl.info/google-appengine-restlet-guice.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/font-awesome.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href='http://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
+  <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Harald Pehl" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-40396539-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body>
+  <header>
+    <hgroup>
+        <h1><a href="/">Harald Pehl</a></h1>
+        
+        <h2>Developer notes written down before they get lost.</h2>
+        
+    </hgroup>
+    <div id="menu">
+        <nav role="navigation">
+    <ul class="main-navigation">
+        <li><a href="/">Blog</a></li>
+        <li><a href="/blog/archives">Archives</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/about">About</a></li>
+    </ul>
+</nav>
+<!--
+    
+    <form action="http://google.com/search" method="get">
+        <fieldset role="search">
+            <input type="hidden" name="q" value="site:hpehl.info" />
+            <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+        </fieldset>
+    </form>
+    
+-->
+
+    </div>
+</header>
+
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Google AppEngine, Restlet & Guice
+
+
+
+
+
+
+
+
+
+
+
+  
+    <time datetime="2009-11-09T13:26:00+01:00" pubdate class="date"><span class="day">09</span><span class="month">Nov</span><span class="year">2009</span></time>
+
+
+</h1>
+      
+    
+  </header>
+
+
+<div class="entry-content">
+    <p>Currently I&#8217;m developing an application for time recording called Karaka. Karaka is deloyed on the Google AppEngine for
+Java (GAE/J) and uses inter alia the following stack:</p>
+
+<ul>
+<li><a href="http://code.google.com/p/google-guice/">Guice 2.0</a></li>
+<li><a href="http://www.restlet.org">Restlet 2.0</a></li>
+</ul>
+
+
+<!-- more -->
+
+
+<p>Basically there are two different ways to go when using the Restlet framework:</p>
+
+<ol>
+<li>Run as a standalone application</li>
+<li>Run in a servlet container</li>
+</ol>
+
+
+<p>For the first approach there&#8217;s
+a <a href="http://tembrel.blogspot.com/2008/07/resource-dependency-injection-in.html">blog entry from Tim Peierls</a> on how to
+configure your resources using Guice. As Karaka is deployed on the GAE/J, I&#8217;m using the second approach. Therefore I
+created a custom servlet in combination with custom Finder and Router classes. All classes are bind together with
+Guice. This post describes my setup and shows the relevant code. Let&#8217;s start by looking at the web.xml:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;web-app</span> <span class="na">xmlns=</span><span class="s">&quot;http://java.sun.com/xml/ns/javaee&quot;</span> <span class="na">version=</span><span class="s">&quot;2.5&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;filter&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;filter-name&gt;</span>guiceFilter<span class="nt">&lt;/filter-name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;filter-class&gt;</span>com.google.inject.servlet.GuiceFilter<span class="nt">&lt;/filter-class&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/filter&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;filter-mapping&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;filter-name&gt;</span>guiceFilter<span class="nt">&lt;/filter-name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;url-pattern&gt;</span>/*<span class="nt">&lt;/url-pattern&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/filter-mapping&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;listener&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;listener-class&gt;</span>name.pehl.karaka.server.servlet.ServletConfig<span class="nt">&lt;/listener-class&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/listener&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/web-app&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nothing special here. The main configuration happens in the ServletConfig class:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ServletConfig</span> <span class="kd">extends</span> <span class="n">GuiceServletContextListener</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">protected</span> <span class="n">Injector</span> <span class="nf">getInjector</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="c1">// Further modules are omitted...</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">Guice</span><span class="o">.</span><span class="na">createInjector</span><span class="o">(</span><span class="k">new</span> <span class="n">ServletModule</span><span class="o">(),</span> <span class="k">new</span> <span class="n">RestModule</span><span class="o">());</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I use two different modules: One for the servlet configuration and one for the setup of the resources. The servlet
+module registers the custom REST servlet:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ServletModule</span> <span class="kd">extends</span> <span class="n">com</span><span class="o">.</span><span class="na">google</span><span class="o">.</span><span class="na">inject</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">ServletModule</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">configureServlets</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">serve</span><span class="o">(</span><span class="s">&quot;/rest/v1/*&quot;</span><span class="o">).</span><span class="na">with</span><span class="o">(</span><span class="n">RestletServlet</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>All REST requests are handled by the RestletServlet. The url mapping contains a version number. Using this approach
+you can later on add another servlet with a different interface / version and maintain backward compatibility.
+Now let&#8217;s look at the RestletServlet:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Singleton</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RestletServlet</span> <span class="kd">extends</span> <span class="n">HttpServlet</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="nd">@Inject</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">Injector</span> <span class="n">injector</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">Context</span> <span class="n">context</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">ServletAdapter</span> <span class="n">adapter</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">ServletException</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">context</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Context</span><span class="o">();</span>
+</span><span class='line'>        <span class="n">Application</span> <span class="n">application</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Application</span><span class="o">();</span>
+</span><span class='line'>        <span class="n">application</span><span class="o">.</span><span class="na">setContext</span><span class="o">(</span><span class="n">context</span><span class="o">);</span>
+</span><span class='line'>        <span class="n">application</span><span class="o">.</span><span class="na">setInboundRoot</span><span class="o">(</span><span class="k">new</span> <span class="n">GuiceRouter</span><span class="o">(</span><span class="n">injector</span><span class="o">,</span> <span class="n">context</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">{</span>
+</span><span class='line'>            <span class="nd">@Override</span>
+</span><span class='line'>            <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">attachRoutes</span><span class="o">()</span>
+</span><span class='line'>            <span class="o">{</span>
+</span><span class='line'>                <span class="n">attach</span><span class="o">(</span><span class="s">&quot;/projects&quot;</span><span class="o">,</span> <span class="n">ProjectsResource</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>            <span class="o">}</span>
+</span><span class='line'>        <span class="o">});</span>
+</span><span class='line'>        <span class="n">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ServletAdapter</span><span class="o">(</span><span class="n">getServletContext</span><span class="o">());</span>
+</span><span class='line'>        <span class="n">adapter</span><span class="o">.</span><span class="na">setTarget</span><span class="o">(</span><span class="n">application</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">service</span><span class="o">(</span><span class="n">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">HttpServletResponse</span> <span class="n">response</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">ServletException</span><span class="o">,</span>
+</span><span class='line'>            <span class="n">IOException</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">adapter</span><span class="o">.</span><span class="na">service</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The servlet is normal <code>HttpServlet</code>. The integration with the Restlet framework is not reached by inheritance but by
+using the <code>ServletAdapter</code> class. The <code>ServletAdapter</code> is configured to use a new <code>Context</code>, <code>Application</code> and our own
+<code>GuiceRouter</code>.</p>
+
+<p>Another important aspect is that a reference to the Injector is provided by Guice (see &#8220;Injecting the injector&#8221; in
+the <a href="http://code.google.com/docreader/#p=google-guice&amp;s=google-guice&amp;t=ServletRegexKeyMapping">Guice documentation</a>).
+We will need the injector later in the <code>GuiceFinder</code> class.</p>
+
+<p>The <code>GuiceRouter</code> is responsible for setting up the mappings between the urls and the resources. Therefore it has
+the abstract method <code>attachRoutes()</code>. The <code>GuiceRouter</code> extends from <code>Router</code> from the Restlet framework and uses a
+<code>GuiceFinder</code> to create the resource instances:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">GuiceRouter</span> <span class="kd">extends</span> <span class="n">Router</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Injector</span> <span class="n">injector</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="nf">GuiceRouter</span><span class="o">(</span><span class="n">Injector</span> <span class="n">injector</span><span class="o">,</span> <span class="n">Context</span> <span class="n">context</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="kd">super</span><span class="o">(</span><span class="n">context</span><span class="o">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">injector</span> <span class="o">=</span> <span class="n">injector</span><span class="o">;</span>
+</span><span class='line'>        <span class="n">attachRoutes</span><span class="o">();</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">Finder</span> <span class="nf">createFinder</span><span class="o">(</span><span class="n">Class</span> <span class="n">targetClass</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">new</span> <span class="nf">GuiceFinder</span><span class="o">(</span><span class="n">injector</span><span class="o">,</span> <span class="n">getContext</span><span class="o">(),</span> <span class="n">targetClass</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kd">abstract</span> <span class="kt">void</span> <span class="nf">attachRoutes</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">protected</span> <span class="n">Injector</span> <span class="nf">getInjector</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">injector</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>GuiceFinder</code> is the class where the resources are created. Therefore the method <code>create()</code> is overwritten.
+By calling <code>Injector.getInstance(targetClass)</code> the resource is created and all its dependencies are injected by Guice:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">GuiceFinder</span> <span class="kd">extends</span> <span class="n">Finder</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Injector</span> <span class="n">injector</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="nf">GuiceFinder</span><span class="o">(</span><span class="n">Injector</span> <span class="n">injector</span><span class="o">,</span> <span class="n">Context</span> <span class="n">context</span><span class="o">,</span> <span class="n">Class</span> <span class="n">targetClass</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="kd">super</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">targetClass</span><span class="o">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">injector</span> <span class="o">=</span> <span class="n">injector</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">ServerResource</span> <span class="nf">create</span><span class="o">(</span><span class="n">Class</span> <span class="n">targetClass</span><span class="o">,</span> <span class="n">Request</span> <span class="n">request</span><span class="o">,</span> <span class="n">Response</span> <span class="n">response</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">injector</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="n">targetClass</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The following code shows one of the resource used in Karaka. The resource is bound to the url &#8220;/projects&#8221;. So when
+the url http://server/rest/v1/projects is called a new instance of the <code>ProjectsResource</code> is created by Guice and all
+dependencies are injected.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProjectsResource</span> <span class="kd">extends</span> <span class="n">ServerResource</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ProjectService</span> <span class="n">service</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">TemplateConverter</span> <span class="n">converter</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Inject</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="nf">ProjectsResource</span><span class="o">(</span><span class="n">ProjectService</span> <span class="n">service</span><span class="o">,</span> <span class="n">TemplateConverter</span> <span class="n">converter</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">service</span> <span class="o">=</span> <span class="n">service</span><span class="o">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">converter</span> <span class="o">=</span> <span class="n">converter</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Get</span><span class="o">(</span><span class="s">&quot;xml&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">Representation</span> <span class="nf">represent</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">Context</span> <span class="n">context</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Context</span><span class="o">();</span>
+</span><span class='line'>        <span class="n">context</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">&quot;projects&quot;</span><span class="o">,</span> <span class="n">service</span><span class="o">.</span><span class="na">list</span><span class="o">());</span>
+</span><span class='line'>        <span class="n">String</span> <span class="n">xml</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="na">convert</span><span class="o">(</span><span class="s">&quot;templates/projects.vm&quot;</span><span class="o">,</span> <span class="n">context</span><span class="o">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">new</span> <span class="nf">StringRepresentation</span><span class="o">(</span><span class="n">xml</span><span class="o">,</span> <span class="n">MediaType</span><span class="o">.</span><span class="na">TEXT_XML</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you can see, there&#8217;s not much code necessary to integrate the Restlet framework with the GAE/J using the servlet
+approach. Feel free to comment and let me know if this is somewhat useful.</p>
+
+</div>
+
+
+  <footer class="line">
+    <p class="meta">
+      <span>
+        
+
+<i class="categories icon-large icon-tags">
+  
+    <a class='category' href='/blog/categories/gae/'>gae</a>, <a class='category' href='/blog/categories/guice/'>guice</a>, <a class='category' href='/blog/categories/restlet/'>restlet</a>
+  
+</i>
+
+
+        
+          <a class="sharing tweet" href="http://twitter.com/share?url=http://hpehl.info/google-appengine-restlet-guice.html"><i class="icon-large icon-twitter"></i></a>
+<a class="sharing gplus" href="https://plus.google.com/share?url=http://hpehl.info/google-appengine-restlet-guice.html"><i class="icon-large icon-google-plus-sign"></i></a>
+<a class="sharing facebook" href="http://www.facebook.com/sharer.php?u=http://hpehl.info/google-appengine-restlet-guice.html"><i class="icon-large icon-facebook"></i></a>
+
+        
+      </span>
+      <span>
+        
+        
+          <a class="articlenav" href="/google-appengine-restlet-security.html" title="Next Post: Google AppEngine, Restlet & Security">Google AppEngine, Restlet & Security &rarr;</a>
+        
+      </span>
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    Copyright &copy; 2013 - Harald Pehl - <a href="/disclaimer">Disclaimer</a>
+    <span class="basic-alignment right">
+        <a class="rss" href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS"><i class="icon-large icon-rss"></i></a>
+    </span>
+</p>
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'hpehl';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://hpehl.info/google-appengine-restlet-guice.html';
+        var disqus_url = 'http://hpehl.info/google-appengine-restlet-guice.html';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<script>
+    $('a[class*=facebook]').on('click', function(e) {
+        e.preventDefault();
+        var width  = 575,
+                height = 400,
+                left   = window.screenLeft + (window.innerWidth - width) / 2,
+                top    = window.screenTop + (window.innerHeight - height) / 2,
+                url    = this.href,
+                opts   = 'status=1' +
+                        ',width='  + width  +
+                        ',height=' + height +
+                        ',top='    + top    +
+                        ',left='   + left;
+        window.open(url, 'twitter', opts);
+    });
+</script>
+
+
+
+  <script type="text/javascript">
+      $('a[class*=gplus]').on('click', function(e) {
+          e.preventDefault();
+          var width  = 650,
+                  height = 300,
+                  left   = window.screenLeft + (window.innerWidth - width) / 2,
+                  top    = window.screenTop + (window.innerHeight - height) / 2,
+                  url    = this.href,
+                  opts   = 'status=1' +
+                          ',width='  + width  +
+                          ',height=' + height +
+                          ',top='    + top    +
+                          ',left='   + left;
+          window.open(url, 'twitter', opts);
+      });
+  </script>
+
+
+
+<script>
+    $('a[class*=tweet]').on('click', function(e) {
+        e.preventDefault();
+        var width  = 575,
+            height = 400,
+            left   = window.screenLeft + (window.innerWidth - width) / 2,
+            top    = window.screenTop + (window.innerHeight - height) / 2,
+            url    = this.href,
+            opts   = 'status=1' +
+                    ',width='  + width  +
+                    ',height=' + height +
+                    ',top='    + top    +
+                    ',left='   + left;
+        window.open(url, 'twitter', opts);
+    });
+</script>
+
+
+
+</body>
+</html>

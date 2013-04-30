@@ -1,0 +1,441 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Google AppEngine, Restlet & Security - Harald Pehl</title>
+  <meta name="author" content="Harald Pehl">
+
+  
+  <meta name="description" content="Google AppEngine, Restlet & Security 24Nov2009 I was wondering how to secure the resources in my current application. The application is deployed on &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://hpehl.info/google-appengine-restlet-security.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/font-awesome.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href='http://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
+  <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Harald Pehl" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-40396539-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body>
+  <header>
+    <hgroup>
+        <h1><a href="/">Harald Pehl</a></h1>
+        
+        <h2>Developer notes written down before they get lost.</h2>
+        
+    </hgroup>
+    <div id="menu">
+        <nav role="navigation">
+    <ul class="main-navigation">
+        <li><a href="/">Blog</a></li>
+        <li><a href="/blog/archives">Archives</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/about">About</a></li>
+    </ul>
+</nav>
+<!--
+    
+    <form action="http://google.com/search" method="get">
+        <fieldset role="search">
+            <input type="hidden" name="q" value="site:hpehl.info" />
+            <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+        </fieldset>
+    </form>
+    
+-->
+
+    </div>
+</header>
+
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Google AppEngine, Restlet & Security
+
+
+
+
+
+
+
+
+
+
+
+  
+    <time datetime="2009-11-24T17:06:00+01:00" pubdate class="date"><span class="day">24</span><span class="month">Nov</span><span class="year">2009</span></time>
+
+
+</h1>
+      
+    
+  </header>
+
+
+<div class="entry-content">
+    <p>I was wondering how to secure the resources in my current application. The application is deployed on the Google
+AppEngine and uses <a href="https://code.google.com/p/google-guice/">Guice 2.0</a> and <a href="http://www.restlet.org">Restlet 2.0</a>.
+Inspired by the post from <a href="http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/">David M. Chandler</a> I
+decided to use the AppEngine cookie named &#8220;ACSID&#8221; as a token in each and every url to secure my resources. This way
+the url to the &#8220;projects&#8221; resource becomes http://karaka-d8.appspot.com/rest/v1/&lt;ACSID>/projects.<!-- more --></p>
+
+<p>Technically I&#8217;m using an aspect together with a custom annotation to secure the resources. Here&#8217;s the Guice module for
+the security stuff:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecurityModule</span> <span class="kd">extends</span> <span class="n">AbstractModule</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">configure</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">SecurityInterceptor</span> <span class="n">interceptor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SecurityInterceptor</span><span class="o">();</span>
+</span><span class='line'>        <span class="n">bindInterceptor</span><span class="o">(</span><span class="n">Matchers</span><span class="o">.</span><span class="na">subclassesOf</span><span class="o">(</span><span class="n">ServerResource</span><span class="o">.</span><span class="na">class</span><span class="o">),</span> <span class="n">Matchers</span><span class="o">.</span><span class="na">annotatedWith</span><span class="o">(</span><span class="n">Secured</span><span class="o">.</span><span class="na">class</span><span class="o">),</span> <span class="n">interceptor</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With the above setup all methodes in subclasses of ServerResource which are annotated with the custom @Secured
+annotation are handled by the SecurityInterceptor. This class contains the logic to check whether there&#8217;s a
+authenticated user and whether the session cookie is correct (that&#8217;s essentially the code from
+<a href="http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/">David M. Chandlers post</a>)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecurityInterceptor</span> <span class="kd">implements</span> <span class="n">MethodInterceptor</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">APPENGINE_COOKIE</span> <span class="o">=</span> <span class="s">&quot;ACSID&quot;</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">MethodInvocation</span> <span class="n">invocation</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">UserService</span> <span class="n">userService</span> <span class="o">=</span> <span class="n">UserServiceFactory</span><span class="o">.</span><span class="na">getUserService</span><span class="o">();</span>
+</span><span class='line'>        <span class="n">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">userService</span><span class="o">.</span><span class="na">getCurrentUser</span><span class="o">();</span>
+</span><span class='line'>        <span class="k">if</span> <span class="o">(</span><span class="n">user</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">{</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nf">SecurityException</span><span class="o">(</span><span class="s">&quot;No user&quot;</span><span class="o">);</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">ServerResource</span> <span class="n">resource</span> <span class="o">=</span> <span class="o">(</span><span class="n">ServerResource</span><span class="o">)</span> <span class="n">invocation</span><span class="o">.</span><span class="na">getThis</span><span class="o">();</span>
+</span><span class='line'>        <span class="n">String</span> <span class="n">token</span> <span class="o">=</span> <span class="o">(</span><span class="n">String</span><span class="o">)</span> <span class="n">resource</span><span class="o">.</span><span class="na">getRequest</span><span class="o">().</span><span class="na">getAttributes</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="s">&quot;token&quot;</span><span class="o">);</span>
+</span><span class='line'>        <span class="k">if</span> <span class="o">(</span><span class="n">token</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">token</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">{</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nf">SecurityException</span><span class="o">(</span><span class="s">&quot;No security token&quot;</span><span class="o">);</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Skip check on localhost so we can test in AppEngine local dev env</span>
+</span><span class='line'>        <span class="n">String</span> <span class="n">sessionId</span> <span class="o">=</span> <span class="n">findSessionId</span><span class="o">(</span><span class="n">resource</span><span class="o">);</span>
+</span><span class='line'>        <span class="n">String</span> <span class="n">serverName</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="na">getReference</span><span class="o">().</span><span class="na">getHostDomain</span><span class="o">();</span>
+</span><span class='line'>        <span class="k">if</span> <span class="o">(!(</span><span class="s">&quot;localhost&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">serverName</span><span class="o">))</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="o">!(</span><span class="n">token</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">sessionId</span><span class="o">)))</span>
+</span><span class='line'>        <span class="o">{</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nf">SecurityException</span><span class="o">(</span><span class="s">&quot;Security token invalid&quot;</span><span class="o">);</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="n">invocation</span><span class="o">.</span><span class="na">proceed</span><span class="o">();</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">String</span> <span class="nf">findSessionId</span><span class="o">(</span><span class="n">ServerResource</span> <span class="n">resource</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">String</span> <span class="n">result</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>        <span class="n">Series</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">Cookie</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">cookies</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="na">getCookies</span><span class="o">();</span>
+</span><span class='line'>        <span class="k">for</span> <span class="o">(</span><span class="n">Cookie</span> <span class="n">cookie</span> <span class="o">:</span> <span class="n">cookies</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="o">(</span><span class="n">APPENGINE_COOKIE</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">cookie</span><span class="o">.</span><span class="na">getName</span><span class="o">()))</span>
+</span><span class='line'>            <span class="o">{</span>
+</span><span class='line'>                <span class="n">result</span> <span class="o">=</span> <span class="n">cookie</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+</span><span class='line'>                <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>            <span class="o">}</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To make this work the resource mappings have to include a {token} parameter. So inside your Router you should have
+something like that</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">attach</span><span class="o">(</span><span class="s">&quot;/{token}/projects&quot;</span><span class="o">,</span> <span class="n">ProjectsResource</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>Finally the methods you want to protect have to be annotated with the @Secured annotation:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProjectsResource</span> <span class="kd">extends</span> <span class="n">ServerResource</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ProjectService</span> <span class="n">service</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">TemplateConverter</span> <span class="n">converter</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Inject</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="nf">ProjectsResource</span><span class="o">(</span><span class="n">ProjectService</span> <span class="n">service</span><span class="o">,</span> <span class="n">TemplateConverter</span> <span class="n">converter</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">service</span> <span class="o">=</span> <span class="n">service</span><span class="o">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">converter</span> <span class="o">=</span> <span class="n">converter</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Secured</span>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">protected</span> <span class="n">Representation</span> <span class="nf">get</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">Context</span> <span class="n">context</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Context</span><span class="o">();</span>
+</span><span class='line'>        <span class="n">context</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">&quot;projects&quot;</span><span class="o">,</span> <span class="n">service</span><span class="o">.</span><span class="na">list</span><span class="o">());</span>
+</span><span class='line'>        <span class="n">String</span> <span class="n">xml</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="na">convert</span><span class="o">(</span><span class="s">&quot;templates/projects.vm&quot;</span><span class="o">,</span> <span class="n">context</span><span class="o">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">new</span> <span class="nf">StringRepresentation</span><span class="o">(</span><span class="n">xml</span><span class="o">,</span> <span class="n">MediaType</span><span class="o">.</span><span class="na">TEXT_XML</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>One last note: First I tried to use the @Get annotation from Restlet 2.0 instead of a custom annotation and configured
+the SecurityInterceptor as follows:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">bindInterceptor</span><span class="o">(</span><span class="n">Matchers</span><span class="o">.</span><span class="na">subclassesOf</span><span class="o">(</span><span class="n">ServerResource</span><span class="o">.</span><span class="na">class</span><span class="o">),</span> <span class="n">Matchers</span><span class="o">.</span><span class="na">annotatedWith</span><span class="o">(</span><span class="n">Get</span><span class="o">.</span><span class="na">class</span><span class="o">),</span> <span class="n">interceptor</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Unfortunately that didn&#8217;t work because the @Get annotation is not available in the generated AOP proxy. So Restlet
+has no way to figure out what method to call for a GET request. Instead you have to override the get method.</p>
+
+</div>
+
+
+  <footer class="line">
+    <p class="meta">
+      <span>
+        
+
+<i class="categories icon-large icon-tags">
+  
+    <a class='category' href='/blog/categories/gae/'>gae</a>, <a class='category' href='/blog/categories/guice/'>guice</a>, <a class='category' href='/blog/categories/restlet/'>restlet</a>, <a class='category' href='/blog/categories/security/'>security</a>
+  
+</i>
+
+
+        
+          <a class="sharing tweet" href="http://twitter.com/share?url=http://hpehl.info/google-appengine-restlet-security.html"><i class="icon-large icon-twitter"></i></a>
+<a class="sharing gplus" href="https://plus.google.com/share?url=http://hpehl.info/google-appengine-restlet-security.html"><i class="icon-large icon-google-plus-sign"></i></a>
+<a class="sharing facebook" href="http://www.facebook.com/sharer.php?u=http://hpehl.info/google-appengine-restlet-security.html"><i class="icon-large icon-facebook"></i></a>
+
+        
+      </span>
+      <span>
+        
+          <a class="articlenav" href="/google-appengine-restlet-guice.html" title="Previous Post: Google AppEngine, Restlet & Guice">&larr; Google AppEngine, Restlet & Guice</a>
+        
+        
+          <a class="articlenav" href="/xml-mapper-for-gwt.html" title="Next Post: XML Mapper for GWT">XML Mapper for GWT &rarr;</a>
+        
+      </span>
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    Copyright &copy; 2013 - Harald Pehl - <a href="/disclaimer">Disclaimer</a>
+    <span class="basic-alignment right">
+        <a class="rss" href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS"><i class="icon-large icon-rss"></i></a>
+    </span>
+</p>
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'hpehl';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://hpehl.info/google-appengine-restlet-security.html';
+        var disqus_url = 'http://hpehl.info/google-appengine-restlet-security.html';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<script>
+    $('a[class*=facebook]').on('click', function(e) {
+        e.preventDefault();
+        var width  = 575,
+                height = 400,
+                left   = window.screenLeft + (window.innerWidth - width) / 2,
+                top    = window.screenTop + (window.innerHeight - height) / 2,
+                url    = this.href,
+                opts   = 'status=1' +
+                        ',width='  + width  +
+                        ',height=' + height +
+                        ',top='    + top    +
+                        ',left='   + left;
+        window.open(url, 'twitter', opts);
+    });
+</script>
+
+
+
+  <script type="text/javascript">
+      $('a[class*=gplus]').on('click', function(e) {
+          e.preventDefault();
+          var width  = 650,
+                  height = 300,
+                  left   = window.screenLeft + (window.innerWidth - width) / 2,
+                  top    = window.screenTop + (window.innerHeight - height) / 2,
+                  url    = this.href,
+                  opts   = 'status=1' +
+                          ',width='  + width  +
+                          ',height=' + height +
+                          ',top='    + top    +
+                          ',left='   + left;
+          window.open(url, 'twitter', opts);
+      });
+  </script>
+
+
+
+<script>
+    $('a[class*=tweet]').on('click', function(e) {
+        e.preventDefault();
+        var width  = 575,
+            height = 400,
+            left   = window.screenLeft + (window.innerWidth - width) / 2,
+            top    = window.screenTop + (window.innerHeight - height) / 2,
+            url    = this.href,
+            opts   = 'status=1' +
+                    ',width='  + width  +
+                    ',height=' + height +
+                    ',top='    + top    +
+                    ',left='   + left;
+        window.open(url, 'twitter', opts);
+    });
+</script>
+
+
+
+</body>
+</html>

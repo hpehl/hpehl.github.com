@@ -4,7 +4,7 @@
   <title><![CDATA[Category: piriti | Harald Pehl]]></title>
   <link href="http://hpehl.info/blog/categories/piriti/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-04-30T15:27:00+02:00</updated>
+  <updated>2013-04-30T17:59:40+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -146,6 +146,103 @@ generatorContext.commit(treeLogger, printWriter);
 
 <p>If you want to delve deeper into the code generation process in <a href="https://github.com/hpehl/piriti">Piriti</a>, check out
 the trunk and take a look into the code.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Announcement: Piriti 0.7.0b1]]></title>
+    <link href="http://hpehl.info/announcement-piriti-0-70b1.html"/>
+    <updated>2011-05-09T23:12:00+02:00</updated>
+    <id>http://hpehl.info/announcement-piriti-0-70b1</id>
+    <content type="html"><![CDATA[<p>I'm pleased to announce the first beta of the upcoming Piriti 0.7.0 release. Piriti 0.7.0 is a major release with
+breaking API changes, lots of new features and bugfixes.<!-- more --></p>
+
+<h3>Breaking API Changes</h3>
+
+<ul>
+<li>Piriti requires GWT 2.2 and GIN 1.5</li>
+<li>Dropped GXT support</li>
+<li>Removed <code>@Json</code>, <code>@JsonMappings</code>, <code>@Xml</code> and <code>@XmlMappings</code> annotations</li>
+</ul>
+
+
+<h3>New Features</h3>
+
+<ul>
+<li>Devided Piriti into different modules:
+
+<ul>
+<li><code>name.pehl.piriti.commons.Commons</code></li>
+<li><code>name.pehl.piriti.converter.Converter</code></li>
+<li><code>name.pehl.piriti.json.JSON</code></li>
+<li><code>name.pehl.piriti.property.Property</code></li>
+<li><code>name.pehl.piriti.xml.XML</code></li>
+</ul>
+</li>
+<li>Simplified mapping setup: All properties in a POJO hirarchy are now mapped by default</li>
+<li>Added new annotations to overide default behaviour:
+
+<ul>
+<li><code>@Order</code></li>
+<li><code>@Path</code></li>
+<li><code>@Format</code></li>
+<li><code>@Native</code></li>
+<li><code>@Transient</code></li>
+<li><code>@CreateWith</code></li>
+<li><code>@MapUpTo</code></li>
+</ul>
+</li>
+<li>Added <code>@Mappings</code> and <code>@Mapping</code> annotation for external mappings (JSON and XML)</li>
+<li>Added support for polymorhic assoziations</li>
+<li>Converters can now be used for any type</li>
+<li>Added XML serialisation (not yet implemented, but scheduled for the 0.7.0 release)</li>
+<li>Added support for IDs and IDREFs in JSON (not yet implemented, but scheduled for the 0.7.0 release)</li>
+</ul>
+
+
+<h3>Bugfixes</h3>
+
+<ul>
+<li>Fixed problems when mapping collection implementations</li>
+<li><code>GWT.create()</code> is now used instead of new operator</li>
+<li>I also restructured the wiki and added a FAQ and a comparison to other JSON / XML mappers. Feel free to visit
+<a href="https://github.com/hpehl/piriti/">https://github.com/hpehl/piriti/</a> and test the new release.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Announcement: Piriti 0.6]]></title>
+    <link href="http://hpehl.info/announcement-piriti-0-6.html"/>
+    <updated>2010-10-27T15:52:00+02:00</updated>
+    <id>http://hpehl.info/announcement-piriti-0-6</id>
+    <content type="html"><![CDATA[<p>I'm pleased to announce Piriti 0.6. This is a major update which adds support for JSONPath expressions. Please take
+a look at the <a href="https://github.com/hpehl/piriti/wiki/Releasenotes">release notes</a> for further info.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Announcement: Piriti 0.4]]></title>
+    <link href="http://hpehl.info/announcement-piriti-0-4.html"/>
+    <updated>2010-07-07T16:28:00+02:00</updated>
+    <id>http://hpehl.info/announcement-piriti-0-4</id>
+    <content type="html"><![CDATA[<p>I'm pleased to announce Piriti 0.4. This is a major update which adds support for namespaces in XML document and XPath
+expressions. Please take a look at the <a href="https://github.com/hpehl/piriti/wiki/Releasenotes">release notes</a> for further info.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Announcement: Piriti 0.3.5]]></title>
+    <link href="http://hpehl.info/announcement-piriti-0-35.html"/>
+    <updated>2010-06-18T17:19:00+02:00</updated>
+    <id>http://hpehl.info/announcement-piriti-0-35</id>
+    <content type="html"><![CDATA[<p>I'm pleased to announce Piriti 0.3.5. This is a minor update which fixes some bugs and changes the way JSON data is
+parsed. Please take a look at the <a href="https://github.com/hpehl/piriti/wiki/Releasenotes">release notes</a> for further
+info.<!-- more --></p>
+
+<p>I'm still looking for a clever way to include namespace support into Piriti. So if there's anybody out there with a
+namespace aware XPath implementation that works in IE, contact me!</p>
 ]]></content>
   </entry>
   

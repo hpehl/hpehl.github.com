@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: rest | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/rest/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-04-30T17:59:40+02:00</updated>
+  <id>http://hpehl.info/</id>
+  <author>
+    <name><![CDATA[Harald Pehl]]></name>
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Paging in Resources]]></title>
+    <link href="http://hpehl.info/paging-in-resources.html"/>
+    <updated>2010-09-13T11:21:00+02:00</updated>
+    <id>http://hpehl.info/paging-in-resources</id>
+    <content type="html"><![CDATA[<p>A common requirement for resources which return large collections of records is paging. Paging can be implemented in
+many different ways. <!-- more -->See the following pages as an entry point to the discussion:</p>
+
+<ul>
+<li><a href="http://stackoverflow.com/questions/924472/paging-in-a-rest-collection">Stackoverflow</a></li>
+<li><a href="http://docs.dojocampus.org/dojox/data/JsonRestStore#paging">DOJO</a></li>
+</ul>
+
+
+<p>In the following sections I will introduce three different solutions. All of them are implemented in
+<a href="https://github.com/hpehl/taoki">Taoki</a> - a small extension for <a href="http://www.restlet.org">Restlet</a>.</p>
+
+<h3>Template Parameter</h3>
+
+<p>This implementation uses parts of the url to carry the paging information:</p>
+
+<pre><code>GET /books
+GET /books/0/50
+GET /books/0/50/author/asc
+</code></pre>
+
+<p>The advantage of this implementation is that the resource can be cached by proxies. The drawback is that a lot of
+template parameters are "wasted". For example /books/report/{quarter} won't be available as route, since it is
+occupied by /books/{offset}/{pageSize}</p>
+
+<h3>Query Parameter</h3>
+
+<p>This implementation uses query parameter.</p>
+
+<pre><code>GET /books
+GET /books?offset=0&amp;amp;limit=50
+GET /books?offset=0&amp;amp;limit=50&amp;amp;sortField=author&amp;amp;sortDir=asc
+</code></pre>
+
+<p>Most proxies won't cache resources which include parameters, but there are no template parameters wasted.</p>
+
+<h3>Custom Header</h3>
+
+<p>This implementation uses the custom header Item-Range.</p>
+
+<pre><code>GET /books
+GET /books
+Item-Range: items=0-49
+GET /books
+Item-Range: items=0-49;author:desc
+</code></pre>
+
+<p>It combines the advantages of the other two implementations. A minor drawback of this solution is that the paging
+information is no longer visible in the URL.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Restlet Extension for Piriti]]></title>
+    <link href="http://hpehl.info/restlet-extension-for-piriti.html"/>
+    <updated>2010-03-25T09:49:00+01:00</updated>
+    <id>http://hpehl.info/restlet-extension-for-piriti</id>
+    <content type="html"><![CDATA[<p><a href="http://restlet.org">Restlet</a> is a RESTful Web framework for Java. There's also a GWT edition available. The Piriti
+Restlet extensions is built on top of that edition. Therefore the 2.x version of Restlet is used. There are two
+representations available which use the Piriti readers to convert JSON and XML data to your model (POJOs and/or
+GXT models).<!-- more --></p>
+
+<h3>Read and convert JSON</h3>
+
+<p>To read the JSON data you need an instance of JsonReader<T>:</p>
+
+<p>``` java
+public class Book
+{</p>
+
+<pre><code>interface BookReader extends JsonReader&lt;Book&gt; {}
+public static final BookReader JSON = GWT.create(BookReader.class);
+
+// Fields annotated with @JsonField
+...
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Then you can read the JSON data like this:</p>
+
+<p>``` java
+ClientResource clientResource =</p>
+
+<pre><code>new ClientResource("/resource/with/json/representation");
+</code></pre>
+
+<p>clientResource.setOnResponse(new Uniform()
+{</p>
+
+<pre><code>@Override
+public void handle(Request request, Response response)
+{
+    PiritiJsonRepresentation&lt;Book&gt; representation = 
+        new PiritiJsonRepresentation&lt;Book&gt;(Book.JSON, response.getEntity());
+    try
+    {
+        // Depending whether there's one book or an array of books
+        // in your JSON data
+        List&lt;Book&gt; books = representation.getModels();
+        Book book = representation.getModel();
+    }
+    catch (IOException e)
+    {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+
+<p>});</p>
+
+<p>clientResource.get(MediaType.APPLICATION_JSON);
+```</p>
+
+<p>The entity returned by the resource has to be a valid JSON object. In case you want to read a list of books, the
+JSON object has to contain one key (name does not matter) with the array of books:</p>
+
+<p><code>json
+{books: [{isbn: "0815", title: "Foo"}, {isbn: "1234", title: "Bar"}]}
+</code></p>
+
+<h3>Read and convert XML</h3>
+
+<p>To read the XML data you need an instance of XmlReader<T></p>
+
+<p>``` java
+public class Book
+{</p>
+
+<pre><code>interface BookReader extends XmlReader&lt;Book&gt; {}
+public static final BookReader XML = GWT.create(BookReader.class);
+
+// Fields annotated with @XmlField
+...
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Then you can read the XML data like this:</p>
+
+<p>``` java
+ClientResource clientResource =</p>
+
+<pre><code>new ClientResource("/resource/with/xml/representation");
+</code></pre>
+
+<p>clientResource.setOnResponse(new Uniform()
+{</p>
+
+<pre><code>@Override
+public void handle(Request request, Response response)
+{
+    PiritiXmlRepresentation&lt;Book&gt; representation = 
+        new PiritiXmlRepresentation&lt;Book&gt;(Book.XML, response.getEntity());
+    try
+    {
+        // Depending whether there's one book element or a list of book
+        // elements in your XML data
+        List&lt;Book&gt; books = representation.getModels();
+        Book book = representation.getModel();
+    }
+    catch (IOException e)
+    {
+        e.printStackTrace();
+    }
+}
+</code></pre>
+
+<p>});</p>
+
+<p>clientResource.get(MediaType.TEXT_XML);
+```</p>
+
+<p>The entity returned by the resource has to be a valid XML document. In case you want to read a list of books, the
+document must contain a list of book elements as direct children of the root element:</p>
+
+<p>``` xml
+<books></p>
+
+<pre><code>&lt;book&gt;
+    &lt;isbn&gt;0815&lt;/isbn&gt;
+    &lt;title&gt;Foo&lt;/title&gt;
+&lt;/book&gt;
+&lt;book&gt;
+    &lt;isbn&gt;1234&lt;/isbn&gt;
+    &lt;title&gt;Bar&lt;/title&gt;
+&lt;/book&gt;
+</code></pre>
+
+<p></books>
+```</p>
+
+<h3>Further information</h3>
+
+<p>If you want to learn more about Piriti and its extensions, please feel free to take a look at it under
+<a href="https://github.com/hpehl/piriti">https://github.com/hpehl/piriti</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Restlet and Google Guice]]></title>
+    <link href="http://hpehl.info/restlet-and-google-guice.html"/>
+    <updated>2010-02-15T17:33:00+01:00</updated>
+    <id>http://hpehl.info/restlet-and-google-guice</id>
+    <content type="html"><![CDATA[<p>In an earlier <a href="/google-appengine-restlet-guice.html">post</a> I described how to configure resources with Google Guice.
+I decided to move the relevant code to a small library called "Taoki" (Maori for "rest").</p>
+
+<p>Besides the features described in the initial post, I added the possibility to configure security for resources.
+The details will be described in a separated post.</p>
+
+<p>For those interested, take a look at <a href="https://github.com/hpehl/taoki">https://github.com/hpehl/taoki</a></p>
+]]></content>
+  </entry>
+  
+</feed>

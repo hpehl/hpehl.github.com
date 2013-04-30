@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: restlet | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/restlet/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-04-30T17:59:40+02:00</updated>
+  <id>http://hpehl.info/</id>
+  <author>
+    <name><![CDATA[Harald Pehl]]></name>
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Google AppEngine, Restlet & Security]]></title>
+    <link href="http://hpehl.info/google-appengine-restlet-security.html"/>
+    <updated>2009-11-24T17:06:00+01:00</updated>
+    <id>http://hpehl.info/google-appengine-restlet-security</id>
+    <content type="html"><![CDATA[<p>I was wondering how to secure the resources in my current application. The application is deployed on the Google
+AppEngine and uses <a href="https://code.google.com/p/google-guice/">Guice 2.0</a> and <a href="http://www.restlet.org">Restlet 2.0</a>.
+Inspired by the post from <a href="http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/">David M. Chandler</a> I
+decided to use the AppEngine cookie named "ACSID" as a token in each and every url to secure my resources. This way
+the url to the "projects" resource becomes http://karaka-d8.appspot.com/rest/v1/&lt;ACSID>/projects.<!-- more --></p>
+
+<p>Technically I'm using an aspect together with a custom annotation to secure the resources. Here's the Guice module for
+the security stuff:</p>
+
+<p>``` java
+public class SecurityModule extends AbstractModule
+{</p>
+
+<pre><code>@Override
+protected void configure()
+{
+    SecurityInterceptor interceptor = new SecurityInterceptor();
+    bindInterceptor(Matchers.subclassesOf(ServerResource.class), Matchers.annotatedWith(Secured.class), interceptor);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>With the above setup all methodes in subclasses of ServerResource which are annotated with the custom @Secured
+annotation are handled by the SecurityInterceptor. This class contains the logic to check whether there's a
+authenticated user and whether the session cookie is correct (that's essentially the code from
+<a href="http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/">David M. Chandlers post</a>)</p>
+
+<p>``` java
+public class SecurityInterceptor implements MethodInterceptor
+{</p>
+
+<pre><code>private static final String APPENGINE_COOKIE = "ACSID";
+
+@Override
+public Object invoke(MethodInvocation invocation) throws Throwable
+{
+    UserService userService = UserServiceFactory.getUserService();
+    User user = userService.getCurrentUser();
+    if (user == null)
+    {
+        throw new SecurityException("No user");
+    }
+
+    ServerResource resource = (ServerResource) invocation.getThis();
+    String token = (String) resource.getRequest().getAttributes().get("token");
+    if (token == null || token.length() == 0)
+    {
+        throw new SecurityException("No security token");
+    }
+
+    // Skip check on localhost so we can test in AppEngine local dev env
+    String sessionId = findSessionId(resource);
+    String serverName = resource.getReference().getHostDomain();
+    if (!("localhost".equals(serverName)) &amp;amp;&amp;amp; !(token.equals(sessionId)))
+    {
+        throw new SecurityException("Security token invalid");
+    }
+
+    return invocation.proceed();
+}
+
+private String findSessionId(ServerResource resource)
+{
+    String result = null;
+    Series&amp;lt;Cookie&amp;gt; cookies = resource.getCookies();
+    for (Cookie cookie : cookies)
+    {
+        if (APPENGINE_COOKIE.equals(cookie.getName()))
+        {
+            result = cookie.getValue();
+            break;
+        }
+    }
+    return result;
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>To make this work the resource mappings have to include a {token} parameter. So inside your Router you should have
+something like that</p>
+
+<p><code>java
+attach("/{token}/projects", ProjectsResource.class);
+</code></p>
+
+<p>Finally the methods you want to protect have to be annotated with the @Secured annotation:</p>
+
+<p>``` java
+public class ProjectsResource extends ServerResource
+{</p>
+
+<pre><code>private final ProjectService service;
+private final TemplateConverter converter;
+
+@Inject
+public ProjectsResource(ProjectService service, TemplateConverter converter)
+{
+    this.service = service;
+    this.converter = converter;
+}
+
+@Secured
+@Override
+protected Representation get()
+{
+    Context context = new Context();
+    context.set("projects", service.list());
+    String xml = converter.convert("templates/projects.vm", context);
+    return new StringRepresentation(xml, MediaType.TEXT_XML);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>One last note: First I tried to use the @Get annotation from Restlet 2.0 instead of a custom annotation and configured
+the SecurityInterceptor as follows:</p>
+
+<p><code>java
+bindInterceptor(Matchers.subclassesOf(ServerResource.class), Matchers.annotatedWith(Get.class), interceptor);
+</code></p>
+
+<p>Unfortunately that didn't work because the @Get annotation is not available in the generated AOP proxy. So Restlet
+has no way to figure out what method to call for a GET request. Instead you have to override the get method.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Google AppEngine, Restlet & Guice]]></title>
+    <link href="http://hpehl.info/google-appengine-restlet-guice.html"/>
+    <updated>2009-11-09T13:26:00+01:00</updated>
+    <id>http://hpehl.info/google-appengine-restlet-guice</id>
+    <content type="html"><![CDATA[<p>Currently I'm developing an application for time recording called Karaka. Karaka is deloyed on the Google AppEngine for
+Java (GAE/J) and uses inter alia the following stack:</p>
+
+<ul>
+<li><a href="http://code.google.com/p/google-guice/">Guice 2.0</a></li>
+<li><a href="http://www.restlet.org">Restlet 2.0</a></li>
+</ul>
+
+
+<!-- more -->
+
+
+<p>Basically there are two different ways to go when using the Restlet framework:</p>
+
+<ol>
+<li>Run as a standalone application</li>
+<li>Run in a servlet container</li>
+</ol>
+
+
+<p>For the first approach there's
+a <a href="http://tembrel.blogspot.com/2008/07/resource-dependency-injection-in.html">blog entry from Tim Peierls</a> on how to
+configure your resources using Guice. As Karaka is deployed on the GAE/J, I'm using the second approach. Therefore I
+created a custom servlet in combination with custom Finder and Router classes. All classes are bind together with
+Guice. This post describes my setup and shows the relevant code. Let's start by looking at the web.xml:</p>
+
+<p>``` xml
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5"></p>
+
+<pre><code>&lt;filter&gt;
+    &lt;filter-name&gt;guiceFilter&lt;/filter-name&gt;
+    &lt;filter-class&gt;com.google.inject.servlet.GuiceFilter&lt;/filter-class&gt;
+&lt;/filter&gt;
+&lt;filter-mapping&gt;
+    &lt;filter-name&gt;guiceFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;
+
+&lt;listener&gt;
+    &lt;listener-class&gt;name.pehl.karaka.server.servlet.ServletConfig&lt;/listener-class&gt;
+&lt;/listener&gt;
+</code></pre>
+
+<p></web-app>
+```</p>
+
+<p>Nothing special here. The main configuration happens in the ServletConfig class:</p>
+
+<p>``` java
+public class ServletConfig extends GuiceServletContextListener
+{</p>
+
+<pre><code>@Override
+protected Injector getInjector()
+{
+    // Further modules are omitted...
+    return Guice.createInjector(new ServletModule(), new RestModule());
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>I use two different modules: One for the servlet configuration and one for the setup of the resources. The servlet
+module registers the custom REST servlet:</p>
+
+<p>``` java
+public class ServletModule extends com.google.inject.servlet.ServletModule
+{</p>
+
+<pre><code>@Override
+protected void configureServlets()
+{
+    serve("/rest/v1/*").with(RestletServlet.class);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>All REST requests are handled by the RestletServlet. The url mapping contains a version number. Using this approach
+you can later on add another servlet with a different interface / version and maintain backward compatibility.
+Now let's look at the RestletServlet:</p>
+
+<p>``` java
+@Singleton
+public class RestletServlet extends HttpServlet
+{</p>
+
+<pre><code>@Inject
+private Injector injector;
+private Context context;
+private ServletAdapter adapter;
+
+@Override
+public void init() throws ServletException
+{
+    context = new Context();
+    Application application = new Application();
+    application.setContext(context);
+    application.setInboundRoot(new GuiceRouter(injector, context)
+    {
+        @Override
+        protected void attachRoutes()
+        {
+            attach("/projects", ProjectsResource.class);
+        }
+    });
+    adapter = new ServletAdapter(getServletContext());
+    adapter.setTarget(application);
+}
+
+@Override
+protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+        IOException
+{
+    adapter.service(request, response);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The servlet is normal <code>HttpServlet</code>. The integration with the Restlet framework is not reached by inheritance but by
+using the <code>ServletAdapter</code> class. The <code>ServletAdapter</code> is configured to use a new <code>Context</code>, <code>Application</code> and our own
+<code>GuiceRouter</code>.</p>
+
+<p>Another important aspect is that a reference to the Injector is provided by Guice (see "Injecting the injector" in
+the <a href="http://code.google.com/docreader/#p=google-guice&amp;s=google-guice&amp;t=ServletRegexKeyMapping">Guice documentation</a>).
+We will need the injector later in the <code>GuiceFinder</code> class.</p>
+
+<p>The <code>GuiceRouter</code> is responsible for setting up the mappings between the urls and the resources. Therefore it has
+the abstract method <code>attachRoutes()</code>. The <code>GuiceRouter</code> extends from <code>Router</code> from the Restlet framework and uses a
+<code>GuiceFinder</code> to create the resource instances:</p>
+
+<p>``` java
+public abstract class GuiceRouter extends Router
+{</p>
+
+<pre><code>private final Injector injector;
+
+public GuiceRouter(Injector injector, Context context)
+{
+    super(context);
+    this.injector = injector;
+    attachRoutes();
+}
+
+@Override
+public Finder createFinder(Class targetClass)
+{
+    return new GuiceFinder(injector, getContext(), targetClass);
+}
+
+protected abstract void attachRoutes();
+
+protected Injector getInjector()
+{
+    return injector;
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The <code>GuiceFinder</code> is the class where the resources are created. Therefore the method <code>create()</code> is overwritten.
+By calling <code>Injector.getInstance(targetClass)</code> the resource is created and all its dependencies are injected by Guice:</p>
+
+<p>``` java
+public class GuiceFinder extends Finder
+{</p>
+
+<pre><code>private final Injector injector;
+
+public GuiceFinder(Injector injector, Context context, Class targetClass)
+{
+    super(context, targetClass);
+    this.injector = injector;
+}
+
+@Override
+public ServerResource create(Class targetClass, Request request, Response response)
+{
+    return injector.getInstance(targetClass);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The following code shows one of the resource used in Karaka. The resource is bound to the url "/projects". So when
+the url http://server/rest/v1/projects is called a new instance of the <code>ProjectsResource</code> is created by Guice and all
+dependencies are injected.</p>
+
+<p>``` java
+public class ProjectsResource extends ServerResource
+{</p>
+
+<pre><code>private final ProjectService service;
+private final TemplateConverter converter;
+
+@Inject
+public ProjectsResource(ProjectService service, TemplateConverter converter)
+{
+    this.service = service;
+    this.converter = converter;
+}
+
+@Get("xml")
+public Representation represent()
+{
+    Context context = new Context();
+    context.set("projects", service.list());
+    String xml = converter.convert("templates/projects.vm", context);
+    return new StringRepresentation(xml, MediaType.TEXT_XML);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>As you can see, there's not much code necessary to integrate the Restlet framework with the GAE/J using the servlet
+approach. Feel free to comment and let me know if this is somewhat useful.</p>
+]]></content>
+  </entry>
+  
+</feed>

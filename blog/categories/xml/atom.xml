@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: xml | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/xml/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-04-30T17:59:40+02:00</updated>
+  <id>http://hpehl.info/</id>
+  <author>
+    <name><![CDATA[Harald Pehl]]></name>
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[New XML parser for GWT]]></title>
+    <link href="http://hpehl.info/new-xml-parser-for-gwt.html"/>
+    <updated>2010-07-07T13:31:00+02:00</updated>
+    <id>http://hpehl.info/new-xml-parser-for-gwt</id>
+    <content type="html"><![CDATA[<p>I'm pleased to announce the first release of <a href="https://github.com/hpehl/totoe">Totoe</a>. Totoe is a XML parser for GWT
+which comes with XPath and namespace support. It originated from Piriti a JSON and XML mapper for GWT.<!-- more --></p>
+
+<p>Totoe uses <a href="http://dev.abiss.gr/sarissa/">Sarissa</a> for the XML parsing. Sarissa is a great cross browser XML parser
+for Javascript. Essentially Totoe is a GWT port of Sarissa with the goal to offer a similar API as the GWT XML module.
+Right now the focus is on parsing XML - there are no methods to create, insert or append documents, elements or nodes.
+Those features might come in later releases. The big advantage over the GWT XML module is IMHO a cleaner API and the
+support of XPath and namespaces.</p>
+]]></content>
+  </entry>
+  
+</feed>
