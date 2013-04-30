@@ -77,34 +77,35 @@ article {
     }
   }
   > footer {
-    padding-bottom: 1em;
-    margin-top: 2em;
     @extend .sans;
+    padding: .8em 0;
+    margin-top: 2em;
+    &.line {
+      background: $img-border top left repeat-x;
+    }
     p.meta {
       margin-bottom: .8em;
       margin-top: 0.8em;
       font-size: .85em;
       clear: both;
       overflow: hidden;
-      a.articlenav{
-        background: #ffffff;
-        border: 1px solid #e8e8e8;
-        -moz-border-radius: 0.4em;
-        -webkit-border-radius: 0.4em;
-        border-radius: 0.4em;
-        color: #555555;
-        padding: .4em .8em;
-        text-decoration: none;
-        @include transition(background-color .5s);
-        &:hover {
-          background: $base2;
-          border: 1px solid #ffffff;
+      > span:last-child {
+        float: right;
+      }
+      a.articlenav, i.categories, a.sharing {
+        margin-right: 1.5em;
+        &:last-child {
+          margin-right: 0;
         }
-        @media only screen and (max-width: 550px) {
-          float: none !important;
-          display: block;
-          margin-left: 0 !important;
-          margin-right: 0 !important;
+      }
+      i.categories {
+        color: lighten($text-color, 20);
+      }
+      a.sharing {
+        text-decoration: none;
+        color: lighten($text-color, 20);
+        &:hover {
+          color: $text-color;
         }
       }
     }
@@ -125,23 +126,6 @@ article + article {
   article h1 {
     font-size: 1.8em;
     a { color: #555555; &:hover { text-decoration:none } }
-  }
-  a[rel=full-article] {
-    background: #ffffff;
-    border: 1px solid #e8e8e8;
-    -moz-border-radius: 0.4em;
-    -webkit-border-radius: 0.4em;
-    display: inline-block;
-    padding: .4em .8em;
-    margin-right: .5em;
-    text-decoration: none;
-    color: mix($text-color, $text-color-light);
-    @extend .serif;
-    @include transition(background-color .5s);
-    &:hover {
-      background: $base2;
-      text-shadow: none;
-    }
   }
   footer {
     @extend .sans;
@@ -210,5 +194,5 @@ time.date {
   }
 }
 time.updated > span {
-  color: #E0841B;
+  color: $orange;
 }

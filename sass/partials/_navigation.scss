@@ -11,7 +11,7 @@
   -webkit-box-sizing: border-box;
   border-bottom: 5px solid $nav-border-bottom;
   nav {
-    padding: .8em 0;
+    padding: .5em 0;
     ul {
       @include horizontal-list(0);
       display: table;
@@ -23,8 +23,8 @@
           @include link-colors($nav-color, $nav-color-hover, $visited: $nav-color);
           font-family: $sans;
           text-decoration: none;
-          font-size: 1.1em;
-          line-height: 1.5em;
+          font-size: 1em;
+          line-height: 1.2em;
           padding: 0 .5em;
           &:hover {
             text-decoration: underline;
