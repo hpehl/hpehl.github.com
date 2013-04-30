@@ -13,17 +13,17 @@ $header-padding-top: 2.2em !default;
 $header-padding-bottom: 0 !default;
 
 .group { @include pie-clearfix; }
-.automargin {  margin: 0 auto; }
+.automargin { margin: 0 auto; }
 
 body {
   -webkit-text-size-adjust: none;
   position: relative;
   margin: 0;
-  > #content > article, #content > div > article, #content > div > section, footer > p {
+  > #content > article, #content > div > article, #content > div > section, footer > p, div.pagination {
     max-width: $max-width;
     @extend .automargin;
   }
-  > header, #menu, > footer, #content > article, #content > div > article, #content > div > section {
+  > header, #menu, > footer, #content > article, #content > div > article, #content > div > section, div.pagination {
     @extend .group;
     padding-left: $pad-min;
     padding-right: $pad-min;
@@ -38,23 +38,6 @@ body {
     @media only screen and (min-width: 992px) {
       padding-left: $pad-wide;
       padding-right: $pad-wide;
-    }
-  }
-  div.pagination {
-    @extend .group;
-    margin-left: $pad-min;
-    margin-right: $pad-min;
-    @media only screen and (min-width: 480px) {
-      margin-left: $pad-narrow;
-      margin-right: $pad-narrow;
-    }
-    @media only screen and (min-width: 768px) {
-      margin-left: $pad-medium;
-      margin-right: $pad-medium;
-    }
-    @media only screen and (min-width: 992px) {
-      margin-left: $pad-wide;
-      margin-right: $pad-wide;
     }
   }
   > header {

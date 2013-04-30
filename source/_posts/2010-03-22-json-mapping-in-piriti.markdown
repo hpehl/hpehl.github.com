@@ -12,7 +12,7 @@ binding.<!-- more -->
 To map JSON data you have to annotate your model classes with @JsonField annotations. In case you have the following 
 JSON structure:
 
-```
+``` json
 {
     isbn: "978-0345417954", 
     pages: 432,

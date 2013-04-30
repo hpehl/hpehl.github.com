@@ -77,7 +77,9 @@ public class Author
 
 Now you can map the XML to your model by calling
 
-    Document document = ...; // XML representation of the book resource
-    Book book = Book.XML.read(document);
+``` java
+Document document = ...; // XML representation of the book resource
+Book book = Book.XML.read(document);
+``` 
 
 To learn more about piriti take a look at <https://github.com/hpehl/piriti>.

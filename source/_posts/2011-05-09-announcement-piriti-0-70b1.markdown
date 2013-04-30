@@ -6,7 +6,7 @@ comments: true
 categories: piriti
 ---
 I'm pleased to announce the first beta of the upcoming Piriti 0.7.0 release. Piriti 0.7.0 is a major release with 
-breaking API changes, lots of new features and bugfixes.
+breaking API changes, lots of new features and bugfixes.<!-- more -->
 
 ### Breaking API Changes
 

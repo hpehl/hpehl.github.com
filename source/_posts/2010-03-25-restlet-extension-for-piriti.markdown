@@ -64,7 +64,7 @@ JSON object has to contain one key (name does not matter) with the array of book
 ### Read and convert XML
 To read the XML data you need an instance of XmlReader<T>
 
-``` 
+``` java
 public class Book
 {
     interface BookReader extends XmlReader<Book> {}
@@ -77,7 +77,7 @@ public class Book
 
 Then you can read the XML data like this:
 
-```
+``` java
 ClientResource clientResource = 
     new ClientResource("/resource/with/xml/representation");
     

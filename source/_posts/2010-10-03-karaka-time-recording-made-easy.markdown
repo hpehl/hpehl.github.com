@@ -6,7 +6,8 @@ comments: true
 categories: karaka 
 ---
 Currently I'm developing a personal time recording tool based on GWT and deployed at Google App Engine. Besides being 
-useful I wanted to use the latest web techniques / frameworks in a real application. Karaka uses the following stack:
+useful I wanted to use the latest web techniques / frameworks in a real application. Karaka uses the following 
+stack:<!-- more -->
 
 * [Google App Engine](http://code.google.com/appengine/)
 * [CDI (Weld)](http://seamframework.org/Weld) / [GIN](http://code.google.com/p/google-gin/)
