@@ -13,7 +13,8 @@ I was looking for a new provider to host my blog. In particular I wanted to
 * write my posts using [markdown](http://daringfireball.net/projects/markdown/)
 * be able to have regular pages (like projects, about me, ...)
 * have full control over the look and feel of my blog
-* assign the blog to a custom domain name
+* have support for responsive design
+* host the blog with my own top level domain
 
 After some research I stumbled across [GitHub Pages](http://pages.github.com/) in combination 
 with [Jekyll](http://jekyllrb.com/) and [Octopress](http://octopress.org/). The setup is really easy and there are
@@ -24,8 +25,8 @@ support for [automatic migration](https://github.com/mojombo/jekyll/wiki/blog-mi
 migrate the comments of my blog and started from scratch using [Disqus](http://disqus.com/).
 
 I invested quite some time on the look and feel for my new blog. To a great extent I was inspired by 
-the [darkstripes](https://github.com/amelandri/darkstripes) Octopress theme and the blog 
-of [Alessandro Melandri](http://melandri.net/). Also my navigation was influenced by the website 
+the [darkstripes](https://github.com/amelandri/darkstripes) theme and the blog 
+of [Alessandro Melandri](http://melandri.net/). My navigation was influenced by the website 
 of [Thibault Jorge](http://www.thibaultjorge.com/en). 
 
 The result of the migration is what you're looking at. I hope you like it!
