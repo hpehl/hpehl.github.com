@@ -5,9 +5,13 @@ comments: false
 sharing: false
 footer: true
 ---
-I'm a Senior Software Engineer at Red Hat. From time to time I post on
-[Google+](https://plus.google.com/112941298216109713269/posts) and Twitter: [@haraldpehl](https://twitter.com/haraldpehl)
+{% img half pullright http://pehl.blog.s3.amazonaws.com/images/westport.jpg %} I'm a Senior Software Engineer at 
+JBoss by Red Hat. I'm part of the WildFly team and currently working on management related subjects like the Admin Console.
 
-This is a personal weblog. The opinions expressed here represent my own and not those of my employer.
-
-{% img centered http://pehl.blog.s3.amazonaws.com/images/westport.jpg %}
+<div class="socialhub">
+<p>If you want to get in contact, use one of the following channels:</p>
+<a href="https://plus.google.com/112941298216109713269/about"><i class="icon-2x icon-google-plus-sign"></i></a>
+<a href="https://twitter.com/haraldpehl"><i class="icon-2x icon-twitter"></i></a>
+<a href="http://de.linkedin.com/pub/harald-pehl/23/981/802"><i class="icon-2x icon-linkedin"></i></a>
+<a href="mailto:harald.pehl@gmail.com"><i class="icon-2x icon-envelope-alt"></i></a>
+</div>
