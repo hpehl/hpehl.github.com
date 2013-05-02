@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: github | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/github/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-05-02T14:41:46+02:00</updated>
+  <id>http://hpehl.info/</id>
+  <author>
+    <name><![CDATA[Harald Pehl]]></name>
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Moved Blog to GitHub Pages]]></title>
+    <link href="http://hpehl.info/moved-blog-to-github-pages.html"/>
+    <updated>2013-05-02T13:55:00+02:00</updated>
+    <id>http://hpehl.info/moved-blog-to-github-pages</id>
+    <content type="html"><![CDATA[<p>For over three years I was hosting my blog at Blogger.com. Although publishing was quite easy I never was really happy
+with the layout and the support for customization.<!--more --></p>
+
+<p>I was looking for a new provider to host my blog. In particular I wanted to</p>
+
+<ul>
+<li>write my posts using <a href="http://daringfireball.net/projects/markdown/">markdown</a></li>
+<li>be able to have regular pages (like projects, about me, ...)</li>
+<li>have full control over the look and feel of my blog</li>
+<li>assign the blog to a custom domain name</li>
+</ul>
+
+
+<p>After some research I stumbled across <a href="http://pages.github.com/">GitHub Pages</a> in combination
+with <a href="http://jekyllrb.com/">Jekyll</a> and <a href="http://octopress.org/">Octopress</a>. The setup is really easy and there are
+plenty of resources and documentation around Jekyll and Octopress.</p>
+
+<p>As my blog contains a manageable number of posts, I decided to manually migrate them to markdown. But there is also
+support for <a href="https://github.com/mojombo/jekyll/wiki/blog-migrations#blogger-blogspot">automatic migration</a>. I didn't
+migrate the comments of my blog and started from scratch using <a href="http://disqus.com/">Disqus</a>.</p>
+
+<p>I invested quite some time on the look and feel for my new blog. To a great extent I was inspired by
+the <a href="https://github.com/amelandri/darkstripes">darkstripes</a> Octopress theme and the blog
+of <a href="http://melandri.net/">Alessandro Melandri</a>. Also my navigation was influenced by the website
+of <a href="http://www.thibaultjorge.com/en">Thibault Jorge</a>.</p>
+
+<p>The result of the migration is what you're looking at. I hope you like it!</p>
+]]></content>
+  </entry>
+  
+</feed>
