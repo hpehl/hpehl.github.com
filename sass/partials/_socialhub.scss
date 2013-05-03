@@ -1,13 +1,40 @@
 .socialhub {
   margin-top: 3em;
-  margin-bottom: 1em;
+}
+
+.socialhub + ul {
+  margin: 0;
   padding: 0;
-  a {
-    text-decoration: none;
-    color: lighten($text-color, 20);
-    margin-right: 2em;
-    &:hover {
-      color: $text-color;
+  list-style: none;
+  li {
+    display: inline;
+    margin-right: 1em;
+    a {
+      text-decoration: none;
+      color: lighten($text-color, 20);
+      &:hover {
+        color: $text-color;
+      }
+      i {
+        text-align: left;
+      }
+    }
+    span {
+      display: none;
+    }
+  }
+  @media only screen and (min-width: 768px) {
+    li {
+      display: block;
+      margin-right: 0;
+      margin-bottom: 1em;
+      a > i {
+        width: 2.5em;
+        vertical-align: middle;
+      }
+      span {
+        display: inline;
+      }
     }
   }
 }
