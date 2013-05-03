@@ -125,18 +125,22 @@ article {
       background: $img-border top left repeat-x;
       h1 {
         font-size: 1.8em;
-        a { color: #555555; &:hover { text-decoration:none } }
+        a { 
+          color: #555555; &:hover { text-decoration:none }
+          span.readon {
+            color: $text-color-light;
+            font-size: .8em;
+            padding-left: .5em;
+          }
+          &:hover > span {
+            color: $text-color;
+          }
+        }
       }
     } 
     &:first-child header {
       padding-top: 2em;
       background: none;
-    }
-    footer {
-      @extend .sans;
-      padding-top: 0;
-      margin-top: 0;
-      margin-bottom: 1em;
     }
   }
 }

@@ -3,8 +3,9 @@
     {% if index %}
       {% if post.external-url %}<!-- This defines how Octopress will use posts with external-url. -->
         <h1 class="entry-title external"><a href="{{ post.external-url }}">{% if site.titlecase %}{{ post.title | titlecase }} <span>&rArr;</span>{% else %}{{ post.title }}{% endif %}</a></h1>
-        {% else %}<!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        <h1 class="entry-title"><a href="{{ root_url }}{{ post.url }}">{% if site.titlecase %}{{ post.title | titlecase }}{% else %}{{ post.title }}{% endif %}</a>{% include post/date.html %}</h1>
+      {% else %}<!-- Now we're back to normal posts. Note the links used under href in both headers.-->
+        {% capture excerpted %}{{ content | has_excerpt }}{% endcapture %}
+        <h1 class="entry-title"><a href="{{ root_url }}{{ post.url }}">{% if site.titlecase %}{{ post.title | titlecase }}{% else %}{{ post.title }}{% endif %}{% if excerpted == 'true' %}<span class="readon">&rarr;</span>{% endif %}</a>{% include post/date.html %}</h1>
       {% endif %}
     {% else %}
       {% if page.external-url %}
@@ -17,12 +18,6 @@
 {% endunless %}
 {% if index %}
   <div class="entry-content">{{ content | excerpt }}</div>
-  {% capture excerpted %}{{ content | has_excerpt }}{% endcapture %}
-  {% if excerpted == 'true' %}
-    <footer>
-      <a rel="full-article" href="{{ root_url }}{{ post.url }}">{{ site.excerpt_link }}</a>
-    </footer>
-  {% endif %}
 {% else %}
 <div class="entry-content">
     {{ content }}
