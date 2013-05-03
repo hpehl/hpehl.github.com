@@ -14,17 +14,19 @@ function getNav() {
 }
 
 function lockNav() {
-  var FIXED = "fixed";
+  $(window).on('scroll.global', onScroll);
+  $(window).on('touchmove', onScroll);
+}
 
-  $(window).on('scroll.global', function () {
+function onScroll() {
+    var FIXED = "fixed";
     var _navIsFix = $('#menu').hasClass(FIXED),
-        _offset = $('header').offset().height - $('header #menu').offset().height
-        _scrollTop = $(window).scrollTop() || $('body').scrollTop() || $('body, html').scrollTop();
+        _offset = $('header').offset().height - $('header #menu').offset().height,
+        _scrollTop = window.pageYOffset || $(window).scrollTop() || $('body').scrollTop() || $('body, html').scrollTop();
 
     if ((_scrollTop >= _offset && !_navIsFix) || (_scrollTop < _offset && _navIsFix)) {
-      _navIsFix ? $('#menu').removeClass(FIXED) : $('#menu').addClass(FIXED);
+        _navIsFix ? $('#menu').removeClass(FIXED) : $('#menu').addClass(FIXED);
     }
-  });
 }
 
 function testFeatures() {
