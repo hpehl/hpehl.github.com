@@ -107,8 +107,7 @@
   </header>
 
 
-<div class="entry-content">
-    <p>I was wondering how to secure the resources in my current application. The application is deployed on the Google
+  <div class="entry-content"><p>I was wondering how to secure the resources in my current application. The application is deployed on the Google
 AppEngine and uses <a href="https://code.google.com/p/google-guice/">Guice 2.0</a> and <a href="http://www.restlet.org">Restlet 2.0</a>.
 Inspired by the post from <a href="http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/">David M. Chandler</a> I
 decided to use the AppEngine cookie named &#8220;ACSID&#8221; as a token in each and every url to secure my resources. This way
@@ -309,7 +308,6 @@ the SecurityInterceptor as follows:</p>
 
 <p>Unfortunately that didn&#8217;t work because the @Get annotation is not available in the generated AOP proxy. So Restlet
 has no way to figure out what method to call for a GET request. Instead you have to override the get method.</p>
-
 </div>
 
 

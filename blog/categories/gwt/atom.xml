@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: gwt | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/gwt/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-05-07T11:13:59+02:00</updated>
+  <id>http://hpehl.info/</id>
+  <author>
+    <name><![CDATA[Harald Pehl]]></name>
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[How to efficiently write GWT Generators]]></title>
+    <link href="http://hpehl.info/how-to-efficiently-write-gwt-generators.html"/>
+    <updated>2013-05-07T10:23:00+02:00</updated>
+    <id>http://hpehl.info/how-to-efficiently-write-gwt-generators</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
+  
+</feed>

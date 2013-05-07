@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-05-03T16:35:07+02:00</updated>
+  <updated>2013-05-07T11:13:59+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -12,6 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[How to efficiently write GWT Generators]]></title>
+    <link href="http://hpehl.info/how-to-efficiently-write-gwt-generators.html"/>
+    <updated>2013-05-07T10:23:00+02:00</updated>
+    <id>http://hpehl.info/how-to-efficiently-write-gwt-generators</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Moved Blog to GitHub Pages]]></title>
@@ -1193,215 +1202,6 @@ of type XmlReader<T></p>
 <p></p>
 
 <p>To learn more about piriti take a look at <a href="https://github.com/hpehl/piriti">https://github.com/hpehl/piriti</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Google AppEngine, Restlet & Security]]></title>
-    <link href="http://hpehl.info/google-appengine-restlet-security.html"/>
-    <updated>2009-11-24T17:06:00+01:00</updated>
-    <id>http://hpehl.info/google-appengine-restlet-security</id>
-    <content type="html"><![CDATA[<p>I was wondering how to secure the resources in my current application. The application is deployed on the Google
-AppEngine and uses <a href="https://code.google.com/p/google-guice/">Guice 2.0</a> and <a href="http://www.restlet.org">Restlet 2.0</a>.
-Inspired by the post from <a href="http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/">David M. Chandler</a> I
-decided to use the AppEngine cookie named &#8220;ACSID&#8221; as a token in each and every url to secure my resources. This way
-the url to the &#8220;projects&#8221; resource becomes http://karaka-d8.appspot.com/rest/v1/&lt;ACSID>/projects.<!-- more --></p>
-
-<p>Technically I&#8217;m using an aspect together with a custom annotation to secure the resources. Here&#8217;s the Guice module for
-the security stuff:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecurityModule</span> <span class="kd">extends</span> <span class="n">AbstractModule</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>    <span class="nd">@Override</span>
-</span><span class='line'>    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">configure</span><span class="o">()</span>
-</span><span class='line'>    <span class="o">{</span>
-</span><span class='line'>        <span class="n">SecurityInterceptor</span> <span class="n">interceptor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SecurityInterceptor</span><span class="o">();</span>
-</span><span class='line'>        <span class="n">bindInterceptor</span><span class="o">(</span><span class="n">Matchers</span><span class="o">.</span><span class="na">subclassesOf</span><span class="o">(</span><span class="n">ServerResource</span><span class="o">.</span><span class="na">class</span><span class="o">),</span> <span class="n">Matchers</span><span class="o">.</span><span class="na">annotatedWith</span><span class="o">(</span><span class="n">Secured</span><span class="o">.</span><span class="na">class</span><span class="o">),</span> <span class="n">interceptor</span><span class="o">);</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>With the above setup all methodes in subclasses of ServerResource which are annotated with the custom @Secured
-annotation are handled by the SecurityInterceptor. This class contains the logic to check whether there&#8217;s a
-authenticated user and whether the session cookie is correct (that&#8217;s essentially the code from
-<a href="http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/">David M. Chandlers post</a>)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecurityInterceptor</span> <span class="kd">implements</span> <span class="n">MethodInterceptor</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">APPENGINE_COOKIE</span> <span class="o">=</span> <span class="s">&quot;ACSID&quot;</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nd">@Override</span>
-</span><span class='line'>    <span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">MethodInvocation</span> <span class="n">invocation</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span>
-</span><span class='line'>    <span class="o">{</span>
-</span><span class='line'>        <span class="n">UserService</span> <span class="n">userService</span> <span class="o">=</span> <span class="n">UserServiceFactory</span><span class="o">.</span><span class="na">getUserService</span><span class="o">();</span>
-</span><span class='line'>        <span class="n">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">userService</span><span class="o">.</span><span class="na">getCurrentUser</span><span class="o">();</span>
-</span><span class='line'>        <span class="k">if</span> <span class="o">(</span><span class="n">user</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
-</span><span class='line'>        <span class="o">{</span>
-</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nf">SecurityException</span><span class="o">(</span><span class="s">&quot;No user&quot;</span><span class="o">);</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="n">ServerResource</span> <span class="n">resource</span> <span class="o">=</span> <span class="o">(</span><span class="n">ServerResource</span><span class="o">)</span> <span class="n">invocation</span><span class="o">.</span><span class="na">getThis</span><span class="o">();</span>
-</span><span class='line'>        <span class="n">String</span> <span class="n">token</span> <span class="o">=</span> <span class="o">(</span><span class="n">String</span><span class="o">)</span> <span class="n">resource</span><span class="o">.</span><span class="na">getRequest</span><span class="o">().</span><span class="na">getAttributes</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="s">&quot;token&quot;</span><span class="o">);</span>
-</span><span class='line'>        <span class="k">if</span> <span class="o">(</span><span class="n">token</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">token</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span>
-</span><span class='line'>        <span class="o">{</span>
-</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nf">SecurityException</span><span class="o">(</span><span class="s">&quot;No security token&quot;</span><span class="o">);</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="c1">// Skip check on localhost so we can test in AppEngine local dev env</span>
-</span><span class='line'>        <span class="n">String</span> <span class="n">sessionId</span> <span class="o">=</span> <span class="n">findSessionId</span><span class="o">(</span><span class="n">resource</span><span class="o">);</span>
-</span><span class='line'>        <span class="n">String</span> <span class="n">serverName</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="na">getReference</span><span class="o">().</span><span class="na">getHostDomain</span><span class="o">();</span>
-</span><span class='line'>        <span class="k">if</span> <span class="o">(!(</span><span class="s">&quot;localhost&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">serverName</span><span class="o">))</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="o">!(</span><span class="n">token</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">sessionId</span><span class="o">)))</span>
-</span><span class='line'>        <span class="o">{</span>
-</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nf">SecurityException</span><span class="o">(</span><span class="s">&quot;Security token invalid&quot;</span><span class="o">);</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="k">return</span> <span class="n">invocation</span><span class="o">.</span><span class="na">proceed</span><span class="o">();</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="kd">private</span> <span class="n">String</span> <span class="nf">findSessionId</span><span class="o">(</span><span class="n">ServerResource</span> <span class="n">resource</span><span class="o">)</span>
-</span><span class='line'>    <span class="o">{</span>
-</span><span class='line'>        <span class="n">String</span> <span class="n">result</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-</span><span class='line'>        <span class="n">Series</span><span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span><span class="n">Cookie</span><span class="o">&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">cookies</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="na">getCookies</span><span class="o">();</span>
-</span><span class='line'>        <span class="k">for</span> <span class="o">(</span><span class="n">Cookie</span> <span class="n">cookie</span> <span class="o">:</span> <span class="n">cookies</span><span class="o">)</span>
-</span><span class='line'>        <span class="o">{</span>
-</span><span class='line'>            <span class="k">if</span> <span class="o">(</span><span class="n">APPENGINE_COOKIE</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">cookie</span><span class="o">.</span><span class="na">getName</span><span class="o">()))</span>
-</span><span class='line'>            <span class="o">{</span>
-</span><span class='line'>                <span class="n">result</span> <span class="o">=</span> <span class="n">cookie</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
-</span><span class='line'>                <span class="k">break</span><span class="o">;</span>
-</span><span class='line'>            <span class="o">}</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>To make this work the resource mappings have to include a {token} parameter. So inside your Router you should have
-something like that</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">attach</span><span class="o">(</span><span class="s">&quot;/{token}/projects&quot;</span><span class="o">,</span> <span class="n">ProjectsResource</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<p>Finally the methods you want to protect have to be annotated with the @Secured annotation:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProjectsResource</span> <span class="kd">extends</span> <span class="n">ServerResource</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ProjectService</span> <span class="n">service</span><span class="o">;</span>
-</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">TemplateConverter</span> <span class="n">converter</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nd">@Inject</span>
-</span><span class='line'>    <span class="kd">public</span> <span class="nf">ProjectsResource</span><span class="o">(</span><span class="n">ProjectService</span> <span class="n">service</span><span class="o">,</span> <span class="n">TemplateConverter</span> <span class="n">converter</span><span class="o">)</span>
-</span><span class='line'>    <span class="o">{</span>
-</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">service</span> <span class="o">=</span> <span class="n">service</span><span class="o">;</span>
-</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">converter</span> <span class="o">=</span> <span class="n">converter</span><span class="o">;</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nd">@Secured</span>
-</span><span class='line'>    <span class="nd">@Override</span>
-</span><span class='line'>    <span class="kd">protected</span> <span class="n">Representation</span> <span class="nf">get</span><span class="o">()</span>
-</span><span class='line'>    <span class="o">{</span>
-</span><span class='line'>        <span class="n">Context</span> <span class="n">context</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Context</span><span class="o">();</span>
-</span><span class='line'>        <span class="n">context</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">&quot;projects&quot;</span><span class="o">,</span> <span class="n">service</span><span class="o">.</span><span class="na">list</span><span class="o">());</span>
-</span><span class='line'>        <span class="n">String</span> <span class="n">xml</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="na">convert</span><span class="o">(</span><span class="s">&quot;templates/projects.vm&quot;</span><span class="o">,</span> <span class="n">context</span><span class="o">);</span>
-</span><span class='line'>        <span class="k">return</span> <span class="k">new</span> <span class="nf">StringRepresentation</span><span class="o">(</span><span class="n">xml</span><span class="o">,</span> <span class="n">MediaType</span><span class="o">.</span><span class="na">TEXT_XML</span><span class="o">);</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>One last note: First I tried to use the @Get annotation from Restlet 2.0 instead of a custom annotation and configured
-the SecurityInterceptor as follows:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">bindInterceptor</span><span class="o">(</span><span class="n">Matchers</span><span class="o">.</span><span class="na">subclassesOf</span><span class="o">(</span><span class="n">ServerResource</span><span class="o">.</span><span class="na">class</span><span class="o">),</span> <span class="n">Matchers</span><span class="o">.</span><span class="na">annotatedWith</span><span class="o">(</span><span class="n">Get</span><span class="o">.</span><span class="na">class</span><span class="o">),</span> <span class="n">interceptor</span><span class="o">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Unfortunately that didn&#8217;t work because the @Get annotation is not available in the generated AOP proxy. So Restlet
-has no way to figure out what method to call for a GET request. Instead you have to override the get method.</p>
 ]]></content>
   </entry>
   
