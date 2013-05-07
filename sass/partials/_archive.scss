@@ -10,7 +10,9 @@
     &:last-child {
       background: none;
     }
-    footer { font-size: 0.9em; padding: 0; margin: 0;}
+    footer { 
+      font-size: 0.9em; padding: 0; margin: 0;
+    }
   }
   h1 { color: $text-color; margin-bottom: .3em; }
   h2 { display: none; }
@@ -22,6 +24,11 @@
       &:hover { color: $link-color-hover; }
       font-weight: normal;
       display: inline-block;
+    }
+    .externalpost-icon {
+      color: $text-color-light;
+      padding-right: .5em;
+      cursor: help;
     }
   }
   a.category, time {

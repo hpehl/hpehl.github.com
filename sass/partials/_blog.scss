@@ -13,6 +13,11 @@ article {
     background: $img-border bottom left repeat-x;
     h1 {
       margin: 0;
+      .externalpost-icon {
+        color: $text-color-light;
+        padding-right: .5em;
+        cursor: help;
+      }
       a { text-decoration: none;
         &:hover { text-decoration: underline; } }
     }
