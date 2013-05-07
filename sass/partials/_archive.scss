@@ -21,14 +21,19 @@
     a {
       @include hover-link;
       color: inherit;
-      &:hover { color: $link-color-hover; }
       font-weight: normal;
       display: inline-block;
+      &:hover {
+        color: $link-color-hover;
+      }
     }
-    .externalpost-icon {
+    span.externalpost {
       color: $text-color-light;
-      padding-right: .5em;
+      padding-left: .5em;
       cursor: help;
+      &:hover {
+        color: $text-color;
+      }
     }
   }
   a.category, time {
