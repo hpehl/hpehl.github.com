@@ -17,7 +17,7 @@
   </header>
 {% endunless %}
 {% if index %}
-  <div class="entry-content">{% if post.external-url %}External post by {{ post.author }} posted in <a href="{{ post.external-url }}">{{ post.external-url }}</a>{% else %}{{ content | excerpt }}{% endif %}</div>
+  <div class="entry-content">{% if post.external-url %}External post by {{ post.author }}: <a href="{{ post.external-url }}">{{ post.external-url }}</a>{% else %}{{ content | excerpt }}{% endif %}</div>
 {% else %}
   <div class="entry-content">{{ content }}</div>
 {% endif %}
