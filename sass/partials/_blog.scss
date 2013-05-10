@@ -200,6 +200,7 @@ time.date {
 }
 time.updated > span {
   color: $orange;
+  cursor: help;
 }
 
 #disqus_thread {

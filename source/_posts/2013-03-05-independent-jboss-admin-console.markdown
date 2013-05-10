@@ -2,6 +2,7 @@
 layout: post
 title: "Independent JBoss Admin Console"
 date: 2013-03-05 21:43
+updated: 2013-05-10 11:42
 comments: true
 categories: jboss console
 ---
@@ -109,3 +110,7 @@ Follow the steps in the [README](https://github.com/hpehl/jboss-as/tree/cors#rea
 
 Due to the limitations regarding authentication and CORS, the solution described here will only work in Firefox and
 Safari. If you want to use Chrome make sure to use the `--allow-cross-origin-auth-prompt` command line option.
+
+## Client Library
+I stumbled upon an interesting project on GitHub: <https://github.com/pazguille/CORS>. Seems to have support for IE8+, 
+offers an easy to use API and hides the awkward implementation details. I will evaluate this and try to make a GWT port.
