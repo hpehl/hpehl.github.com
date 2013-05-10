@@ -13,7 +13,7 @@
   {% if was_updated == '0' %}
     <time datetime="{{ date | datetime | date_to_xmlschema }}" pubdate class="date"><span class="day">{{ day }}</span><span class="month">{{ month }}</span><span class="year">{{ year }}</span></time>
 {% else %}
-    <time datetime="{{ updated | datetime | date_to_xmlschema }}" pubdate data-updated="true" title="Posted at {{date_formatted}}, updated at {{updated_formatted}}" class="date updated"><span class="day">{{ day }}</span><span class="month">{{ month }}</span><span class="year">{{ year }}</span></time>
+    <time datetime="{{ updated | datetime | date_to_xmlschema }}" pubdate data-updated="true" title="Posted on {{date_formatted}}, updated on {{updated_formatted}}" class="date updated"><span class="day">{{ day }}</span><span class="month">{{ month }}</span><span class="year">{{ year }}</span></time>
 {% assign updated = false %}
   {% endif %}
 {% endif %}
