@@ -4,7 +4,7 @@
   <title><![CDATA[Category: console | Harald Pehl]]></title>
   <link href="http://hpehl.info/blog/categories/console/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-05-07T11:43:42+02:00</updated>
+  <updated>2013-05-10T12:00:00+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -137,6 +137,11 @@ Follow the steps in the <a href="https://github.com/hpehl/jboss-as/tree/cors#rea
 
 <p>Due to the limitations regarding authentication and CORS, the solution described here will only work in Firefox and
 Safari. If you want to use Chrome make sure to use the <code>--allow-cross-origin-auth-prompt</code> command line option.</p>
+
+<h2>Client Library</h2>
+
+<p>I stumbled upon an interesting project on GitHub: <a href="https://github.com/pazguille/CORS">https://github.com/pazguille/CORS</a>. Seems to have support for IE8+,
+offers an easy to use API and hides the awkward implementation details. I will evaluate this and try to make a GWT port.</p>
 ]]></content>
   </entry>
   
