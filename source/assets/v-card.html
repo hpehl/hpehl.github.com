@@ -1,0 +1,91 @@
+<element name="v-card">
+    <template>
+        <style>
+            @host {
+                * {
+                    font-family: sans-serif;
+                }
+            }
+
+            section {
+                background: #fff;
+                border-radius: 5px;
+                box-shadow: 0 0 4px 2px rgba(0, 0, 0, .5);
+                min-width: 30rem;
+                width: 30rem;
+                height: 15rem;
+
+                display: -webkit-flex;
+                display: flex;
+                -webkit-align-items: center;
+                align-items: center;
+                -webkit-justify-content: space-between;
+                justify-content: space-between;
+            }
+
+            header {
+                background-color: #555;
+                color: white;
+                text-align: right;
+                margin: 0;
+                padding: .5rem 1rem .5rem 2.5rem;
+
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+                font-weight: normal;
+                margin: 0;
+                padding: 0;
+            }
+
+            header h2 {
+                font-size: 1rem;
+                font-weight: normal;
+                margin: 0;
+                padding: 0;
+            }
+
+            ol {
+                font-size: .8rem;
+                margin: 0;
+                padding: 0;
+            }
+
+            li {
+                list-style: none;
+                margin: 0;
+                padding: .2rem;
+            }
+
+            .logo {
+                margin-right: 1rem;
+                max-width: 64px;
+                max-height: 64px;
+            }
+        </style>
+        <section>
+            <header>
+                <h1><content select="span.fn"></content></h1>
+                <h2><content select="span.position"></content></h2>
+            </header>
+            <ol>
+                <li>
+                    <content select="a.url"></content>
+                </li>
+                <li>
+                    <content select="a.twitter"></content>
+                </li>
+                <li>
+                    <content select="a.gplus"></content>
+                </li>
+            </ol>
+            <div class="logo">
+                <content select="img.logo"></content>
+            </div>
+        </section>
+    </template>
+    <script>
+        Polymer.register(this);
+    </script>
+</element>

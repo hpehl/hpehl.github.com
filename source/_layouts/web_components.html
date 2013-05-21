@@ -1,0 +1,53 @@
+---
+layout: default
+single: true
+---
+
+<script src="http://www.polymer-project.org/polymer/polymer.min.js"></script>
+<div>
+<article class="hentry" role="article">
+  {% include article.html %}
+  <link rel="import" href="assets/v-card.html">
+  <style>
+    #redhat_logo {
+      -webkit-border-radius: 0;
+      border-radius: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+      border: none;
+    } 
+  </style>
+  <v-card>
+    <span class="fn">Harald Pehl</span>
+    <span class="position">Senior Software Engineer</span>
+    <a class="url" href="http://hpehl.info">http://hpehl.info</a>
+    <a class="twitter" href="https://twitter.com/haraldpehl">@haraldpehl</a>
+    <a class="gplus" href="https://plus.google.com/u/0/112941298216109713269/">+Harald Pehl</a>
+    <img id="redhat_logo" class="logo" src="http://upload.wikimedia.org/wikipedia/it/archive/c/cb/20120516124751!Red_hat_logo.png" width="64" height="64">
+  </v-card>
+
+  <footer class="line">
+    <p class="meta">
+      <span>
+        {% include post/categories.html %}
+        {% unless page.sharing == false %}
+          {% include post/sharing.html %}
+        {% endunless %}
+      </span>
+      <span>
+        {% if page.previous.url %}
+          <a class="articlenav" href="{{page.previous.url}}" title="Previous Post: {{page.previous.title}}">&larr; {{page.previous.title}}</a>
+        {% endif %}
+        {% if page.next.url %}
+          <a class="articlenav" href="{{page.next.url}}" title="Next Post: {{page.next.title}}">{{page.next.title}} &rarr;</a>
+        {% endif %}
+      </span>
+    </p>
+  </footer>
+</article>
+{% if site.disqus_short_name and page.comments == true %}
+  <section>
+    <div id="disqus_thread" aria-live="polite">{% include post/disqus_thread.html %}</div>
+  </section>
+{% endif %}
+</div>
