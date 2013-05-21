@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-05-10T15:43:08+02:00</updated>
+  <updated>2013-05-22T01:32:52+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -12,6 +12,153 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Web Components]]></title>
+    <link href="http://hpehl.info/web-components.html"/>
+    <updated>2013-05-17T12:57:00+02:00</updated>
+    <id>http://hpehl.info/web-components</id>
+    <content type="html"><![CDATA[<p>I recently watched <a href="https://plus.google.com/+EricBidelman/">Eric Bidelmans</a> <a href="http://www.youtube.com/watch?v=fqULJBBEVQE">presentation</a> on
+Web Components at Google IO 13. <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html">Web Components</a>
+is an effort to bring true modularisation to web development. For the first time you&#8217;ll have encapsulation at the
+browser level. No more mess with duplicate IDs or mixed CSS style rules. <!-- more -->The building blocks of Web
+Components are</p>
+
+<ul>
+<li><a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html">Shadow DOM</a></li>
+<li><a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/templates/index.html">Templates</a></li>
+<li><a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html">Custom Elements</a></li>
+<li><a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/imports/index.html">HTML Imports</a></li>
+</ul>
+
+
+<p>If you think this is a long way of and available in a few years, then you&#8217;re complete wrong! You can use Web Components
+today. And they are already used by the browser vendors under the hood.
+This <a href="http://glazkov.com/2011/01/14/what-the-heck-is-shadow-dom/">article</a> from
+<a href="http://glazkov.com/about/">Dimitri Glazkov</a> opened my eyes. Many of the new HTML5 elements like
+<code>&lt;input type="range"/&gt;</code>, <code>&lt;input type="date"/&gt;</code> or <code>&lt;video/&gt;</code> are implemented using Web Compontents. You can see the
+markup behind those elements if you enable Shadow DOM in Chrome Canary. The screenshot below shows the internal markup
+of an <code>&lt;input type="date"/&gt;</code> element:</p>
+
+<p><figure class="centered"><img src="http://hpehl.info/images/posts/input_type_date_shadow_dom.png"></figure></p>
+
+<h1>V-Card Sample</h1>
+
+<p>If you want to start creating your own Web Components, take a look at <a href="http://www.polymer-project.org/">Polymer</a>. It&#8217;s
+a framework for developing Web Components today. It fills out missing browser implementation with so called polyfills.</p>
+
+<p>Let&#8217;s build our own Web Component using Polymer. We&#8217;ll create a custom element named <code>v-card</code> which renders a business
+card:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="cp">&lt;!DOCTYPE html&gt;</span>
+</span><span class='line'><span class="nt">&lt;html&gt;</span>
+</span><span class='line'><span class="nt">&lt;head&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;polymer.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;v-card.html&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;/head&gt;</span>
+</span><span class='line'><span class="nt">&lt;body&gt;</span>
+</span><span class='line'><span class="nt">&lt;v</span><span class="na">-card</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;fn&quot;</span><span class="nt">&gt;</span>Harald Pehl<span class="nt">&lt;/span&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;position&quot;</span><span class="nt">&gt;</span>Senior Software Engineer<span class="nt">&lt;/span&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">&quot;url&quot;</span> <span class="na">href=</span><span class="s">&quot;http://hpehl.info&quot;</span><span class="nt">&gt;</span>http://hpehl.info<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">&quot;twitter&quot;</span> <span class="na">href=</span><span class="s">&quot;https://twitter.com/haraldpehl&quot;</span><span class="nt">&gt;</span>@haraldpehl<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">&quot;gplus&quot;</span> <span class="na">href=</span><span class="s">&quot;https://plus.google.com/u/0/112941298216109713269/&quot;</span><span class="nt">&gt;</span>+Harald Pehl<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">&quot;logo&quot;</span> <span class="na">src=</span><span class="s">&quot;http://upload.wikimedia.org/wikipedia/it/archive/c/cb/20120516124751!Red_hat_logo.png&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="err">&lt;</span>/v-card&gt;
+</span><span class='line'><span class="nt">&lt;/body&gt;</span>
+</span><span class='line'><span class="nt">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The actual Web Component is implemented in <code>v-card.html</code>. Using the <code>&lt;content&gt;</code> element and CSS selectors we can pull
+in content from the host page.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;element</span> <span class="na">name=</span><span class="s">&quot;v-card&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;template&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;style&gt;</span>
+</span><span class='line'>            <span class="o">...</span>
+</span><span class='line'>        <span class="nt">&lt;/style&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;header&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;h1&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;span.fn&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/h1&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;h2&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;span.position&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/h2&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/header&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ol&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.url&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.twitter&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.gplus&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/ol&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;logo&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;img.logo&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/template&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;script&gt;</span>
+</span><span class='line'>        <span class="nx">Polymer</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span><span class='line'>    <span class="nt">&lt;/script&gt;</span>
+</span><span class='line'><span class="nt">&lt;/element&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here is the result of our first Web Component. Please note that I&#8217;m unsing the flexbox model for rendering the
+business card. Support for flexbox is somewhat <a href="http://caniuse.com/#feat=flexbox">limited</a>. Chrome has the best support
+for flexbox, Safari does not support it at the moment. If you&#8217;re using Firefox you might have to enable
+<code>layout.css.flexbox.enabled</code> in about:config.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[How to efficiently write GWT Generators]]></title>
@@ -1069,144 +1216,6 @@ I decided to move the relevant code to a small library called &#8220;Taoki&#8221
 The details will be described in a separated post.</p>
 
 <p>For those interested, take a look at <a href="https://github.com/hpehl/taoki">https://github.com/hpehl/taoki</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[XML Mapper for GWT]]></title>
-    <link href="http://hpehl.info/xml-mapper-for-gwt.html"/>
-    <updated>2010-01-14T17:41:00+01:00</updated>
-    <id>http://hpehl.info/xml-mapper-for-gwt</id>
-    <content type="html"><![CDATA[<p>I&#8217;m a big fan of RESTful architectures. When using REST resources with XML representations in combination with GWT
-you have to parse the XML and map it to the model used in the GWT client. The code therefore is tedious and
-error-prone. So I decided to start a little framework called &#8220;piriti&#8221; (Maori for bridge). It is hosted on goolge code
-under <a href="https://github.com/hpehl/piriti">https://github.com/hpehl/piriti</a>. The basic idea behind piriti is to use annotations on your model and generate
-the parsing / mapping code with the help of deferred binding.<!-- more --></p>
-
-<p>Let&#8217;s assume you have a REST resource for a book which produces the following XML representation</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;book&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;isbn&gt;</span>978-0345417954<span class="nt">&lt;/isbn&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;pages&gt;</span>432<span class="nt">&lt;/pages&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;title&gt;</span>The Hotel New Hampshire<span class="nt">&lt;/title&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;author&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;firstname&gt;</span>John<span class="nt">&lt;/firstname&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;surname&gt;</span>Irving<span class="nt">&lt;/surname&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/author&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;reviews&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;review&gt;</span>A hectic gaudy saga with the verve of a Marx Brothers movie.<span class="nt">&lt;/review&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;review&gt;</span>Rejoice! John Irving has written another book according to your world. You must read this book.<span class="nt">&lt;/review&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;review&gt;</span>Spellbinding, intensely human, a high-wire act of dazzling virtuosity.<span class="nt">&lt;/review&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/reviews&gt;</span>
-</span><span class='line'><span class="nt">&lt;/book&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>On the GWT client you have the following model classes</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Book</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>    <span class="n">String</span> <span class="n">isbn</span><span class="o">;</span>
-</span><span class='line'>    <span class="kt">int</span> <span class="n">pages</span><span class="o">;</span>
-</span><span class='line'>    <span class="n">String</span> <span class="n">title</span><span class="o">;</span>
-</span><span class='line'>    <span class="n">Author</span> <span class="n">author</span><span class="o">;</span>
-</span><span class='line'>    <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">reviews</span><span class="o">;</span>
-</span><span class='line'><span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Author</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>    <span class="n">String</span> <span class="n">firstname</span><span class="o">;</span>
-</span><span class='line'>    <span class="n">String</span> <span class="n">surname</span><span class="o">;</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>To map the XML to your model, all you have to do is annotate the relevant fields in your model and define an interface
-of type XmlReader<T></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Book</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>    <span class="kd">interface</span> <span class="nc">BookReader</span> <span class="kd">extends</span> <span class="n">XmlReader</span><span class="o">&lt;</span><span class="n">Book</span><span class="o">&gt;</span> <span class="o">{}</span>
-</span><span class='line'>    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">BookReader</span> <span class="n">XML</span> <span class="o">=</span> <span class="n">GWT</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">BookReader</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nd">@XmlField</span> <span class="n">String</span> <span class="n">isbn</span><span class="o">;</span>
-</span><span class='line'>    <span class="nd">@XmlField</span> <span class="kt">int</span> <span class="n">pages</span><span class="o">;</span>
-</span><span class='line'>    <span class="nd">@XmlField</span> <span class="n">String</span> <span class="n">title</span><span class="o">;</span>
-</span><span class='line'>    <span class="nd">@XmlField</span> <span class="n">Author</span> <span class="n">author</span><span class="o">;</span>
-</span><span class='line'>    <span class="nd">@XmlField</span><span class="o">(</span><span class="s">&quot;reviews/review&quot;</span><span class="o">)</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">reviews</span><span class="o">;</span>
-</span><span class='line'><span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Author</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>    <span class="kd">interface</span> <span class="nc">AuthorReader</span> <span class="kd">extends</span> <span class="n">XmlReader</span><span class="o">&lt;</span><span class="n">Author</span><span class="o">&gt;</span> <span class="o">{}</span>
-</span><span class='line'>    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">AuthorReader</span> <span class="n">XML</span> <span class="o">=</span> <span class="n">GWT</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">AuthorReader</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nd">@XmlField</span> <span class="n">String</span> <span class="n">firstname</span><span class="o">;</span>
-</span><span class='line'>    <span class="nd">@XmlField</span> <span class="n">String</span> <span class="n">surname</span><span class="o">;</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now you can map the XML to your model by calling</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Document</span> <span class="n">document</span> <span class="o">=</span> <span class="o">...;</span> <span class="c1">// XML representation of the book resource</span>
-</span><span class='line'><span class="n">Book</span> <span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="o">.</span><span class="na">XML</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="n">document</span><span class="o">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<p>To learn more about piriti take a look at <a href="https://github.com/hpehl/piriti">https://github.com/hpehl/piriti</a>.</p>
 ]]></content>
   </entry>
   

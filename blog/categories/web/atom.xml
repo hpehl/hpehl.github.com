@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: web | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/web/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-05-22T01:32:52+02:00</updated>
+  <id>http://hpehl.info/</id>
+  <author>
+    <name><![CDATA[Harald Pehl]]></name>
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Web Components]]></title>
+    <link href="http://hpehl.info/web-components.html"/>
+    <updated>2013-05-17T12:57:00+02:00</updated>
+    <id>http://hpehl.info/web-components</id>
+    <content type="html"><![CDATA[<p>I recently watched <a href="https://plus.google.com/+EricBidelman/">Eric Bidelmans</a> <a href="http://www.youtube.com/watch?v=fqULJBBEVQE">presentation</a> on
+Web Components at Google IO 13. <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html">Web Components</a>
+is an effort to bring true modularisation to web development. For the first time you'll have encapsulation at the
+browser level. No more mess with duplicate IDs or mixed CSS style rules. <!-- more -->The building blocks of Web
+Components are</p>
+
+<ul>
+<li><a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html">Shadow DOM</a></li>
+<li><a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/templates/index.html">Templates</a></li>
+<li><a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html">Custom Elements</a></li>
+<li><a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/imports/index.html">HTML Imports</a></li>
+</ul>
+
+
+<p>If you think this is a long way of and available in a few years, then you're complete wrong! You can use Web Components
+today. And they are already used by the browser vendors under the hood.
+This <a href="http://glazkov.com/2011/01/14/what-the-heck-is-shadow-dom/">article</a> from
+<a href="http://glazkov.com/about/">Dimitri Glazkov</a> opened my eyes. Many of the new HTML5 elements like
+<code>&lt;input type="range"/&gt;</code>, <code>&lt;input type="date"/&gt;</code> or <code>&lt;video/&gt;</code> are implemented using Web Compontents. You can see the
+markup behind those elements if you enable Shadow DOM in Chrome Canary. The screenshot below shows the internal markup
+of an <code>&lt;input type="date"/&gt;</code> element:</p>
+
+<p><figure class="centered"><img src="/images/posts/input_type_date_shadow_dom.png"></figure></p>
+
+<h1>V-Card Sample</h1>
+
+<p>If you want to start creating your own Web Components, take a look at <a href="http://www.polymer-project.org/">Polymer</a>. It's
+a framework for developing Web Components today. It fills out missing browser implementation with so called polyfills.</p>
+
+<p>Let's build our own Web Component using Polymer. We'll create a custom element named <code>v-card</code> which renders a business
+card:</p>
+
+<p>```html
+&lt;!DOCTYPE html>
+<html>
+<head></p>
+
+<pre><code>&lt;script src="polymer.js"&gt;&lt;/script&gt;
+&lt;link rel="import" href="v-card.html"&gt;
+</code></pre>
+
+<p></head>
+<body>
+<v-card></p>
+
+<pre><code>&lt;span class="fn"&gt;Harald Pehl&lt;/span&gt;
+&lt;span class="position"&gt;Senior Software Engineer&lt;/span&gt;
+&lt;a class="url" href="http://hpehl.info"&gt;http://hpehl.info&lt;/a&gt;
+&lt;a class="twitter" href="https://twitter.com/haraldpehl"&gt;@haraldpehl&lt;/a&gt;
+&lt;a class="gplus" href="https://plus.google.com/u/0/112941298216109713269/"&gt;+Harald Pehl&lt;/a&gt;
+&lt;img class="logo" src="http://upload.wikimedia.org/wikipedia/it/archive/c/cb/20120516124751!Red_hat_logo.png"&gt;
+</code></pre>
+
+<p></v-card>
+</body>
+</html>
+```</p>
+
+<p>The actual Web Component is implemented in <code>v-card.html</code>. Using the <code>&lt;content&gt;</code> element and CSS selectors we can pull
+in content from the host page.</p>
+
+<p>```html
+<element name="v-card"></p>
+
+<pre><code>&lt;template&gt;
+    &lt;style&gt;
+        ...
+    &lt;/style&gt;
+    &lt;section&gt;
+        &lt;header&gt;
+            &lt;h1&gt;&lt;content select="span.fn"&gt;&lt;/content&gt;&lt;/h1&gt;
+            &lt;h2&gt;&lt;content select="span.position"&gt;&lt;/content&gt;&lt;/h2&gt;
+        &lt;/header&gt;
+        &lt;ol&gt;
+            &lt;li&gt;
+                &lt;content select="a.url"&gt;&lt;/content&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;content select="a.twitter"&gt;&lt;/content&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;content select="a.gplus"&gt;&lt;/content&gt;
+            &lt;/li&gt;
+        &lt;/ol&gt;
+        &lt;div class="logo"&gt;
+            &lt;content select="img.logo"&gt;&lt;/content&gt;
+        &lt;/div&gt;
+    &lt;/section&gt;
+&lt;/template&gt;
+&lt;script&gt;
+    Polymer.register(this);
+&lt;/script&gt;
+</code></pre>
+
+<p></element>
+```</p>
+
+<p>Here is the result of our first Web Component. Please note that I'm unsing the flexbox model for rendering the
+business card. Support for flexbox is somewhat <a href="http://caniuse.com/#feat=flexbox">limited</a>. Chrome has the best support
+for flexbox, Safari does not support it at the moment. If you're using Firefox you might have to enable
+<code>layout.css.flexbox.enabled</code> in about:config.</p>
+]]></content>
+  </entry>
+  
+</feed>
