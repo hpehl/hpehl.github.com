@@ -91,5 +91,6 @@ in content from the host page.
 ```
 
 Here is the result of our first Web Component. Please note that I'm unsing the flexbox model for rendering the 
-business card. Support for flexbox is somewhat [limited](http://caniuse.com/#feat=flexbox). Safari does not support it 
-at the moment. If you're using Firefox you might have to enable `layout.css.flexbox.enabled` in about:config. 
+business card. Support for flexbox is somewhat [limited](http://caniuse.com/#feat=flexbox). Chrome has the best support
+for flexbox, Safari does not support it at the moment. If you're using Firefox you might have to enable 
+`layout.css.flexbox.enabled` in about:config. 
