@@ -1,5 +1,5 @@
 ---
-layout: web_components
+layout: post
 title: "Web Components"
 date: 2013-05-17 12:57
 comments: true
@@ -28,17 +28,20 @@ of an `<input type="date"/>` element:
 
 
 # V-Card Sample
-If you want to start creating your own Web Components, take a look at [Polymer](http://www.polymer-project.org/). It's 
-a framework for developing Web Components today. It fills out missing browser implementation with so called polyfills. 
+If you want to start creating your own Web Components, I strongly recommend to take a look at 
+[Polymer](http://www.polymer-project.org/). It's a framework for developing Web Components today. It fills out missing 
+browser implementation with so called polyfills. 
 
-Let's build our own Web Component using Polymer. We'll create a custom element named `v-card` which renders a business 
-card:
+Let's jump into Web Component development and build a `v-card` element which renders a business card. The following 
+code shows the host page containing the custom element. The `v-card` element expects a fullname, a title, several 
+links and a logo. The data is wrapped into regular HTML elements. The class names are taken from the 
+[hCard microformat](http://microformats.org/wiki/hcard) and are used later to select the relevant information.
 
 ```html
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="polymer.js"></script>
+    <script src="/path/to/polymer.js"></script>
     <link rel="import" href="v-card.html">
 </head>
 <body>
@@ -48,20 +51,49 @@ card:
     <a class="url" href="http://hpehl.info">http://hpehl.info</a>
     <a class="twitter" href="https://twitter.com/haraldpehl">@haraldpehl</a>
     <a class="gplus" href="https://plus.google.com/u/0/112941298216109713269/">+Harald Pehl</a>
-    <img class="logo" src="http://upload.wikimedia.org/wikipedia/it/archive/c/cb/20120516124751!Red_hat_logo.png">
+    <img class="logo" src="http://upload.wikimedia.org/wikipedia/it/archive/c/cb/20120516124751!Red_hat_logo.png"/>
 </v-card>
 </body>
 </html>
 ```
 
-The actual Web Component is implemented in `v-card.html`. Using the `<content>` element and CSS selectors we can pull
-in content from the host page. 
+The `v-card` implementation uses its own CSS styles and markup. Thanks to Shadow DOM they don't conflict with the 
+host page. The data for the business card is pulled from the host page using the `<content>` element and CSS selectors. 
+Finally the call to `Polymer.register(this);` takes care of all the polyfill magic to make this work accross all 
+modern browsers. 
 
 ```html
 <element name="v-card">
     <template>
         <style>
-            ...
+            header, h1, h2, ol, li, img {
+                margin: 0;
+                padding: 0;
+            }
+            
+            section {
+                background: #fff;
+                border-radius: 5px;
+                box-shadow: 0 0 4px 2px rgba(0, 0, 0, .5);
+                width: 30rem; height: 15rem;
+                display: flex; align-items: center; justify-content: space-between;
+            }
+            
+            header {
+                background-color: #555;
+                color: white;
+                text-align: right;
+                padding: 1rem 1rem 1rem 2.5rem;
+            }
+            
+            h1, h2 { font-weight: normal; }
+            header h1 { font-size: 1.5rem; }
+            header h2 { font-size: 1rem; }
+            
+            ol { font-size: .8rem; }
+            li { list-style: none; }
+            
+            .logo_container { margin-right: 1rem; }
         </style>
         <section>
             <header>
@@ -69,17 +101,11 @@ in content from the host page.
                 <h2><content select="span.position"></content></h2>
             </header>
             <ol>
-                <li>
-                    <content select="a.url"></content>
-                </li>
-                <li>
-                    <content select="a.twitter"></content>
-                </li>
-                <li>
-                    <content select="a.gplus"></content>
-                </li>
+                <li><content select="a.url"></content></li>
+                <li><content select="a.twitter"></content></li>
+                <li><content select="a.gplus"></content></li>
             </ol>
-            <div class="logo">
+            <div class="logo_container">
                 <content select="img.logo"></content>
             </div>
         </section>
@@ -90,7 +116,22 @@ in content from the host page.
 </element>
 ```
 
-Here is the result of our first Web Component. Please note that I'm unsing the flexbox model for rendering the 
-business card. Support for flexbox is somewhat [limited](http://caniuse.com/#feat=flexbox). Chrome has the best support
-for flexbox, Safari does not support it at the moment. If you're using Firefox you might have to enable 
-`layout.css.flexbox.enabled` in about:config. 
+Below you can see the `v-card` Web Component in action. Please note that I'm unsing CSS3 flexbox to render the 
+business card. Support for flexbox is somewhat [limited](http://caniuse.com/#feat=flexbox). Chrome should make 
+no problems, for Firefox you might have to enable `layout.css.flexbox.enabled` in about:config. All other browsers 
+will most likely have problems rendering the business card. If that's the case here's a 
+[reference representation]({{ root_url }}/images/posts/v-card_reference.png).
+
+{% include post/v_card.html %}
+
+I hope this simple example shows the potential behind Web Components. I'm convinced Web Components are the future of 
+client side web development. If you want to dive deeper into the subject here is a list of useful resources:
+
+- [Web Components in Action](http://www.youtube.com/watch?v=0g0oOOT86NY): Google IO session about Polymer 
+- [X-Tags](http://www.x-tags.org/): Polymer counterpart from Mozilla 
+- [Web UI](http://www.dartlang.org/articles/web-ui/): Darts implementation for Web Components
+- Shadow DOM series on HTML5 Rocks:
+    - [Shadow DOM 101](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/)
+    - [Shadow DOM 201](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/): CSS and Styling
+    - [Shadow DOM 301](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-301/): Advanced Concepts & DOM APIs
+- [Shadow DOM Visualizer](http://html5-demos.appspot.com/static/shadowdom-visualizer/index.html)
