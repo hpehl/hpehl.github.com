@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-05-24T15:02:45+02:00</updated>
+  <updated>2013-05-24T15:05:44+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -152,16 +152,6 @@ modern browsers.</p>
 <span class='line-number'>53</span>
 <span class='line-number'>54</span>
 <span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
 </pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;element</span> <span class="na">name=</span><span class="s">&quot;v-card&quot;</span><span class="nt">&gt;</span>
 </span><span class='line'>    <span class="nt">&lt;template&gt;</span>
 </span><span class='line'>        <span class="nt">&lt;style&gt;</span>
@@ -200,23 +190,13 @@ modern browsers.</p>
 </span><span class='line'>        <span class="nt">&lt;/style&gt;</span>
 </span><span class='line'>        <span class="nt">&lt;section&gt;</span>
 </span><span class='line'>            <span class="nt">&lt;header&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;h1&gt;</span>
-</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;span.fn&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;/h1&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;h2&gt;</span>
-</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;span.position&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;/h2&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;h1&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;span.fn&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/h1&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;h2&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;span.position&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/h2&gt;</span>
 </span><span class='line'>            <span class="nt">&lt;/header&gt;</span>
 </span><span class='line'>            <span class="nt">&lt;ol&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;li&gt;</span>
-</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.url&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;li&gt;</span>
-</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.twitter&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;li&gt;</span>
-</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.gplus&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.url&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.twitter&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.gplus&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/li&gt;</span>
 </span><span class='line'>            <span class="nt">&lt;/ol&gt;</span>
 </span><span class='line'>            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;logo_container&quot;</span><span class="nt">&gt;</span>
 </span><span class='line'>                <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;img.logo&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
