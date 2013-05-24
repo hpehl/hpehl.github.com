@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-05-22T19:13:00+02:00</updated>
+  <updated>2013-05-24T10:29:08+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -32,7 +32,7 @@ Components are</p>
 </ul>
 
 
-<p>If you think this is a long way of and available in a few years, then you&#8217;re complete wrong! You can use Web Components
+<p>If you think this is a long way of and available in a few years, then you&#8217;re completely wrong! You can use Web Components
 today. And they are already used by the browser vendors under the hood.
 This <a href="http://glazkov.com/2011/01/14/what-the-heck-is-shadow-dom/">article</a> from
 <a href="http://glazkov.com/about/">Dimitri Glazkov</a> opened my eyes. Many of the new HTML5 elements like
@@ -49,8 +49,8 @@ of an <code>&lt;input type="date"/&gt;</code> element:</p>
 browser implementation with so called polyfills.</p>
 
 <p>Let&#8217;s jump into Web Component development and build a <code>v-card</code> element which renders a business card. The following
-code shows the host page containing the custom element. The <code>v-card</code> element expects a fullname, a title, several
-links and a logo. The data is wrapped into regular HTML elements. The class names are taken from the
+code shows the host page containing the custom <code>v-card</code> element. It expects a fullname, a title, several
+links and a logo. The parameters are wrapped in regular HTML elements. The class names are taken from the
 <a href="http://microformats.org/wiki/hcard">hCard microformat</a> and are used later to select the relevant information.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -92,7 +92,7 @@ links and a logo. The data is wrapped into regular HTML elements. The class name
 
 <p>The <code>v-card</code> implementation uses its own CSS styles and markup. Thanks to Shadow DOM they don&#8217;t conflict with the
 host page. The data for the business card is pulled from the host page using the <code>&lt;content&gt;</code> element and CSS selectors.
-Finally the call to <code>Polymer.register(this);</code> takes care of all the polyfill magic to make this work accross all
+Finally the call to <code>Polymer.register(this)</code> takes care of all the polyfill magic to make this work accross all
 modern browsers.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
