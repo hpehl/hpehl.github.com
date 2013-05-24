@@ -26,7 +26,6 @@ of an `<input type="date"/>` element:
 
 {% img centered /images/posts/input_type_date_shadow_dom.png %}
 
-
 # V-Card Sample
 If you want to start creating your own Web Components, I strongly recommend to take a look at 
 [Polymer](http://www.polymer-project.org/). It's a framework for developing Web Components today. It fills out missing 
@@ -37,84 +36,14 @@ code shows the host page containing the custom `v-card` element. It expects a fu
 links and a logo. The parameters are wrapped in regular HTML elements. The class names are taken from the 
 [hCard microformat](http://microformats.org/wiki/hcard) and are used later to select the relevant information.
 
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <script src="/path/to/polymer.js"></script>
-    <link rel="import" href="v-card.html">
-</head>
-<body>
-<v-card>
-    <span class="fn">Harald Pehl</span>
-    <span class="position">Senior Software Engineer</span>
-    <a class="url" href="http://hpehl.info">http://hpehl.info</a>
-    <a class="twitter" href="https://twitter.com/haraldpehl">@haraldpehl</a>
-    <a class="gplus" href="https://plus.google.com/u/0/112941298216109713269/">+Harald Pehl</a>
-    <img class="logo" src="http://upload.wikimedia.org/wikipedia/it/archive/c/cb/20120516124751!Red_hat_logo.png"/>
-</v-card>
-</body>
-</html>
-```
+{% include_code Host Page lang:html webcomponents/host.html %}
 
 The `v-card` implementation uses its own CSS styles and markup. Thanks to Shadow DOM they don't conflict with the 
 host page. The data for the business card is pulled from the host page using the `<content>` element and CSS selectors. 
 Finally the call to `Polymer.register(this)` takes care of all the polyfill magic to make this work accross all 
 modern browsers. 
 
-```html
-<element name="v-card">
-    <template>
-        <style>
-            header, h1, h2, ol, li, img {
-                margin: 0;
-                padding: 0;
-            }
-            
-            section {
-                background: #fff;
-                border-radius: 5px;
-                box-shadow: 0 0 4px 2px rgba(0, 0, 0, .5);
-                width: 30rem; height: 15rem;
-                display: flex; align-items: center; justify-content: space-between;
-            }
-            
-            header {
-                background-color: #555;
-                color: white;
-                text-align: right;
-                padding: 1rem 1rem 1rem 2.5rem;
-            }
-            
-            h1, h2 { font-weight: normal; }
-            header h1 { font-size: 1.5rem; }
-            header h2 { font-size: 1rem; }
-            
-            ol { font-size: .8rem; }
-            li { list-style: none; }
-            
-            .logo_container { margin-right: 1rem; }
-        </style>
-        <section>
-            <header>
-                <h1><content select="span.fn"></content></h1>
-                <h2><content select="span.position"></content></h2>
-            </header>
-            <ol>
-                <li><content select="a.url"></content></li>
-                <li><content select="a.twitter"></content></li>
-                <li><content select="a.gplus"></content></li>
-            </ol>
-            <div class="logo_container">
-                <content select="img.logo"></content>
-            </div>
-        </section>
-    </template>
-    <script>
-        Polymer.register(this);
-    </script>
-</element>
-```
+{% include_code Custom Element Implementation lang:html webcomponents/v-card.html %}
 
 Below you can see the `v-card` Web Component in action. Please note that I'm unsing CSS3 flexbox to render the 
 business card. Support for flexbox is somewhat [limited](http://caniuse.com/#feat=flexbox). Chrome should make 
