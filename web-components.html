@@ -144,7 +144,8 @@ code shows the host page containing the custom <code>v-card</code> element. It e
 links and a logo. The parameters are wrapped in regular HTML elements. The class names are taken from the
 <a href="http://microformats.org/wiki/hcard">hCard microformat</a> and are used later to select the relevant information.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>Host Page  (host.html)</span> <a href='/downloads/code/webcomponents/host.html'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -186,7 +187,8 @@ host page. The data for the business card is pulled from the host page using the
 Finally the call to <code>Polymer.register(this)</code> takes care of all the polyfill magic to make this work accross all
 modern browsers.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>Custom Element Implementation  (v-card.html)</span> <a href='/downloads/code/webcomponents/v-card.html'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -237,20 +239,39 @@ modern browsers.</p>
 <span class='line-number'>49</span>
 <span class='line-number'>50</span>
 <span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
 </pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;element</span> <span class="na">name=</span><span class="s">&quot;v-card&quot;</span><span class="nt">&gt;</span>
 </span><span class='line'>    <span class="nt">&lt;template&gt;</span>
 </span><span class='line'>        <span class="nt">&lt;style&gt;</span>
-</span><span class='line'>            <span class="nt">header</span><span class="o">,</span> <span class="nt">h1</span><span class="o">,</span> <span class="nt">h2</span><span class="o">,</span> <span class="nt">ol</span><span class="o">,</span> <span class="nt">li</span><span class="o">,</span> <span class="nt">img</span> <span class="p">{</span>
-</span><span class='line'>                <span class="k">margin</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
-</span><span class='line'>                <span class="k">padding</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
-</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="nt">header</span><span class="o">,</span> <span class="nt">h1</span><span class="o">,</span> <span class="nt">h2</span><span class="o">,</span> <span class="nt">ol</span><span class="o">,</span> <span class="nt">li</span><span class="o">,</span> <span class="nt">img</span> <span class="p">{</span>  <span class="k">margin</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span> <span class="k">padding</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>            <span class="nt">h1</span><span class="o">,</span> <span class="nt">h2</span> <span class="p">{</span> <span class="k">font-weight</span><span class="o">:</span> <span class="k">normal</span><span class="p">;</span> <span class="p">}</span>
 </span><span class='line'>
 </span><span class='line'>            <span class="nt">section</span> <span class="p">{</span>
 </span><span class='line'>                <span class="k">background</span><span class="o">:</span> <span class="m">#fff</span><span class="p">;</span>
 </span><span class='line'>                <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">5px</span><span class="p">;</span>
 </span><span class='line'>                <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="m">0</span> <span class="m">0</span> <span class="m">4px</span> <span class="m">2px</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="o">.</span><span class="m">5</span><span class="p">);</span>
-</span><span class='line'>                <span class="k">width</span><span class="o">:</span> <span class="m">30</span><span class="n">rem</span><span class="p">;</span> <span class="k">height</span><span class="o">:</span> <span class="m">15</span><span class="n">rem</span><span class="p">;</span>
-</span><span class='line'>                <span class="k">display</span><span class="o">:</span> <span class="n">flex</span><span class="p">;</span> <span class="n">align</span><span class="o">-</span><span class="n">items</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span> <span class="k">justify</span><span class="o">-</span><span class="k">content</span><span class="o">:</span> <span class="n">space</span><span class="o">-</span><span class="n">between</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">width</span><span class="o">:</span> <span class="m">30</span><span class="n">rem</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">height</span><span class="o">:</span> <span class="m">15</span><span class="n">rem</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="k">display</span><span class="o">:</span> <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">flex</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">display</span><span class="o">:</span> <span class="n">flex</span><span class="p">;</span>
+</span><span class='line'>                <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">align</span><span class="o">-</span><span class="n">items</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>
+</span><span class='line'>                <span class="n">align</span><span class="o">-</span><span class="n">items</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>
+</span><span class='line'>                <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="k">justify</span><span class="o">-</span><span class="k">content</span><span class="o">:</span> <span class="n">space</span><span class="o">-</span><span class="n">between</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">justify</span><span class="o">-</span><span class="k">content</span><span class="o">:</span> <span class="n">space</span><span class="o">-</span><span class="n">between</span><span class="p">;</span>
 </span><span class='line'>            <span class="p">}</span>
 </span><span class='line'>
 </span><span class='line'>            <span class="nt">header</span> <span class="p">{</span>
@@ -260,7 +281,6 @@ modern browsers.</p>
 </span><span class='line'>                <span class="k">padding</span><span class="o">:</span> <span class="m">1</span><span class="n">rem</span> <span class="m">1</span><span class="n">rem</span> <span class="m">1</span><span class="n">rem</span> <span class="m">2</span><span class="o">.</span><span class="m">5</span><span class="n">rem</span><span class="p">;</span>
 </span><span class='line'>            <span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'>            <span class="nt">h1</span><span class="o">,</span> <span class="nt">h2</span> <span class="p">{</span> <span class="k">font-weight</span><span class="o">:</span> <span class="k">normal</span><span class="p">;</span> <span class="p">}</span>
 </span><span class='line'>            <span class="nt">header</span> <span class="nt">h1</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span> <span class="m">1</span><span class="o">.</span><span class="m">5</span><span class="n">rem</span><span class="p">;</span> <span class="p">}</span>
 </span><span class='line'>            <span class="nt">header</span> <span class="nt">h2</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span> <span class="m">1</span><span class="n">rem</span><span class="p">;</span> <span class="p">}</span>
 </span><span class='line'>
@@ -271,13 +291,23 @@ modern browsers.</p>
 </span><span class='line'>        <span class="nt">&lt;/style&gt;</span>
 </span><span class='line'>        <span class="nt">&lt;section&gt;</span>
 </span><span class='line'>            <span class="nt">&lt;header&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;h1&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;span.fn&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/h1&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;h2&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;span.position&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/h2&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;h1&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;span.fn&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/h1&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;h2&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;span.position&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/h2&gt;</span>
 </span><span class='line'>            <span class="nt">&lt;/header&gt;</span>
 </span><span class='line'>            <span class="nt">&lt;ol&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;li&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.url&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/li&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;li&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.twitter&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/li&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;li&gt;&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.gplus&quot;</span><span class="nt">&gt;&lt;/content&gt;&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.url&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.twitter&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.gplus&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
 </span><span class='line'>            <span class="nt">&lt;/ol&gt;</span>
 </span><span class='line'>            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;logo_container&quot;</span><span class="nt">&gt;</span>
 </span><span class='line'>                <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;img.logo&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
@@ -300,7 +330,7 @@ will most likely have problems rendering the business card. If that&#8217;s the 
 <script src="/javascripts/polymer.min.js" type="text/javascript"></script>
 
 
-<p><link rel="import" href="assets/v-card.html"></p>
+<p><link rel="import" href="/downloads/code/webcomponents/v-card.html"></p>
 
 <p><v-card>
   <span class="fn" style="color: inherit">Harald Pehl</span>

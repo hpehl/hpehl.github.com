@@ -4,7 +4,7 @@
   <title><![CDATA[Category: web | Harald Pehl]]></title>
   <link href="http://hpehl.info/blog/categories/web/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-05-24T10:29:08+02:00</updated>
+  <updated>2013-05-24T15:02:45+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -53,93 +53,180 @@ code shows the host page containing the custom <code>v-card</code> element. It e
 links and a logo. The parameters are wrapped in regular HTML elements. The class names are taken from the
 <a href="http://microformats.org/wiki/hcard">hCard microformat</a> and are used later to select the relevant information.</p>
 
-<p>```html
-&lt;!DOCTYPE html>
-<html>
-<head></p>
-
-<pre><code>&lt;script src="http://hpehl.info/path/to/polymer.js"&gt;&lt;/script&gt;
-&lt;link rel="import" href="v-card.html"&gt;
-</code></pre>
-
-<p></head>
-<body>
-<v-card></p>
-
-<pre><code>&lt;span class="fn"&gt;Harald Pehl&lt;/span&gt;
-&lt;span class="position"&gt;Senior Software Engineer&lt;/span&gt;
-&lt;a class="url" href="http://hpehl.info"&gt;http://hpehl.info&lt;/a&gt;
-&lt;a class="twitter" href="https://twitter.com/haraldpehl"&gt;@haraldpehl&lt;/a&gt;
-&lt;a class="gplus" href="https://plus.google.com/u/0/112941298216109713269/"&gt;+Harald Pehl&lt;/a&gt;
-&lt;img class="logo" src="http://upload.wikimedia.org/wikipedia/it/archive/c/cb/20120516124751!Red_hat_logo.png"/&gt;
-</code></pre>
-
-<p></v-card>
-</body>
-</html>
-```</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Host Page  (host.html)</span> <a href='/downloads/code/webcomponents/host.html'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="cp">&lt;!DOCTYPE html&gt;</span>
+</span><span class='line'><span class="nt">&lt;html&gt;</span>
+</span><span class='line'><span class="nt">&lt;head&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/path/to/polymer.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;import&quot;</span> <span class="na">href=</span><span class="s">&quot;v-card.html&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;/head&gt;</span>
+</span><span class='line'><span class="nt">&lt;body&gt;</span>
+</span><span class='line'><span class="nt">&lt;v</span><span class="na">-card</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;fn&quot;</span><span class="nt">&gt;</span>Harald Pehl<span class="nt">&lt;/span&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;position&quot;</span><span class="nt">&gt;</span>Senior Software Engineer<span class="nt">&lt;/span&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">&quot;url&quot;</span> <span class="na">href=</span><span class="s">&quot;http://hpehl.info&quot;</span><span class="nt">&gt;</span>http://hpehl.info<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">&quot;twitter&quot;</span> <span class="na">href=</span><span class="s">&quot;https://twitter.com/haraldpehl&quot;</span><span class="nt">&gt;</span>@haraldpehl<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">&quot;gplus&quot;</span> <span class="na">href=</span><span class="s">&quot;https://plus.google.com/u/0/112941298216109713269/&quot;</span><span class="nt">&gt;</span>+Harald Pehl<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">&quot;logo&quot;</span> <span class="na">src=</span><span class="s">&quot;http://upload.wikimedia.org/wikipedia/it/archive/c/cb/20120516124751!Red_hat_logo.png&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'><span class="err">&lt;</span>/v-card&gt;
+</span><span class='line'><span class="nt">&lt;/body&gt;</span>
+</span><span class='line'><span class="nt">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>The <code>v-card</code> implementation uses its own CSS styles and markup. Thanks to Shadow DOM they don't conflict with the
 host page. The data for the business card is pulled from the host page using the <code>&lt;content&gt;</code> element and CSS selectors.
 Finally the call to <code>Polymer.register(this)</code> takes care of all the polyfill magic to make this work accross all
 modern browsers.</p>
 
-<p>```html
-<element name="v-card"></p>
-
-<pre><code>&lt;template&gt;
-    &lt;style&gt;
-        header, h1, h2, ol, li, img {
-            margin: 0;
-            padding: 0;
-        }
-
-        section {
-            background: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 4px 2px rgba(0, 0, 0, .5);
-            width: 30rem; height: 15rem;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-
-        header {
-            background-color: #555;
-            color: white;
-            text-align: right;
-            padding: 1rem 1rem 1rem 2.5rem;
-        }
-
-        h1, h2 { font-weight: normal; }
-        header h1 { font-size: 1.5rem; }
-        header h2 { font-size: 1rem; }
-
-        ol { font-size: .8rem; }
-        li { list-style: none; }
-
-        .logo_container { margin-right: 1rem; }
-    &lt;/style&gt;
-    &lt;section&gt;
-        &lt;header&gt;
-            &lt;h1&gt;&lt;content select="span.fn"&gt;&lt;/content&gt;&lt;/h1&gt;
-            &lt;h2&gt;&lt;content select="span.position"&gt;&lt;/content&gt;&lt;/h2&gt;
-        &lt;/header&gt;
-        &lt;ol&gt;
-            &lt;li&gt;&lt;content select="a.url"&gt;&lt;/content&gt;&lt;/li&gt;
-            &lt;li&gt;&lt;content select="a.twitter"&gt;&lt;/content&gt;&lt;/li&gt;
-            &lt;li&gt;&lt;content select="a.gplus"&gt;&lt;/content&gt;&lt;/li&gt;
-        &lt;/ol&gt;
-        &lt;div class="logo_container"&gt;
-            &lt;content select="img.logo"&gt;&lt;/content&gt;
-        &lt;/div&gt;
-    &lt;/section&gt;
-&lt;/template&gt;
-&lt;script&gt;
-    Polymer.register(this);
-&lt;/script&gt;
-</code></pre>
-
-<p></element>
-```</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Custom Element Implementation  (v-card.html)</span> <a href='/downloads/code/webcomponents/v-card.html'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;element</span> <span class="na">name=</span><span class="s">&quot;v-card&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;template&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;style&gt;</span>
+</span><span class='line'>            <span class="nt">header</span><span class="o">,</span> <span class="nt">h1</span><span class="o">,</span> <span class="nt">h2</span><span class="o">,</span> <span class="nt">ol</span><span class="o">,</span> <span class="nt">li</span><span class="o">,</span> <span class="nt">img</span> <span class="p">{</span>  <span class="k">margin</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span> <span class="k">padding</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>            <span class="nt">h1</span><span class="o">,</span> <span class="nt">h2</span> <span class="p">{</span> <span class="k">font-weight</span><span class="o">:</span> <span class="k">normal</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nt">section</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">background</span><span class="o">:</span> <span class="m">#fff</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">5px</span><span class="p">;</span>
+</span><span class='line'>                <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="m">0</span> <span class="m">0</span> <span class="m">4px</span> <span class="m">2px</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="o">.</span><span class="m">5</span><span class="p">);</span>
+</span><span class='line'>                <span class="k">width</span><span class="o">:</span> <span class="m">30</span><span class="n">rem</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">height</span><span class="o">:</span> <span class="m">15</span><span class="n">rem</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="k">display</span><span class="o">:</span> <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">flex</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">display</span><span class="o">:</span> <span class="n">flex</span><span class="p">;</span>
+</span><span class='line'>                <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">align</span><span class="o">-</span><span class="n">items</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>
+</span><span class='line'>                <span class="n">align</span><span class="o">-</span><span class="n">items</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>
+</span><span class='line'>                <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="k">justify</span><span class="o">-</span><span class="k">content</span><span class="o">:</span> <span class="n">space</span><span class="o">-</span><span class="n">between</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">justify</span><span class="o">-</span><span class="k">content</span><span class="o">:</span> <span class="n">space</span><span class="o">-</span><span class="n">between</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nt">header</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">background-color</span><span class="o">:</span> <span class="m">#555</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">color</span><span class="o">:</span> <span class="nb">white</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">text-align</span><span class="o">:</span> <span class="k">right</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">padding</span><span class="o">:</span> <span class="m">1</span><span class="n">rem</span> <span class="m">1</span><span class="n">rem</span> <span class="m">1</span><span class="n">rem</span> <span class="m">2</span><span class="o">.</span><span class="m">5</span><span class="n">rem</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nt">header</span> <span class="nt">h1</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span> <span class="m">1</span><span class="o">.</span><span class="m">5</span><span class="n">rem</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>            <span class="nt">header</span> <span class="nt">h2</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span> <span class="m">1</span><span class="n">rem</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nt">ol</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span> <span class="o">.</span><span class="m">8</span><span class="n">rem</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>            <span class="nt">li</span> <span class="p">{</span> <span class="k">list-style</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nc">.logo_container</span> <span class="p">{</span> <span class="k">margin-right</span><span class="o">:</span> <span class="m">1</span><span class="n">rem</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>        <span class="nt">&lt;/style&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;section&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;header&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;h1&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;span.fn&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/h1&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;h2&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;span.position&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/h2&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/header&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;ol&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.url&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.twitter&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;li&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;a.gplus&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/ol&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;logo_container&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;content</span> <span class="na">select=</span><span class="s">&quot;img.logo&quot;</span><span class="nt">&gt;&lt;/content&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/template&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;script&gt;</span>
+</span><span class='line'>        <span class="nx">Polymer</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span><span class='line'>    <span class="nt">&lt;/script&gt;</span>
+</span><span class='line'><span class="nt">&lt;/element&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>Below you can see the <code>v-card</code> Web Component in action. Please note that I'm unsing CSS3 flexbox to render the
 business card. Support for flexbox is somewhat <a href="http://caniuse.com/#feat=flexbox">limited</a>. Chrome should make
@@ -148,7 +235,7 @@ will most likely have problems rendering the business card. If that's the case h
 <a href="/images/posts/v-card_reference.png">reference representation</a>.</p>
 
 <p><script src="/javascripts/polymer.min.js" type="text/javascript"></script>
-<link rel="import" href="assets/v-card.html">
+<link rel="import" href="/downloads/code/webcomponents/v-card.html">
 
 <v-card>
   <span class="fn" style="color: inherit">Harald Pehl</span>
