@@ -16,7 +16,7 @@ Components are
 - [Custom Elements](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html)
 - [HTML Imports](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/imports/index.html)
 
-If you think this is a long way of and available in a few years, then you're complete wrong! You can use Web Components 
+If you think this is a long way of and available in a few years, then you're completely wrong! You can use Web Components 
 today. And they are already used by the browser vendors under the hood. 
 This [article](http://glazkov.com/2011/01/14/what-the-heck-is-shadow-dom/) from 
 [Dimitri Glazkov](http://glazkov.com/about/) opened my eyes. Many of the new HTML5 elements like 
@@ -33,8 +33,8 @@ If you want to start creating your own Web Components, I strongly recommend to t
 browser implementation with so called polyfills. 
 
 Let's jump into Web Component development and build a `v-card` element which renders a business card. The following 
-code shows the host page containing the custom element. The `v-card` element expects a fullname, a title, several 
-links and a logo. The data is wrapped into regular HTML elements. The class names are taken from the 
+code shows the host page containing the custom `v-card` element. It expects a fullname, a title, several 
+links and a logo. The parameters are wrapped in regular HTML elements. The class names are taken from the 
 [hCard microformat](http://microformats.org/wiki/hcard) and are used later to select the relevant information.
 
 ```html
@@ -59,7 +59,7 @@ links and a logo. The data is wrapped into regular HTML elements. The class name
 
 The `v-card` implementation uses its own CSS styles and markup. Thanks to Shadow DOM they don't conflict with the 
 host page. The data for the business card is pulled from the host page using the `<content>` element and CSS selectors. 
-Finally the call to `Polymer.register(this);` takes care of all the polyfill magic to make this work accross all 
+Finally the call to `Polymer.register(this)` takes care of all the polyfill magic to make this work accross all 
 modern browsers. 
 
 ```html
