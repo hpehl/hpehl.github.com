@@ -32,11 +32,13 @@ article {
       background: $img-border bottom left repeat-x;
     }
   }
-  h2 {
-    padding-top: 0.8em;
-    background: $img-border top left repeat-x;
+  .entry-content {
+    h1, h2 {
+      padding-top: 0.8em;
+      margin-bottom: .5em;
+    }
   }
-  .entry-content & h2:first-child, header + h2 { padding-top: 0; }
+  .entry-content & h1:first-child, .entry-content & h2:first-child, header + h2 { padding-top: 0; }
   h2:first-child, header + h2 { background: none; }
   .feature {
     padding-top: .5em;
