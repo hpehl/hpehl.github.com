@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>HTTP Caching - Harald Pehl</title>
+  <meta name="author" content="Harald Pehl">
+
+  
+  <meta name="description" content="HTTP Caching 27May2013 I recently implemented caching for distinct operations of the
+HTTP management API in
+WildFly. As a preparation I did some &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://hpehl.info/http-caching.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/font-awesome.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href='http://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
+  <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js" type="text/javascript"></script>
+  <script src="/javascripts/ender.js" type="text/javascript"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Harald Pehl" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-40396539-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body>
+  <header>
+    <hgroup>
+        <h1><a href="/">Harald Pehl</a></h1>
+        
+        <h2>Developer notes written down before they get lost.</h2>
+        
+    </hgroup>
+    <div id="menu">
+        <nav role="navigation">
+    <ul class="main-navigation">
+        <li><a href="/">Blog</a></li>
+        <li><a href="/blog/archives">Archives</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/about">About</a></li>
+    </ul>
+</nav>
+<!--
+    
+    <form action="http://google.com/search" method="get">
+        <fieldset role="search">
+            <input type="hidden" name="q" value="site:hpehl.info" />
+            <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+        </fieldset>
+    </form>
+    
+-->
+
+    </div>
+</header>
+
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">HTTP Caching
+
+
+
+
+
+
+
+
+
+
+
+  
+    <time datetime="2013-05-27T21:14:00+02:00" pubdate class="date"><span class="day">27</span><span class="month">May</span><span class="year">2013</span></time>
+
+
+</h1>
+      
+    
+  </header>
+
+
+  <div class="entry-content"><p>I recently implemented caching for distinct operations of the
+<a href="https://docs.jboss.org/author/display/WFLY8/The+HTTP+management+API">HTTP management API</a> in
+<a href="http://www.wildfly.org/">WildFly</a>. As a preparation I did some research on HTTP caching and how it&#8217;s best
+implemented on the server side. A really good introduction is the
+<a href="http://www.mnot.net/cache_docs/">caching tutorial</a> by Mark Nottingham. I&#8217;ll discuss the key points in this
+blog post.<!-- more --></p>
+
+<h1>Terminology</h1>
+
+<p>A cache sits between one or more servers (also known as <em>origin</em> servers) and a client watching requests and saving
+responses (also known as <em>representations</em>). There are different kind of caches:</p>
+
+<ul>
+<li>browser caches</li>
+<li>proxy cahces</li>
+<li>gateway caches</li>
+</ul>
+
+
+<p>The cache I want to look at in more detail is the browser cache. Every browser uses a section of your hard disk
+to store representations that you&#8217;ve seen. The browser will check to make sure that the representations are fresh,
+usually once a session (that is, the once in the current invocation of the browser).</p>
+
+<h1>Rules for Caching</h1>
+
+<p>There are certain rules used to decide when to serve a representation from the cache.</p>
+
+<ol>
+<li>If the response’s headers tell the cache not to keep it, it won’t.</li>
+<li><p>A cached representation is considered fresh (that is, able to be sent to a client without checking with the origin server) if:</p>
+
+<ul>
+<li>It has an expiry time or other age-controlling header set, and is still within the fresh period, or</li>
+<li>If the cache has seen the representation recently, and it was modified relatively long ago.</li>
+</ul>
+
+
+<p> Fresh representations are served directly from the cache, without checking with the origin server.</p></li>
+<li>If a representation is stale, the origin server will be asked to validate it, or tell the cache whether the copy that it has is still good.</li>
+<li>Under certain circumstances — for example, when it’s disconnected from a network — a cache can serve stale responses without checking with the origin server.</li>
+</ol>
+
+
+<p>There are two key players when it comes to apply these rules: <em>freshness</em> and <em>validation</em>. A fresh representation will
+be available instantly from the cache, while a validated representation will avoid sending the entire representation
+over again if it hasn’t changed.</p>
+
+<h1>Freshness</h1>
+
+<p>Freshness of a resource can be controlled using various HTTP <em>response</em> headers.</p>
+
+<ul>
+<li><p><code>Pragma</code> &mdash; The HTTP sepcification does not set any guidelines for <code>Pragma</code> response headers; instead it
+discusses <code>Pragma</code> <em>request</em> headers. Using this header will most likely have no effect and the recommendation is to
+use the headers below.</p></li>
+<li><p><code>Expires</code> &mdash; Using the <code>Expires</code> header you can tell a cache how long the representation will be fresh. After
+that time, caches will always check back with the origin server to see if a representation has changed. The only value
+valid in an <code>Expires</code> header is a <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1">HTTP date</a> which is
+based by definition on GMT.</p>
+
+<p>  Because the <code>Expires</code> header includes an absolute date and time, the clocks on the origin server and the cache must
+be in sync. If they have a different idea of the time, caches might consider stale representations as fresh. This is
+the reason you&#8217;re better off using the <code>Cache-Control</code> header.</p></li>
+<li><p><code>Cache-Control</code> &mdash; Starting with HTTP 1.1 you can use the <code>Cache-Control</code> header to manage caching. The header
+uses many different parameters. I will discuss the most common (see the
+<a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9">HTTP secification</a> for a complete list of parameters):</p>
+
+<ul>
+<li><code>max-age=[seconds]</code> &mdash; specifies the maximum amount of time that a representation will be considered fresh.
+[seconds] is the number of seconds from the time of the request you wish the representation to be fresh for.</li>
+<li><code>no-cache</code> &mdash; forces caches to submit the request to the origin server for validation before releasing a
+cached copy, every time. This is useful to maintain rigid freshness, without sacrificing all of the benefits of
+caching.</li>
+</ul>
+</li>
+</ul>
+
+
+<p>When both <code>Cache-Control</code> and <code>Expires</code> are present, <code>Cache-Control</code> takes precedence. Whenever possible, I recommend
+to use <code>Cache-Control</code>.</p>
+
+<h1>Validation</h1>
+
+<p>Validation is used by the cache to check if a representation has changed. By using it, caches avoid having to download
+the entire representation when they already have a copy locally, but they’re not sure if it’s still fresh. Validators
+are very important; if one isn’t present, and there isn’t any freshness information (<code>Expires</code> or <code>Cache-Control</code>)
+available, caches will not store a representation at all.</p>
+
+<p>Basically there are two response headers for validating representations:</p>
+
+<ul>
+<li><p><code>Last-Modified</code> &mdash; A <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1">HTTP date</a> stating the
+last modification date of the representation. When a cache has a representation stored that includes a <code>Last-Modified</code>
+header, it can use it to ask the server if the representation has changed since the last time it was seen, with an
+<code>If-Modified-Since</code> request.</p></li>
+<li><p><code>ETag</code> &mdash; An unique identified for the representation. Something kind of hashcode. The ETag must change every
+time the representation does. The cache can ask the server using a <code>If-None-Match</code> header whether the representation
+has changed.</p></li>
+</ul>
+
+
+<p>If the representation did not change the origin server should respond with an empty 304 - not modified response.</p>
+
+<h1>References</h1>
+
+<p>All headers, parameters and rules for HTTP caching are described in great detail in an own chapter of
+the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html">HTTP specification</a>. If you plan to implement HTTP caching
+in one way or another it&#8217;s a very useful reference.</p>
+</div>
+
+
+  <footer class="line">
+    <p class="meta">
+      <span>
+        
+
+<i title="Categories" class="categories icon-large icon-tags">
+  
+    <a class='category' href='/blog/categories/cache/'>cache</a>, <a class='category' href='/blog/categories/http/'>http</a>
+  
+</i>
+
+
+        
+          <a class="sharing tweet" title="Share on Twitter" href="http://twitter.com/share?url=http://hpehl.info/http-caching.html"><i class="icon-large icon-twitter"></i></a>
+<a class="sharing gplus" title="Share on Google+" href="https://plus.google.com/share?url=http://hpehl.info/http-caching.html"><i class="icon-large icon-google-plus-sign"></i></a>
+<a class="sharing facebook" title="Share on Facebook" href="http://www.facebook.com/sharer.php?u=http://hpehl.info/http-caching.html"><i class="icon-large icon-facebook"></i></a>
+
+        
+      </span>
+      <span>
+        
+          <a class="articlenav" href="/web-components.html" title="Previous Post: Web Components">&larr; Web Components</a>
+        
+        
+      </span>
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    Copyright &copy; 2013 - Harald Pehl - <a href="/disclaimer">Disclaimer</a>
+    <span class="basic-alignment right">
+        <a class="rss" href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS"><i class="icon-large icon-rss"></i></a>
+    </span>
+</p>
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'hpehl';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://hpehl.info/http-caching.html';
+        var disqus_url = 'http://hpehl.info/http-caching.html';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<script>
+    $('a[class*=facebook]').on('click', function(e) {
+        e.preventDefault();
+        var width  = 575,
+                height = 400,
+                left   = window.screenLeft + (window.innerWidth - width) / 2,
+                top    = window.screenTop + (window.innerHeight - height) / 2,
+                url    = this.href,
+                opts   = 'status=1' +
+                        ',width='  + width  +
+                        ',height=' + height +
+                        ',top='    + top    +
+                        ',left='   + left;
+        window.open(url, 'twitter', opts);
+    });
+</script>
+
+
+
+  <script type="text/javascript">
+      $('a[class*=gplus]').on('click', function(e) {
+          e.preventDefault();
+          var width  = 650,
+                  height = 300,
+                  left   = window.screenLeft + (window.innerWidth - width) / 2,
+                  top    = window.screenTop + (window.innerHeight - height) / 2,
+                  url    = this.href,
+                  opts   = 'status=1' +
+                          ',width='  + width  +
+                          ',height=' + height +
+                          ',top='    + top    +
+                          ',left='   + left;
+          window.open(url, 'twitter', opts);
+      });
+  </script>
+
+
+
+<script>
+    $('a[class*=tweet]').on('click', function(e) {
+        e.preventDefault();
+        var width  = 575,
+            height = 400,
+            left   = window.screenLeft + (window.innerWidth - width) / 2,
+            top    = window.screenTop + (window.innerHeight - height) / 2,
+            url    = this.href,
+            opts   = 'status=1' +
+                    ',width='  + width  +
+                    ',height=' + height +
+                    ',top='    + top    +
+                    ',left='   + left;
+        window.open(url, 'twitter', opts);
+    });
+</script>
+
+
+
+</body>
+</html>

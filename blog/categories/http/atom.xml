@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: http | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/http/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-05-28T00:22:22+02:00</updated>
+  <id>http://hpehl.info/</id>
+  <author>
+    <name><![CDATA[Harald Pehl]]></name>
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[HTTP Caching]]></title>
+    <link href="http://hpehl.info/http-caching.html"/>
+    <updated>2013-05-27T21:14:00+02:00</updated>
+    <id>http://hpehl.info/http-caching</id>
+    <content type="html"><![CDATA[<p>I recently implemented caching for distinct operations of the
+<a href="https://docs.jboss.org/author/display/WFLY8/The+HTTP+management+API">HTTP management API</a> in
+<a href="http://www.wildfly.org/">WildFly</a>. As a preparation I did some research on HTTP caching and how it's best
+implemented on the server side. A really good introduction is the
+<a href="http://www.mnot.net/cache_docs/">caching tutorial</a> by Mark Nottingham. I'll discuss the key points in this
+blog post.<!-- more --></p>
+
+<h1>Terminology</h1>
+
+<p>A cache sits between one or more servers (also known as <em>origin</em> servers) and a client watching requests and saving
+responses (also known as <em>representations</em>). There are different kind of caches:</p>
+
+<ul>
+<li>browser caches</li>
+<li>proxy cahces</li>
+<li>gateway caches</li>
+</ul>
+
+
+<p>The cache I want to look at in more detail is the browser cache. Every browser uses a section of your hard disk
+to store representations that you've seen. The browser will check to make sure that the representations are fresh,
+usually once a session (that is, the once in the current invocation of the browser).</p>
+
+<h1>Rules for Caching</h1>
+
+<p>There are certain rules used to decide when to serve a representation from the cache.</p>
+
+<ol>
+<li>If the response’s headers tell the cache not to keep it, it won’t.</li>
+<li><p>A cached representation is considered fresh (that is, able to be sent to a client without checking with the origin server) if:</p>
+
+<ul>
+<li>It has an expiry time or other age-controlling header set, and is still within the fresh period, or</li>
+<li>If the cache has seen the representation recently, and it was modified relatively long ago.</li>
+</ul>
+
+
+<p> Fresh representations are served directly from the cache, without checking with the origin server.</p></li>
+<li>If a representation is stale, the origin server will be asked to validate it, or tell the cache whether the copy that it has is still good.</li>
+<li>Under certain circumstances — for example, when it’s disconnected from a network — a cache can serve stale responses without checking with the origin server.</li>
+</ol>
+
+
+<p>There are two key players when it comes to apply these rules: <em>freshness</em> and <em>validation</em>. A fresh representation will
+be available instantly from the cache, while a validated representation will avoid sending the entire representation
+over again if it hasn’t changed.</p>
+
+<h1>Freshness</h1>
+
+<p>Freshness of a resource can be controlled using various HTTP <em>response</em> headers.</p>
+
+<ul>
+<li><p><code>Pragma</code> &mdash; The HTTP sepcification does not set any guidelines for <code>Pragma</code> response headers; instead it
+discusses <code>Pragma</code> <em>request</em> headers. Using this header will most likely have no effect and the recommendation is to
+use the headers below.</p></li>
+<li><p><code>Expires</code> &mdash; Using the <code>Expires</code> header you can tell a cache how long the representation will be fresh. After
+that time, caches will always check back with the origin server to see if a representation has changed. The only value
+valid in an <code>Expires</code> header is a <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1">HTTP date</a> which is
+based by definition on GMT.</p>
+
+<p>  Because the <code>Expires</code> header includes an absolute date and time, the clocks on the origin server and the cache must
+be in sync. If they have a different idea of the time, caches might consider stale representations as fresh. This is
+the reason you're better off using the <code>Cache-Control</code> header.</p></li>
+<li><p><code>Cache-Control</code> &mdash; Starting with HTTP 1.1 you can use the <code>Cache-Control</code> header to manage caching. The header
+uses many different parameters. I will discuss the most common (see the
+<a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9">HTTP secification</a> for a complete list of parameters):</p>
+
+<ul>
+<li><code>max-age=[seconds]</code> &mdash; specifies the maximum amount of time that a representation will be considered fresh.
+[seconds] is the number of seconds from the time of the request you wish the representation to be fresh for.</li>
+<li><code>no-cache</code> &mdash; forces caches to submit the request to the origin server for validation before releasing a
+cached copy, every time. This is useful to maintain rigid freshness, without sacrificing all of the benefits of
+caching.</li>
+</ul>
+</li>
+</ul>
+
+
+<p>When both <code>Cache-Control</code> and <code>Expires</code> are present, <code>Cache-Control</code> takes precedence. Whenever possible, I recommend
+to use <code>Cache-Control</code>.</p>
+
+<h1>Validation</h1>
+
+<p>Validation is used by the cache to check if a representation has changed. By using it, caches avoid having to download
+the entire representation when they already have a copy locally, but they’re not sure if it’s still fresh. Validators
+are very important; if one isn’t present, and there isn’t any freshness information (<code>Expires</code> or <code>Cache-Control</code>)
+available, caches will not store a representation at all.</p>
+
+<p>Basically there are two response headers for validating representations:</p>
+
+<ul>
+<li><p><code>Last-Modified</code> &mdash; A <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1">HTTP date</a> stating the
+last modification date of the representation. When a cache has a representation stored that includes a <code>Last-Modified</code>
+header, it can use it to ask the server if the representation has changed since the last time it was seen, with an
+<code>If-Modified-Since</code> request.</p></li>
+<li><p><code>ETag</code> &mdash; An unique identified for the representation. Something kind of hashcode. The ETag must change every
+time the representation does. The cache can ask the server using a <code>If-None-Match</code> header whether the representation
+has changed.</p></li>
+</ul>
+
+
+<p>If the representation did not change the origin server should respond with an empty 304 - not modified response.</p>
+
+<h1>References</h1>
+
+<p>All headers, parameters and rules for HTTP caching are described in great detail in an own chapter of
+the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html">HTTP specification</a>. If you plan to implement HTTP caching
+in one way or another it's a very useful reference.</p>
+]]></content>
+  </entry>
+  
+</feed>

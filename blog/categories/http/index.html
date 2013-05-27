@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Harald Pehl</title>
+  <title>Category: http - Harald Pehl</title>
   <meta name="author" content="Harald Pehl">
 
   
-  <meta name="description" content="In an earlier post I described how to configure resources with Google Guice.
-I decided to move the relevant code to a small library called &#8220; &hellip;">
+  <meta name="description" content="Category: http">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@ I decided to move the relevant code to a small library called &#8220; &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://hpehl.info/blog/page/3/index.html">
+  <link rel="canonical" href="http://hpehl.infoblog/categories/http/index.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/font-awesome.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -80,175 +79,39 @@ I decided to move the relevant code to a small library called &#8220; &hellip;">
 
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article role="article">
   
-  
-  
-    <article>
-      
   <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        
-        <h1 class="entry-title"><a href="/restlet-and-google-guice.html">Restlet and Google Guice</a>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <time datetime="2010-02-15T17:33:00+01:00" pubdate class="date"><span class="day">15</span><span class="month">Feb</span><span class="year">2010</span></time>
-
-
-</h1>
-      
+    <h1 class="entry-title">Category: Http</h1>
     
   </header>
-
-
-  <div class="entry-content"><p>In an earlier <a href="/google-appengine-restlet-guice.html">post</a> I described how to configure resources with Google Guice.
-I decided to move the relevant code to a small library called &#8220;Taoki&#8221; (Maori for &#8220;rest&#8221;).</p>
-
-<p>Besides the features described in the initial post, I added the possibility to configure security for resources.
-The details will be described in a separated post.</p>
-
-<p>For those interested, take a look at <a href="https://github.com/hpehl/taoki">https://github.com/hpehl/taoki</a></p>
-</div>
-
-
-    </article>
   
+  <div id="blog-archives" class="category">
+
+
+
   
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
+  <h2>2013</h2>
+
+<article>
+  
         
-        <h1 class="entry-title"><a href="/xml-mapper-for-gwt.html">XML Mapper for GWT<span class="readon" title="More...">&rarr;</span></a>
+<h1><a href="/http-caching.html">HTTP Caching</a></h1>
+<time datetime="2013-05-27T21:14:00+02:00" pubdate><span class='month'>May</span> <span class='day'>27</span> <span class='year'>2013</span></time>
+
+<footer>
+  <span class="categories">posted in <a class='category' href='/blog/categories/cache/'>cache</a>, <a class='category' href='/blog/categories/http/'>http</a></span>
+</footer>
 
 
-
-
-
-
-
-
-
-
-
-  
-    <time datetime="2010-01-14T17:41:00+01:00" pubdate class="date"><span class="day">14</span><span class="month">Jan</span><span class="year">2010</span></time>
-
-
-</h1>
-      
-    
-  </header>
-
-
-  <div class="entry-content"><p>I&#8217;m a big fan of RESTful architectures. When using REST resources with XML representations in combination with GWT
-you have to parse the XML and map it to the model used in the GWT client. The code therefore is tedious and
-error-prone. So I decided to start a little framework called &#8220;piriti&#8221; (Maori for bridge). It is hosted on goolge code
-under <a href="https://github.com/hpehl/piriti">https://github.com/hpehl/piriti</a>. The basic idea behind piriti is to use annotations on your model and generate
-the parsing / mapping code with the help of deferred binding.</div>
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        
-        <h1 class="entry-title"><a href="/google-appengine-restlet-security.html">Google AppEngine, Restlet & Security<span class="readon" title="More...">&rarr;</span></a>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <time datetime="2009-11-24T17:06:00+01:00" pubdate class="date"><span class="day">24</span><span class="month">Nov</span><span class="year">2009</span></time>
-
-
-</h1>
-      
-    
-  </header>
-
-
-  <div class="entry-content"><p>I was wondering how to secure the resources in my current application. The application is deployed on the Google
-AppEngine and uses <a href="https://code.google.com/p/google-guice/">Guice 2.0</a> and <a href="http://www.restlet.org">Restlet 2.0</a>.
-Inspired by the post from <a href="http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/">David M. Chandler</a> I
-decided to use the AppEngine cookie named &#8220;ACSID&#8221; as a token in each and every url to secure my resources. This way
-the url to the &#8220;projects&#8221; resource becomes http://karaka-d8.appspot.com/rest/v1/&lt;ACSID>/projects.</div>
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        
-        <h1 class="entry-title"><a href="/google-appengine-restlet-guice.html">Google AppEngine, Restlet & Guice<span class="readon" title="More...">&rarr;</span></a>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <time datetime="2009-11-09T13:26:00+01:00" pubdate class="date"><span class="day">09</span><span class="month">Nov</span><span class="year">2009</span></time>
-
-
-</h1>
-      
-    
-  </header>
-
-
-  <div class="entry-content"><p>Currently I&#8217;m developing an application for time recording called Karaka. Karaka is deloyed on the Google AppEngine for
-Java (GAE/J) and uses inter alia the following stack:</p>
-
-<ul>
-<li><a href="http://code.google.com/p/google-guice/">Guice 2.0</a></li>
-<li><a href="http://www.restlet.org">Restlet 2.0</a></li>
-</ul>
-
+</article>
 
 </div>
 
-
-    </article>
   
-  <div class="pagination">
-    
-    
-    <a class="basic-alignment right" href="/blog/page/2/">Newer &rarr;</a>
-    
-  </div>
+</article>
+
 </div>
 
     </div>
