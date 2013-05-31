@@ -105,8 +105,8 @@ code base must let pass preflighted `OPTIONS` requests.
 At the moment a first preview of an independent console is available at
 OpenShift: [https://console-hpehl.rhcloud.com](https://console-hpehl.rhcloud.com). Please note that you must have a
 CORS enabled server instance running in order to connect from the console. You can build one by yourself using the
-"cors" branch of the AS code base: [https://github.com/hpehl/jboss-as/tree/cors](https://github.com/hpehl/jboss-as/tree/cors).
-Follow the steps in the [README](https://github.com/hpehl/jboss-as/tree/cors#readme) to build the server.
+"cors" branch of the AS code base: [https://github.com/hpehl/wildfly/tree/cors](https://github.com/hpehl/wildfly/tree/cors).
+Follow the steps in the [README](https://github.com/hpehl/wildfly/tree/cors#readme) to build the server.
 
 Due to the limitations regarding authentication and CORS, the solution described here will only work in Firefox and
 Safari. If you want to use Chrome make sure to use the `--allow-cross-origin-auth-prompt` command line option.
