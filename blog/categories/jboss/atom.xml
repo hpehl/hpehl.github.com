@@ -4,7 +4,7 @@
   <title><![CDATA[Category: jboss | Harald Pehl]]></title>
   <link href="http://hpehl.info/blog/categories/jboss/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-05-31T18:04:15+02:00</updated>
+  <updated>2013-07-18T12:01:44+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -12,6 +12,24 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Admin Apps]]></title>
+    <link href="http://hpehl.info/admin-apps.html"/>
+    <updated>2013-07-18T11:46:00+02:00</updated>
+    <id>http://hpehl.info/admin-apps</id>
+    <content type="html"><![CDATA[<p>If you ever wanted to administer your JBoss servers from your iOS or Andoird phone, checkout these great apps from
+<a href="https://twitter.com/cvasilak">Christos Vasilakis</a>:</p>
+
+<ul>
+<li>Android: <a href="https://github.com/cvasilak/JBoss-Admin-Android">https://github.com/cvasilak/JBoss-Admin-Android</a></li>
+<li>iOS: <a href="http://www.cvasilak.org/JBossAdmin.html">http://www.cvasilak.org/JBossAdmin.html</a> <a href="https://itunes.apple.com/us/app/jboss-admin/id523516060?mt=8&uo=4" target="itunes_store"><img src="http://r.mzstatic.com/images/web/linkmaker/badge_appstore-sm.gif" alt="JBoss Admin - Christos Vasilakis" style="border: 0;"/></a></li>
+</ul>
+
+
+<p>Keep it up, Christos!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Independent JBoss Admin Console]]></title>
