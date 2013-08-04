@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: mail | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/mail/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-08-04T19:43:33+02:00</updated>
+  <id>http://hpehl.info/</id>
+  <author>
+    <name><![CDATA[Harald Pehl]]></name>
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Send Mails from OpenShift]]></title>
+    <link href="http://hpehl.info/send-mails-from-openshift.html"/>
+    <updated>2013-08-04T19:42:00+02:00</updated>
+    <id>http://hpehl.info/send-mails-from-openshift</id>
+    <content type="html"><![CDATA[<p>OpenShift is a great place to host your applications. In this post I'm going to show you how you can easily send mails
+from your JEE applications running on JBoss. For sending mails I'm going to configure an external SMTP server. Any SMTP
+server will do, I'm going to use GMail.<!-- more --></p>
+
+<p>In case you don't already have an application ready, create one selecting the JBoss AS 7 cartridge. Clone the git
+repository and open the JBoss standalone configuration: <code>.openshift/config/standalone.xml</code>. Look for the mail subsystem
+which should look like this:</p>
+
+<p>```xml
+<subsystem xmlns="urn:jboss:domain:mail:1.0"></p>
+
+<pre><code>&lt;mail-session jndi-name="java:jboss/mail/Default"&gt;
+    &lt;smtp-server outbound-socket-binding-ref="mail-smtp"/&gt;
+&lt;/mail-session&gt;
+</code></pre>
+
+<p></subsystem>
+```</p>
+
+<p>We're going to add another mail session / smtp server using GMail:</p>
+
+<p>```xml
+<subsystem xmlns="urn:jboss:domain:mail:1.0"></p>
+
+<pre><code>...
+&lt;mail-session jndi-name="java:/mail/Gmail" from="your.name@gmail.com"&gt;
+    &lt;smtp-server ssl="true" outbound-socket-binding-ref="gmail-smtp"&gt;
+        &lt;login name="your.name@gmail.com" password="..."/&gt;
+    &lt;/smtp-server&gt;
+&lt;/mail-session&gt;
+</code></pre>
+
+<p></subsystem>
+```</p>
+
+<p>Enter your credentials for the SMTP server you want to use. In case you have activated application specific passwords
+in your Google profile, the password is not your Google password, but an application specific one you have to create
+first.</p>
+
+<p>As you can see we're referencing a named socket binding, which we're going to create now. Towards the end of the
+standalone configuration you can see all configured socket bindings:</p>
+
+<p>```xml
+<socket-binding-group name="standard-sockets" default-interface="public" port-offset="0"></p>
+
+<pre><code>&lt;socket-binding name="http" port="8080"/&gt;
+&lt;socket-binding name="jacorb" interface="unsecure" port="3528"/&gt;
+&lt;socket-binding name="jacorb-ssl" interface="unsecure" port="3529"/&gt;
+&lt;socket-binding name="jgroups-tcp" port="7600"/&gt;
+&lt;socket-binding name="management-native" interface="management" port="9999"/&gt;
+&lt;socket-binding name="management-http" interface="management" port="9990"/&gt;
+&lt;socket-binding name="messaging" port="5445"/&gt;
+&lt;socket-binding name="messaging-throughput" port="5455"/&gt;
+&lt;socket-binding name="osgi-http" interface="management" port="8090"/&gt;
+&lt;socket-binding name="remoting" port="4447"/&gt;
+&lt;socket-binding name="txn-recovery-environment" port="4712"/&gt;
+&lt;socket-binding name="txn-status-manager" port="4713"/&gt;
+&lt;outbound-socket-binding name="mail-smtp"&gt;
+    &lt;remote-destination host="localhost" port="25"/&gt;
+&lt;/outbound-socket-binding&gt;
+</code></pre>
+
+<p></socket-binding-group>
+```</p>
+
+<p>Add an outbound socket binding for you SMTP server:</p>
+
+<p>```xml
+<socket-binding-group name="standard-sockets" default-interface="public" port-offset="0"></p>
+
+<pre><code>...
+&lt;outbound-socket-binding name="gmail-smtp" source-port="0" fixed-source-port="false"&gt;
+    &lt;remote-destination host="smtp.gmail.com" port="465"/&gt;
+&lt;/outbound-socket-binding&gt;
+</code></pre>
+
+<p></socket-binding-group>
+```</p>
+
+<p>We're almost done! Now you can use the mail session in your application. In my case I'm using the mail session from an
+<a href="http://www.jboss.org/errai">Errai</a> service, but any other server side class (REST endpoint, servlet, EJB, POJO) should
+work also:</p>
+
+<p>```java
+import static javax.mail.Message.RecipientType.TO;</p>
+
+<p>import java.util.Date;</p>
+
+<p>import javax.annotation.Resource;
+import javax.mail.Address;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;</p>
+
+<p>import com.google.common.base.Optional;</p>
+
+<p>import org.jboss.errai.bus.client.api.messaging.Message;
+import org.jboss.errai.bus.client.api.messaging.MessageCallback;
+import org.jboss.errai.bus.server.annotations.Service;
+import org.jboss.errai.common.client.protocols.MessageParts;</p>
+
+<p>@Service
+public class FeedbackService implements MessageCallback {</p>
+
+<pre><code>@Resource(mappedName = "java:/mail/Gmail") private Session mailSession;
+
+@Override
+public void callback(Message message) {
+
+    // get data out of the message and persist feedback 
+    String guest = Optional.fromNullable(message.get(String.class, "guest")).or("n/a");
+    boolean commitment = Optional.fromNullable(message.get(Boolean.class, "commitment")).or(false);
+    saveFeedback(guest, commitment);
+
+    // send response using the Errai message bus
+    // see http://docs.jboss.org/errai/2.4.0.Beta1/errai/reference/html_single/#sid-5931263 
+    // for more details
+    createConversation(message)
+            .subjectProvided()
+            .done()
+            .reply();
+
+    // sending the mail might take a moment, so this is done *after* sending the response to the client.
+    sendMail(guest, commitment);
+}
+
+private void saveFeedback(final String guest, final boolean commitment) {
+    ...
+}
+
+private void sendMail(final String guest, final boolean commitment) {
+    try {
+        MimeMessage message = new MimeMessage(mailSession);
+        Address[] to = new InternetAddress[]{new InternetAddress("your.name@gmail.com")};
+        message.setRecipients(TO, to);
+        message.setSubject("Your subject");
+        message.setContent("Your message", "text/plain");
+        Transport.send(message);
+    } catch (MessagingException e) {
+        // error handling
+    }
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>That's all - any feedback, thoughts and objections are welcome.</p>
+]]></content>
+  </entry>
+  
+</feed>

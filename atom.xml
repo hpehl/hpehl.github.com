@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-07-18T12:01:44+02:00</updated>
+  <updated>2013-08-04T19:43:33+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -12,6 +12,247 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Send Mails from OpenShift]]></title>
+    <link href="http://hpehl.info/send-mails-from-openshift.html"/>
+    <updated>2013-08-04T19:42:00+02:00</updated>
+    <id>http://hpehl.info/send-mails-from-openshift</id>
+    <content type="html"><![CDATA[<p>OpenShift is a great place to host your applications. In this post I&#8217;m going to show you how you can easily send mails
+from your JEE applications running on JBoss. For sending mails I&#8217;m going to configure an external SMTP server. Any SMTP
+server will do, I&#8217;m going to use GMail.<!-- more --></p>
+
+<p>In case you don&#8217;t already have an application ready, create one selecting the JBoss AS 7 cartridge. Clone the git
+repository and open the JBoss standalone configuration: <code>.openshift/config/standalone.xml</code>. Look for the mail subsystem
+which should look like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;subsystem</span> <span class="na">xmlns=</span><span class="s">&quot;urn:jboss:domain:mail:1.0&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;mail-session</span> <span class="na">jndi-name=</span><span class="s">&quot;java:jboss/mail/Default&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;smtp-server</span> <span class="na">outbound-socket-binding-ref=</span><span class="s">&quot;mail-smtp&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/mail-session&gt;</span>
+</span><span class='line'><span class="nt">&lt;/subsystem&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&#8217;re going to add another mail session / smtp server using GMail:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;subsystem</span> <span class="na">xmlns=</span><span class="s">&quot;urn:jboss:domain:mail:1.0&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    ...
+</span><span class='line'>    <span class="nt">&lt;mail-session</span> <span class="na">jndi-name=</span><span class="s">&quot;java:/mail/Gmail&quot;</span> <span class="na">from=</span><span class="s">&quot;your.name@gmail.com&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;smtp-server</span> <span class="na">ssl=</span><span class="s">&quot;true&quot;</span> <span class="na">outbound-socket-binding-ref=</span><span class="s">&quot;gmail-smtp&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;login</span> <span class="na">name=</span><span class="s">&quot;your.name@gmail.com&quot;</span> <span class="na">password=</span><span class="s">&quot;...&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/smtp-server&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/mail-session&gt;</span>
+</span><span class='line'><span class="nt">&lt;/subsystem&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Enter your credentials for the SMTP server you want to use. In case you have activated application specific passwords
+in your Google profile, the password is not your Google password, but an application specific one you have to create
+first.</p>
+
+<p>As you can see we&#8217;re referencing a named socket binding, which we&#8217;re going to create now. Towards the end of the
+standalone configuration you can see all configured socket bindings:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;socket-binding-group</span> <span class="na">name=</span><span class="s">&quot;standard-sockets&quot;</span> <span class="na">default-interface=</span><span class="s">&quot;public&quot;</span> <span class="na">port-offset=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;socket-binding</span> <span class="na">name=</span><span class="s">&quot;http&quot;</span> <span class="na">port=</span><span class="s">&quot;8080&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;socket-binding</span> <span class="na">name=</span><span class="s">&quot;jacorb&quot;</span> <span class="na">interface=</span><span class="s">&quot;unsecure&quot;</span> <span class="na">port=</span><span class="s">&quot;3528&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;socket-binding</span> <span class="na">name=</span><span class="s">&quot;jacorb-ssl&quot;</span> <span class="na">interface=</span><span class="s">&quot;unsecure&quot;</span> <span class="na">port=</span><span class="s">&quot;3529&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;socket-binding</span> <span class="na">name=</span><span class="s">&quot;jgroups-tcp&quot;</span> <span class="na">port=</span><span class="s">&quot;7600&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;socket-binding</span> <span class="na">name=</span><span class="s">&quot;management-native&quot;</span> <span class="na">interface=</span><span class="s">&quot;management&quot;</span> <span class="na">port=</span><span class="s">&quot;9999&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;socket-binding</span> <span class="na">name=</span><span class="s">&quot;management-http&quot;</span> <span class="na">interface=</span><span class="s">&quot;management&quot;</span> <span class="na">port=</span><span class="s">&quot;9990&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;socket-binding</span> <span class="na">name=</span><span class="s">&quot;messaging&quot;</span> <span class="na">port=</span><span class="s">&quot;5445&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;socket-binding</span> <span class="na">name=</span><span class="s">&quot;messaging-throughput&quot;</span> <span class="na">port=</span><span class="s">&quot;5455&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;socket-binding</span> <span class="na">name=</span><span class="s">&quot;osgi-http&quot;</span> <span class="na">interface=</span><span class="s">&quot;management&quot;</span> <span class="na">port=</span><span class="s">&quot;8090&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;socket-binding</span> <span class="na">name=</span><span class="s">&quot;remoting&quot;</span> <span class="na">port=</span><span class="s">&quot;4447&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;socket-binding</span> <span class="na">name=</span><span class="s">&quot;txn-recovery-environment&quot;</span> <span class="na">port=</span><span class="s">&quot;4712&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;socket-binding</span> <span class="na">name=</span><span class="s">&quot;txn-status-manager&quot;</span> <span class="na">port=</span><span class="s">&quot;4713&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;outbound-socket-binding</span> <span class="na">name=</span><span class="s">&quot;mail-smtp&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;remote-destination</span> <span class="na">host=</span><span class="s">&quot;localhost&quot;</span> <span class="na">port=</span><span class="s">&quot;25&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/outbound-socket-binding&gt;</span>
+</span><span class='line'><span class="nt">&lt;/socket-binding-group&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Add an outbound socket binding for you SMTP server:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;socket-binding-group</span> <span class="na">name=</span><span class="s">&quot;standard-sockets&quot;</span> <span class="na">default-interface=</span><span class="s">&quot;public&quot;</span> <span class="na">port-offset=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    ...
+</span><span class='line'>    <span class="nt">&lt;outbound-socket-binding</span> <span class="na">name=</span><span class="s">&quot;gmail-smtp&quot;</span> <span class="na">source-port=</span><span class="s">&quot;0&quot;</span> <span class="na">fixed-source-port=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;remote-destination</span> <span class="na">host=</span><span class="s">&quot;smtp.gmail.com&quot;</span> <span class="na">port=</span><span class="s">&quot;465&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/outbound-socket-binding&gt;</span>
+</span><span class='line'><span class="nt">&lt;/socket-binding-group&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&#8217;re almost done! Now you can use the mail session in your application. In my case I&#8217;m using the mail session from an
+<a href="http://www.jboss.org/errai">Errai</a> service, but any other server side class (REST endpoint, servlet, EJB, POJO) should
+work also:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">static</span> <span class="n">javax</span><span class="o">.</span><span class="na">mail</span><span class="o">.</span><span class="na">Message</span><span class="o">.</span><span class="na">RecipientType</span><span class="o">.</span><span class="na">TO</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.util.Date</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.annotation.Resource</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.mail.Address</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.mail.MessagingException</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.mail.Session</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.mail.Transport</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.mail.internet.InternetAddress</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.mail.internet.MimeMessage</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">com.google.common.base.Optional</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.jboss.errai.bus.client.api.messaging.Message</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.jboss.errai.bus.client.api.messaging.MessageCallback</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.jboss.errai.bus.server.annotations.Service</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.jboss.errai.common.client.protocols.MessageParts</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@Service</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FeedbackService</span> <span class="kd">implements</span> <span class="n">MessageCallback</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Resource</span><span class="o">(</span><span class="n">mappedName</span> <span class="o">=</span> <span class="s">&quot;java:/mail/Gmail&quot;</span><span class="o">)</span> <span class="kd">private</span> <span class="n">Session</span> <span class="n">mailSession</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">callback</span><span class="o">(</span><span class="n">Message</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// get data out of the message and persist feedback </span>
+</span><span class='line'>        <span class="n">String</span> <span class="n">guest</span> <span class="o">=</span> <span class="n">Optional</span><span class="o">.</span><span class="na">fromNullable</span><span class="o">(</span><span class="n">message</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="s">&quot;guest&quot;</span><span class="o">)).</span><span class="na">or</span><span class="o">(</span><span class="s">&quot;n/a&quot;</span><span class="o">);</span>
+</span><span class='line'>        <span class="kt">boolean</span> <span class="n">commitment</span> <span class="o">=</span> <span class="n">Optional</span><span class="o">.</span><span class="na">fromNullable</span><span class="o">(</span><span class="n">message</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">Boolean</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="s">&quot;commitment&quot;</span><span class="o">)).</span><span class="na">or</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+</span><span class='line'>        <span class="n">saveFeedback</span><span class="o">(</span><span class="n">guest</span><span class="o">,</span> <span class="n">commitment</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// send response using the Errai message bus</span>
+</span><span class='line'>        <span class="c1">// see http://docs.jboss.org/errai/2.4.0.Beta1/errai/reference/html_single/#sid-5931263 </span>
+</span><span class='line'>        <span class="c1">// for more details</span>
+</span><span class='line'>        <span class="n">createConversation</span><span class="o">(</span><span class="n">message</span><span class="o">)</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">subjectProvided</span><span class="o">()</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">done</span><span class="o">()</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">reply</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// sending the mail might take a moment, so this is done *after* sending the response to the client.</span>
+</span><span class='line'>        <span class="n">sendMail</span><span class="o">(</span><span class="n">guest</span><span class="o">,</span> <span class="n">commitment</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">saveFeedback</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">guest</span><span class="o">,</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">commitment</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="o">...</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">sendMail</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">guest</span><span class="o">,</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">commitment</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>            <span class="n">MimeMessage</span> <span class="n">message</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MimeMessage</span><span class="o">(</span><span class="n">mailSession</span><span class="o">);</span>
+</span><span class='line'>            <span class="n">Address</span><span class="o">[]</span> <span class="n">to</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InternetAddress</span><span class="o">[]{</span><span class="k">new</span> <span class="n">InternetAddress</span><span class="o">(</span><span class="s">&quot;your.name@gmail.com&quot;</span><span class="o">)};</span>
+</span><span class='line'>            <span class="n">message</span><span class="o">.</span><span class="na">setRecipients</span><span class="o">(</span><span class="n">TO</span><span class="o">,</span> <span class="n">to</span><span class="o">);</span>
+</span><span class='line'>            <span class="n">message</span><span class="o">.</span><span class="na">setSubject</span><span class="o">(</span><span class="s">&quot;Your subject&quot;</span><span class="o">);</span>
+</span><span class='line'>            <span class="n">message</span><span class="o">.</span><span class="na">setContent</span><span class="o">(</span><span class="s">&quot;Your message&quot;</span><span class="o">,</span> <span class="s">&quot;text/plain&quot;</span><span class="o">);</span>
+</span><span class='line'>            <span class="n">Transport</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
+</span><span class='line'>        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">MessagingException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>            <span class="c1">// error handling</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That&#8217;s all - any feedback, thoughts and objections are welcome.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Admin Apps]]></title>
@@ -1107,219 +1348,6 @@ deferred binding. Here are some of the features:<!-- more --></p>
 <li>Wiki: <a href="https://github.com/hpehl/piriti/wiki">https://github.com/hpehl/piriti/wiki</a></li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Restlet Extension for Piriti]]></title>
-    <link href="http://hpehl.info/restlet-extension-for-piriti.html"/>
-    <updated>2010-03-25T09:49:00+01:00</updated>
-    <id>http://hpehl.info/restlet-extension-for-piriti</id>
-    <content type="html"><![CDATA[<p><a href="http://restlet.org">Restlet</a> is a RESTful Web framework for Java. There&#8217;s also a GWT edition available. The Piriti
-Restlet extensions is built on top of that edition. Therefore the 2.x version of Restlet is used. There are two
-representations available which use the Piriti readers to convert JSON and XML data to your model (POJOs and/or
-GXT models).<!-- more --></p>
-
-<h3>Read and convert JSON</h3>
-
-<p>To read the JSON data you need an instance of JsonReader<T>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Book</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>    <span class="kd">interface</span> <span class="nc">BookReader</span> <span class="kd">extends</span> <span class="n">JsonReader</span><span class="o">&lt;</span><span class="n">Book</span><span class="o">&gt;</span> <span class="o">{}</span>
-</span><span class='line'>    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">BookReader</span> <span class="n">JSON</span> <span class="o">=</span> <span class="n">GWT</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">BookReader</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c1">// Fields annotated with @JsonField</span>
-</span><span class='line'>    <span class="o">...</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Then you can read the JSON data like this:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">ClientResource</span> <span class="n">clientResource</span> <span class="o">=</span>
-</span><span class='line'>    <span class="k">new</span> <span class="nf">ClientResource</span><span class="o">(</span><span class="s">&quot;/resource/with/json/representation&quot;</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">clientResource</span><span class="o">.</span><span class="na">setOnResponse</span><span class="o">(</span><span class="k">new</span> <span class="n">Uniform</span><span class="o">()</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>    <span class="nd">@Override</span>
-</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handle</span><span class="o">(</span><span class="n">Request</span> <span class="n">request</span><span class="o">,</span> <span class="n">Response</span> <span class="n">response</span><span class="o">)</span>
-</span><span class='line'>    <span class="o">{</span>
-</span><span class='line'>        <span class="n">PiritiJsonRepresentation</span><span class="o">&lt;</span><span class="n">Book</span><span class="o">&gt;</span> <span class="n">representation</span> <span class="o">=</span>
-</span><span class='line'>            <span class="k">new</span> <span class="n">PiritiJsonRepresentation</span><span class="o">&lt;</span><span class="n">Book</span><span class="o">&gt;(</span><span class="n">Book</span><span class="o">.</span><span class="na">JSON</span><span class="o">,</span> <span class="n">response</span><span class="o">.</span><span class="na">getEntity</span><span class="o">());</span>
-</span><span class='line'>        <span class="k">try</span>
-</span><span class='line'>        <span class="o">{</span>
-</span><span class='line'>            <span class="c1">// Depending whether there&#39;s one book or an array of books</span>
-</span><span class='line'>            <span class="c1">// in your JSON data</span>
-</span><span class='line'>            <span class="n">List</span><span class="o">&lt;</span><span class="n">Book</span><span class="o">&gt;</span> <span class="n">books</span> <span class="o">=</span> <span class="n">representation</span><span class="o">.</span><span class="na">getModels</span><span class="o">();</span>
-</span><span class='line'>            <span class="n">Book</span> <span class="n">book</span> <span class="o">=</span> <span class="n">representation</span><span class="o">.</span><span class="na">getModel</span><span class="o">();</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>        <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span>
-</span><span class='line'>        <span class="o">{</span>
-</span><span class='line'>            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'><span class="o">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">clientResource</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">MediaType</span><span class="o">.</span><span class="na">APPLICATION_JSON</span><span class="o">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The entity returned by the resource has to be a valid JSON object. In case you want to read a list of books, the
-JSON object has to contain one key (name does not matter) with the array of books:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span><span class="err">books:</span> <span class="err">[{isbn:</span> <span class="nt">&quot;0815&quot;</span><span class="p">,</span> <span class="err">title:</span> <span class="nt">&quot;Foo&quot;</span><span class="p">}</span><span class="err">,</span> <span class="p">{</span><span class="err">isbn:</span> <span class="nt">&quot;1234&quot;</span><span class="p">,</span> <span class="err">title:</span> <span class="nt">&quot;Bar&quot;</span><span class="p">}</span><span class="err">]}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<h3>Read and convert XML</h3>
-
-<p>To read the XML data you need an instance of XmlReader<T></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Book</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>    <span class="kd">interface</span> <span class="nc">BookReader</span> <span class="kd">extends</span> <span class="n">XmlReader</span><span class="o">&lt;</span><span class="n">Book</span><span class="o">&gt;</span> <span class="o">{}</span>
-</span><span class='line'>    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">BookReader</span> <span class="n">XML</span> <span class="o">=</span> <span class="n">GWT</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">BookReader</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c1">// Fields annotated with @XmlField</span>
-</span><span class='line'>    <span class="o">...</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<p>Then you can read the XML data like this:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">ClientResource</span> <span class="n">clientResource</span> <span class="o">=</span>
-</span><span class='line'>    <span class="k">new</span> <span class="nf">ClientResource</span><span class="o">(</span><span class="s">&quot;/resource/with/xml/representation&quot;</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">clientResource</span><span class="o">.</span><span class="na">setOnResponse</span><span class="o">(</span><span class="k">new</span> <span class="n">Uniform</span><span class="o">()</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>    <span class="nd">@Override</span>
-</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handle</span><span class="o">(</span><span class="n">Request</span> <span class="n">request</span><span class="o">,</span> <span class="n">Response</span> <span class="n">response</span><span class="o">)</span>
-</span><span class='line'>    <span class="o">{</span>
-</span><span class='line'>        <span class="n">PiritiXmlRepresentation</span><span class="o">&lt;</span><span class="n">Book</span><span class="o">&gt;</span> <span class="n">representation</span> <span class="o">=</span>
-</span><span class='line'>            <span class="k">new</span> <span class="n">PiritiXmlRepresentation</span><span class="o">&lt;</span><span class="n">Book</span><span class="o">&gt;(</span><span class="n">Book</span><span class="o">.</span><span class="na">XML</span><span class="o">,</span> <span class="n">response</span><span class="o">.</span><span class="na">getEntity</span><span class="o">());</span>
-</span><span class='line'>        <span class="k">try</span>
-</span><span class='line'>        <span class="o">{</span>
-</span><span class='line'>            <span class="c1">// Depending whether there&#39;s one book element or a list of book</span>
-</span><span class='line'>            <span class="c1">// elements in your XML data</span>
-</span><span class='line'>            <span class="n">List</span><span class="o">&lt;</span><span class="n">Book</span><span class="o">&gt;</span> <span class="n">books</span> <span class="o">=</span> <span class="n">representation</span><span class="o">.</span><span class="na">getModels</span><span class="o">();</span>
-</span><span class='line'>            <span class="n">Book</span> <span class="n">book</span> <span class="o">=</span> <span class="n">representation</span><span class="o">.</span><span class="na">getModel</span><span class="o">();</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>        <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span>
-</span><span class='line'>        <span class="o">{</span>
-</span><span class='line'>            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'><span class="o">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">clientResource</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">MediaType</span><span class="o">.</span><span class="na">TEXT_XML</span><span class="o">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The entity returned by the resource has to be a valid XML document. In case you want to read a list of books, the
-document must contain a list of book elements as direct children of the root element:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;books&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;book&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;isbn&gt;</span>0815<span class="nt">&lt;/isbn&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;title&gt;</span>Foo<span class="nt">&lt;/title&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/book&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;book&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;isbn&gt;</span>1234<span class="nt">&lt;/isbn&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;title&gt;</span>Bar<span class="nt">&lt;/title&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/book&gt;</span>
-</span><span class='line'><span class="nt">&lt;/books&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<h3>Further information</h3>
-
-<p>If you want to learn more about Piriti and its extensions, please feel free to take a look at it under
-<a href="https://github.com/hpehl/piriti">https://github.com/hpehl/piriti</a></p>
 ]]></content>
   </entry>
   

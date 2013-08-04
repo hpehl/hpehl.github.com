@@ -9,8 +9,8 @@
   <meta name="author" content="Harald Pehl">
 
   
-  <meta name="description" content="I&#8217;m pleased to announce the first beta of the upcoming Piriti 0.7.0 release. Piriti 0.7.0 is a major release with
-breaking API changes, lots of &hellip;">
+  <meta name="description" content="The JSON/XML mapper Piriti is heavily based on deferred binding and code generation.
+As I started to implement code generators in Piriti I looked &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -82,6 +82,47 @@ breaking API changes, lots of &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
+        
+        <h1 class="entry-title"><a href="/how-to-use-velocity-to-generate-code-in-gwt.html">How to Use Velocity to Generate Code in GWT<span class="readon" title="More...">&rarr;</span></a>
+
+
+
+
+
+
+
+
+
+
+
+  
+    <time datetime="2012-01-28T21:44:00+01:00" pubdate class="date"><span class="day">28</span><span class="month">Jan</span><span class="year">2012</span></time>
+
+
+</h1>
+      
+    
+  </header>
+
+
+  <div class="entry-content"><p>The JSON/XML mapper <a href="https://github.com/hpehl/piriti">Piriti</a> is heavily based on deferred binding and code generation.
+As I started to implement code generators in Piriti I looked around how other projects deal with it and read through
+the <a href="https://developers.google.com/web-toolkit/doc/latest/DevGuideCodingBasicsDeferred">official documentation</a> on the
+GWT site. The usual way to generate code is to extend <code>com.google.gwt.core.ext.Generator</code> and then call
+<code>GeneratorContext.tryCreate(TreeLogger, String, String)</code>. The returned PrintWriter is then often wrapped into
+some kind of <a href="https://code.google.com/p/google-web-toolkit/source/browse/trunk/user/src/com/google/gwt/uibinder/rebind/IndentedWriter.java">IndentedWriter</a>
+like the one used by GWT itself. This class adds methods to indent and unindent code and supports <code>printf()</code> like
+behaviour. Finally the writer is used to generate all code. </div>
+
+
+    </article>
   
   
     <article>
@@ -406,43 +447,6 @@ info.</div>
 
   <div class="entry-content"><p>I&#8217;m pleased to announce Piriti 0.3.1. Piriti is a JSON and XML mapper for GWT. It is based on annotations and
 deferred binding. Here are some of the features:</div>
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        
-        <h1 class="entry-title"><a href="/restlet-extension-for-piriti.html">Restlet Extension for Piriti<span class="readon" title="More...">&rarr;</span></a>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <time datetime="2010-03-25T09:49:00+01:00" pubdate class="date"><span class="day">25</span><span class="month">Mar</span><span class="year">2010</span></time>
-
-
-</h1>
-      
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://restlet.org">Restlet</a> is a RESTful Web framework for Java. There&#8217;s also a GWT edition available. The Piriti
-Restlet extensions is built on top of that edition. Therefore the 2.x version of Restlet is used. There are two
-representations available which use the Piriti readers to convert JSON and XML data to your model (POJOs and/or
-GXT models).</div>
 
 
     </article>
