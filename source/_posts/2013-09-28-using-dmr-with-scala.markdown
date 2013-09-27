@@ -40,4 +40,4 @@ IMO the solution for this is to bring OAuth support to WildFly. For the time bei
 somewhat limeted and if any feasible when running on the same host. 
 
 # Conclusion
-There's very much work in progress, but we'd love to here your feedback!
+The different libraries are very much work in progress, but we'd love to here your feedback!
