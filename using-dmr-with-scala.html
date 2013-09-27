@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: dart - Harald Pehl</title>
+  <title>Polyglot DMR - Harald Pehl</title>
   <meta name="author" content="Harald Pehl">
 
   
-  <meta name="description" content="Category: dart">
+  <meta name="description" content="Polyglot DMR 28Sep2013 The dynamic or detyped model representation (DMR) is an API to interact with the management model of a
+running WildFly &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://hpehl.infoblog/categories/dart/index.html">
+  <link rel="canonical" href="http://hpehl.info/using-dmr-with-scala.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/font-awesome.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -80,52 +81,114 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: Dart</h1>
+    
+      
+        <h1 class="entry-title">Polyglot DMR
+
+
+
+
+
+
+
+
+
+
+
+  
+    <time datetime="2013-09-28T00:20:00+02:00" pubdate class="date"><span class="day">28</span><span class="month">Sep</span><span class="year">2013</span></time>
+
+
+</h1>
+      
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+  <div class="entry-content"><p>The <strong>d</strong>ynamic or <strong>d</strong>etyped <strong>m</strong>odel <strong>r</strong>epresentation (DMR) is an API to interact with the management model of a
+running WildFly instance. There&#8217;s an Java API available at <a href="https://github.com/jbossas/jboss-dmr">https://github.com/jbossas/jboss-dmr</a> which is described in
+the <a href="https://docs.jboss.org/author/display/WFLY8/Detyped+management+and+the+jboss-dmr+library">WildFly Wiki</a>. Though
+the Java API is very rich and powerful it is somewhat hard to write scripts that perform useful tasks like</p>
 
-  
-  <h2>2013</h2>
-
-<article>
-  
-        
-<h1><a href="/using-dmr-with-scala.html">Polyglot DMR</a></h1>
-<time datetime="2013-09-28T00:20:00+02:00" pubdate><span class='month'>Sep</span> <span class='day'>28</span> <span class='year'>2013</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/dart/'>dart</a>, <a class='category' href='/blog/categories/dmr/'>dmr</a>, <a class='category' href='/blog/categories/node-dot-js/'>node.js</a>, <a class='category' href='/blog/categories/scala/'>scala</a></span>
-</footer>
+<ul>
+<li>Periodically read the memory and send an SMS / tweet / email when a threshold is reached</li>
+<li>Rollout a deployment over all servers in a cluster</li>
+<li>Monitor the state of an application<!--more--></li>
+</ul>
 
 
-</article>
+<p>To address this challenges we created different client libraries for different languages:</p>
 
+<h1>Scala</h1>
 
+<p>The scala library is hosted at <a href="https://github.com/hpehl/dmr.scala">DMR.scala</a>. The
+<a href="https://github.com/heiko-braun/dmr-repl">DMR.repl</a> library leverages the Scala REPL to execute DMR operations in
+a very interactive way.</p>
 
-<article>
-  
-        
-<h1><a href="/playing-around-with-dart-isolates.html">Playing around with Dart Isolates</a></h1>
-<time datetime="2013-04-08T22:26:00+02:00" pubdate><span class='month'>Apr</span> <span class='day'>08</span> <span class='year'>2013</span></time>
+<h1>Dart</h1>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/dart/'>dart</a></span>
-</footer>
+<p>Using <a href="https://github.com/hal/dmr.dart">DMR.dart</a> you can run DRM operations in Dart. Both executing individual
+operations, as well as writing whole web applications is possible.</p>
 
+<h1>Node.js</h1>
 
-</article>
+<p>The library for Node.js is called <a href="https://github.com/hal/dmr.js">DMR.js</a>.</p>
 
+<h1>Ideas</h1>
+
+<p>Bringing the DMR library to different languages opens up many possibilities. We can think of a repository with
+(parameterized) management scripts, an integration with Gist / Paste.bin to quickly share your operations with
+your co-workers, &#8230; We&#8217;d love to heear your feedback and suggestions on this!</p>
+
+<h1>Open Issues</h1>
+
+<p>One of the main challenges when using the different client libraries is authentication. Right now there&#8217;s a workaround
+to use a <a href="/independent-jboss-admin-console.html">CORS enables JBoss AS instance</a> which is however a bit out of date.
+IMO the solution for this is to bring OAuth support to WildFly. For the time being the usage of the client libraries is
+somewhat limeted and if any feasible when running on the same host.</p>
+
+<h1>Conclusion</h1>
+
+<p>There&#8217;s very much work in progress, but we&#8217;d love to here your feedback!</p>
 </div>
 
+
+  <footer class="line">
+    <p class="meta">
+      <span>
+        
+
+<i title="Categories" class="categories icon-large icon-tags">
   
+    <a class='category' href='/blog/categories/dart/'>dart</a>, <a class='category' href='/blog/categories/dmr/'>dmr</a>, <a class='category' href='/blog/categories/node-dot-js/'>node.js</a>, <a class='category' href='/blog/categories/scala/'>scala</a>
+  
+</i>
+
+
+        
+          <a class="sharing tweet" title="Share on Twitter" href="http://twitter.com/share?url=http://hpehl.info/using-dmr-with-scala.html"><i class="icon-large icon-twitter"></i></a>
+<a class="sharing gplus" title="Share on Google+" href="https://plus.google.com/share?url=http://hpehl.info/using-dmr-with-scala.html"><i class="icon-large icon-google-plus-sign"></i></a>
+<a class="sharing facebook" title="Share on Facebook" href="http://www.facebook.com/sharer.php?u=http://hpehl.info/using-dmr-with-scala.html"><i class="icon-large icon-facebook"></i></a>
+
+        
+      </span>
+      <span>
+        
+          <a class="articlenav" href="/send-mails-from-openshift.html" title="Previous Post: Send Mails from OpenShift">&larr; Send Mails from OpenShift</a>
+        
+        
+      </span>
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -144,7 +207,10 @@
       var disqus_shortname = 'hpehl';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://hpehl.info/using-dmr-with-scala.html';
+        var disqus_url = 'http://hpehl.info/using-dmr-with-scala.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

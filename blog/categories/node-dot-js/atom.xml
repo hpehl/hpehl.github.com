@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: dart | Harald Pehl]]></title>
-  <link href="http://hpehl.info/blog/categories/dart/atom.xml" rel="self"/>
+  <title><![CDATA[Category: node.js | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/node-dot-js/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
   <updated>2013-09-28T00:14:51+02:00</updated>
   <id>http://hpehl.info/</id>
@@ -63,26 +63,6 @@ somewhat limeted and if any feasible when running on the same host.</p>
 <h1>Conclusion</h1>
 
 <p>There's very much work in progress, but we'd love to here your feedback!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Playing around with Dart Isolates]]></title>
-    <link href="http://hpehl.info/playing-around-with-dart-isolates.html"/>
-    <updated>2013-04-08T22:26:00+02:00</updated>
-    <id>http://hpehl.info/playing-around-with-dart-isolates</id>
-    <content type="html"><![CDATA[<p>I was looking for a way to implement some kind of dynamic plug-in system in Dart. The idea was to load Dart code on
-demand into an isolate using <a href="http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnUri">spawnUri()</a>.
-It turns out that this function is implemented in the Dart VM but neither in Dartium nor does it compile down to
-JavaScript.<!-- more --></p>
-
-<p>Falling back to <a href="http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnFunction">spawnFunction()</a> works
-as expected in the browser but it turns out that isolates are not allowed to access / change the DOM. This reduces
-isolates to dumb worker functions. Plug-ins which make contributions to the UI are not possible using this approach.</p>
-
-<p>I created some test scripts for the browser and the VM to test the possibilities you have with isolates. You can
-find them at GitHub: <a href="https://github.com/hpehl/dart-isolates">https://github.com/hpehl/dart-isolates</a>. Let me know what
-you think.</p>
 ]]></content>
   </entry>
   
