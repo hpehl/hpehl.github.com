@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-09-28T00:22:47+02:00</updated>
+  <updated>2013-10-24T10:07:09+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -12,6 +12,26 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[JBoss One Day Talk]]></title>
+    <link href="http://hpehl.info/jboss-one-day-talk.html"/>
+    <updated>2013-10-24T09:45:00+02:00</updated>
+    <id>http://hpehl.info/jboss-one-day-talk</id>
+    <content type="html"><![CDATA[<p>Yesterday I presented &#8220;WildFly 8 - the artist formerly known as JBoss AS&#8221; at the
+<a href="http://onedaytalk.org/">JBoss One Day Talk</a> in Munich. Furthermore I had the chance to give a brief introduction to
+&#8220;DMR.scala / DMR.repl&#8221;.</p>
+
+<p>I really enjoyed attending the conference. It was well organized and packed with great talks. Feel free to take a lok
+at the slides of my talks (partly in German):</p>
+
+<ul>
+<li><a href="downloads/onedaytalk_wildfly8.pdf">WildFly 8 - the artist formerly known as JBoss AS</a></li>
+<li><a href="http://slid.es/hpehl/dmrscala">DMR.scala / DMR.repl</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Polyglot DMR]]></title>
@@ -1359,20 +1379,6 @@ for Javascript. Essentially Totoe is a GWT port of Sarissa with the goal to offe
 Right now the focus is on parsing XML - there are no methods to create, insert or append documents, elements or nodes.
 Those features might come in later releases. The big advantage over the GWT XML module is IMHO a cleaner API and the
 support of XPath and namespaces.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Announcement: Piriti 0.3.5]]></title>
-    <link href="http://hpehl.info/announcement-piriti-0-35.html"/>
-    <updated>2010-06-18T17:19:00+02:00</updated>
-    <id>http://hpehl.info/announcement-piriti-0-35</id>
-    <content type="html"><![CDATA[<p>I&#8217;m pleased to announce Piriti 0.3.5. This is a minor update which fixes some bugs and changes the way JSON data is
-parsed. Please take a look at the <a href="https://github.com/hpehl/piriti/wiki/Releasenotes">release notes</a> for further
-info.<!-- more --></p>
-
-<p>I&#8217;m still looking for a clever way to include namespace support into Piriti. So if there&#8217;s anybody out there with a
-namespace aware XPath implementation that works in IE, contact me!</p>
 ]]></content>
   </entry>
   

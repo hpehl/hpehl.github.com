@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: wildfly | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/wildfly/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2013-10-24T10:07:09+02:00</updated>
+  <id>http://hpehl.info/</id>
+  <author>
+    <name><![CDATA[Harald Pehl]]></name>
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[JBoss One Day Talk]]></title>
+    <link href="http://hpehl.info/jboss-one-day-talk.html"/>
+    <updated>2013-10-24T09:45:00+02:00</updated>
+    <id>http://hpehl.info/jboss-one-day-talk</id>
+    <content type="html"><![CDATA[<p>Yesterday I presented "WildFly 8 - the artist formerly known as JBoss AS" at the
+<a href="http://onedaytalk.org/">JBoss One Day Talk</a> in Munich. Furthermore I had the chance to give a brief introduction to
+"DMR.scala / DMR.repl".</p>
+
+<p>I really enjoyed attending the conference. It was well organized and packed with great talks. Feel free to take a lok
+at the slides of my talks (partly in German):</p>
+
+<ul>
+<li><a href="downloads/onedaytalk_wildfly8.pdf">WildFly 8 - the artist formerly known as JBoss AS</a></li>
+<li><a href="http://slid.es/hpehl/dmrscala">DMR.scala / DMR.repl</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
