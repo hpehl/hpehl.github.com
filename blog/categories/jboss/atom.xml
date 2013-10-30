@@ -4,7 +4,7 @@
   <title><![CDATA[Category: jboss | Harald Pehl]]></title>
   <link href="http://hpehl.info/blog/categories/jboss/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-10-25T09:24:46+02:00</updated>
+  <updated>2013-10-30T21:11:15+01:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -12,6 +12,78 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[JBoss One Day Talk]]></title>
+    <link href="http://hpehl.info/jboss-one-day-talk.html"/>
+    <updated>2013-10-24T09:45:00+02:00</updated>
+    <id>http://hpehl.info/jboss-one-day-talk</id>
+    <content type="html"><![CDATA[<p>Yesterday I presented "WildFly 8 - the artist formerly known as JBoss AS" at the
+<a href="http://onedaytalk.org/">JBoss One Day Talk</a> in Munich. Furthermore I had the chance to give a brief introduction to
+"DMR.scala / DMR.repl".</p>
+
+<p>I really enjoyed attending the conference. It was well organized and packed with great talks. Here are the slides of my talks (partly in German):</p>
+
+<ul>
+<li><a href="downloads/onedaytalk_wildfly8.pdf">WildFly 8 - the artist formerly known as JBoss AS</a></li>
+<li><a href="http://slid.es/hpehl/dmrscala">DMR.scala / DMR.repl</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Polyglot DMR]]></title>
+    <link href="http://hpehl.info/using-dmr-with-scala.html"/>
+    <updated>2013-09-28T00:20:00+02:00</updated>
+    <id>http://hpehl.info/using-dmr-with-scala</id>
+    <content type="html"><![CDATA[<p>The <strong>d</strong>ynamic or <strong>d</strong>etyped <strong>m</strong>odel <strong>r</strong>epresentation (DMR) is an API to interact with the management model of a
+running WildFly instance. There's an Java API available at <a href="https://github.com/jbossas/jboss-dmr">https://github.com/jbossas/jboss-dmr</a> which is described in
+the <a href="https://docs.jboss.org/author/display/WFLY8/Detyped+management+and+the+jboss-dmr+library">WildFly Wiki</a>. Though
+the Java API is very rich and powerful it is somewhat hard to write scripts that perform useful tasks like</p>
+
+<ul>
+<li>Periodically read the memory and send an SMS / tweet / email when a threshold is reached</li>
+<li>Rollout a deployment over all servers in a cluster</li>
+<li>Monitor the state of an application<!--more--></li>
+</ul>
+
+
+<p>To address this challenges we created different client libraries for different languages:</p>
+
+<h1>Scala</h1>
+
+<p>The scala library is hosted at <a href="https://github.com/hpehl/dmr.scala">DMR.scala</a>. The
+<a href="https://github.com/heiko-braun/dmr-repl">DMR.repl</a> library leverages the Scala REPL to execute DMR operations in
+a very interactive way.</p>
+
+<h1>Dart</h1>
+
+<p>Using <a href="https://github.com/hal/dmr.dart">DMR.dart</a> you can run DRM operations in Dart. Both executing individual
+operations, as well as writing whole web applications is possible.</p>
+
+<h1>Node.js</h1>
+
+<p>The library for Node.js is called <a href="https://github.com/hal/dmr.js">DMR.js</a>.</p>
+
+<h1>Ideas</h1>
+
+<p>Bringing the DMR library to different languages opens up many possibilities. We can think of a repository with
+(parameterized) management scripts, an integration with Gist / Paste.bin to quickly share your operations with
+your co-workers, ... We'd love to heear your feedback and suggestions on this!</p>
+
+<h1>Open Issues</h1>
+
+<p>One of the main challenges when using the different client libraries is authentication. Right now there's a workaround
+to use a <a href="/independent-jboss-admin-console.html">CORS enables JBoss AS instance</a> which is however a bit out of date.
+IMO the solution for this is to bring OAuth support to WildFly. For the time being the usage of the client libraries is
+somewhat limeted and if any feasible when running on the same host.</p>
+
+<h1>Conclusion</h1>
+
+<p>The different libraries are very much work in progress, but we'd love to here your feedback!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Send Mails from OpenShift]]></title>
