@@ -3,7 +3,7 @@ layout: post
 title: "JBoss One Day Talk"
 date: 2013-10-24 09:45
 comments: true
-categories: wildfly scala
+categories: jboss wildfly scala
 ---
 Yesterday I presented "WildFly 8 - the artist formerly known as JBoss AS" at the
 [JBoss One Day Talk](http://onedaytalk.org/) in Munich. Furthermore I had the chance to give a brief introduction to

@@ -3,7 +3,7 @@ layout: post
 title: "Polyglot DMR"
 date: 2013-09-28 00:20
 comments: true
-categories: dmr scala dart node.js 
+categories: jboss dmr scala dart node.js
 ---
 The __d__ynamic or __d__etyped __m__odel __r__epresentation (DMR) is an API to interact with the management model of a 
 running WildFly instance. There's an Java API available at <https://github.com/jbossas/jboss-dmr> which is described in 
