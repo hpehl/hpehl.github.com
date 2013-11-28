@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-10-30T21:11:15+01:00</updated>
+  <updated>2013-11-28T14:42:00+01:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -12,6 +12,143 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[WildFly Dockerfiles]]></title>
+    <link href="http://hpehl.info/wildfly-dockerfiles.html"/>
+    <updated>2013-11-28T14:40:00+01:00</updated>
+    <id>http://hpehl.info/wildfly-dockerfiles</id>
+    <content type="html"><![CDATA[<p>For the last couple of days I have been playing with <a href="http://www.docker.io">Docker</a>. In a nutshell Docker is a tool
+that lets you create images and run so called containers. It uses <a href="http://lxc.sourceforge.net/">Linux Containers</a> (LXC)
+under the hood. What appears to be yet another virtualization solution, is in fact a very lightweight way to setup,
+manage and run &#8220;processes in a box&#8221;.<!-- more --></p>
+
+<p>Docker comes with a great <a href="http://www.docker.io/gettingstarted/">tutorial</a> and a
+reasonable <a href="http://docs.docker.io/en/latest/">documentation</a>. So I won&#8217;t go into any details here. There are also some
+very good <a href="http://goldmann.pl/blog/tags/docker/">posts</a> from <a href="http://goldmann.pl/blog/">Marek Goldmann</a> which helped
+me a lot getting started. In the remaining part of this post I will show you how to setup both a WildFly standalone
+server and a domain with multiple hosts and servers. Here we go!</p>
+
+<h1>Preperations</h1>
+
+<p>I assume you already have installed Docker. If not please refer to the
+<a href="http://www.docker.io/gettingstarted/#h_installation">offical documentation</a> on how to setup Docker on your machine.
+The following assumes you&#8217;re using Docker 0.7.0.</p>
+
+<p>I&#8217;ve put together a repository which is based on Ubuntu and contains Java7 and WildFly 8.0.0.Beta1. It does not contain
+any commands or entrypoints, but is intended to serve as a base repository for the other WildFly related repositories.
+You can grap it and use it as a starting point:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ docker pull hpehl/wildfly
+</span><span class='line'>$ docker run -i -t hpehl/wildfly /bin/bash</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Standalone</h1>
+
+<p>To quickly run a standalone server, I&#8217;ve put together the repository <code>hpehl/wildfly-standalone</code>. It is based on
+<code>hpehl/wildfly</code> and starts an unmodified standalone server. The standalone server exposes the following ports:</p>
+
+<ul>
+<li>8080 for HTTP</li>
+<li>9990 for HTTP based management and</li>
+<li>9999 for native management</li>
+</ul>
+
+
+<p>You can use the user <code>admin:passw0rd_</code> to access the management interfaces. Running it with</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker run -p 49080:8080 -p 49090:9990 -d hpehl/wildfly-standalone</span></code></pre></td></tr></table></div></figure>
+
+
+<p>will start the server. You can check the status with <code>docker logs &lt;CONTAINER_ID&gt;</code>. After a short while you should
+be able to access the server using http://localhost:49080</p>
+
+<p><figure class="centered"><img src="http://hpehl.info/images/posts/docker_wildfly_standalone.png" title="WildFly standalone server running inside a Docker container" ></figure></p>
+
+<h1>Domain</h1>
+
+<p>To setup a domain use the repository <code>hpehl/wildfly</code>. It contains different tags to start a domain controller and up to
+four hosts. Tags are a way to reference different images inside a repository. The syntax for tags is
+<code>&lt;repository&gt;:&lt;tag&gt;</code> When no tag is given, Docker uses the tag <code>latest</code>. The domain repository consists of these tags:</p>
+
+<ul>
+<li><code>hpehl/wildfly-domain:dc</code>: The domain controller with five servers. The domain controller defines three server groups:
+
+<ul>
+<li>deployment</li>
+<li>staging</li>
+<li>production</li>
+</ul>
+</li>
+<li><code>hpehl/wildfly-domain:hostA</code>: First host with three servers</li>
+<li><code>hpehl/wildfly-domain:hostB</code>: Second host with three servers</li>
+<li><code>hpehl/wildfly-domain:hostC</code>: Third host with two servers</li>
+<li><code>hpehl/wildfly-domain:hostD</code>: Fourth host with two servers</li>
+</ul>
+
+
+<p>Docker has a great feature which enables inter-container communication. This is done by specifying the <code>link</code>
+parameter. When linking two containers Docker will use the exposed ports of the container to create a secure tunnel
+for the parent to access. This feature is used in the WildFly domain for the communication between the domain
+controller and the hosts.</p>
+
+<p>In order to setup and run the domain, you have to first start the domain controller. After that you can start as many
+hosts as you like and link them to the domain controller. Be sure to use &#8220;dc&#8221; as name (using another name won&#8217;t work):</p>
+
+<pre><code>docker run -name wildfly-dc -d hpehl/wildfly-domain:dc
+docker run -name hostA -link wildfly-dc:dc -d hpehl/wildfly-domain:hostA
+docker run -name hostB -link wildfly-dc:dc -d hpehl/wildfly-domain:hostB
+docker run -name hostC -link wildfly-dc:dc -d hpehl/wildfly-domain:hostC
+docker run -name hostD -link wildfly-dc:dc -d hpehl/wildfly-domain:hostD
+</code></pre>
+
+<p>Some notes:</p>
+
+<ul>
+<li>The domain controller exposes the standard ports
+
+<ul>
+<li>8080 for HTTP</li>
+<li>9990 for HTTP based management and</li>
+<li>9999 for native management</li>
+</ul>
+</li>
+<li>The hosts expose just port 8080</li>
+<li>The domain controller defines the user <code>admin:passw0rd_</code>, which can be used for management</li>
+</ul>
+
+
+<h1>Troubleshooting</h1>
+
+<p>Unfortunately in the current WildFly Beta there&#8217;s a problem if you want to access the admin console of a WildFly
+instance running inside a Docker container. I assume this will be fixed once WildFly GA is available. For the time
+being you can only use the CLI.</p>
+
+<p>If you really do need the console, you can use the latest EAP 6.2 distribution which is not affected by this
+limitation. You can find <a href="https://github.com/hpehl/dockerfiles/tree/master/eap62">Dockerfiles</a> on my GitHub account
+using EAP. However please note that there&#8217;s no EAP distribution included. You have to provide one on your own.</p>
+
+<h1>Summary</h1>
+
+<p>Using Docker it is really easy to setup a WildFly domain. Adding / removing hosts is just a matter of
+starting / stopping Docker containers.</p>
+
+<p>Docker offers also a rich API. So setting up your domain could also be done using a nifty web front-end where you
+&#8216;click together&#8217; your server groups, hosts and servers. The Dockerfiles, images and containers would then be created
+based on your input - all fully automatically!</p>
+
+<h1>Resources</h1>
+
+<ul>
+<li>WildFly repositories on index.docker.io: https://index.docker.io/u/hpehl/</li>
+<li>Related Dockerfiles: https://github.com/hpehl/dockerfiles/tree/master/wildfly</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[JBoss One Day Talk]]></title>
@@ -1362,22 +1499,6 @@ information is no longer visible in the URL.</p>
     <id>http://hpehl.info/announcement-piriti-0-4</id>
     <content type="html"><![CDATA[<p>I&#8217;m pleased to announce Piriti 0.4. This is a major update which adds support for namespaces in XML document and XPath
 expressions. Please take a look at the <a href="https://github.com/hpehl/piriti/wiki/Releasenotes">release notes</a> for further info.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[New XML parser for GWT]]></title>
-    <link href="http://hpehl.info/new-xml-parser-for-gwt.html"/>
-    <updated>2010-07-07T13:31:00+02:00</updated>
-    <id>http://hpehl.info/new-xml-parser-for-gwt</id>
-    <content type="html"><![CDATA[<p>I&#8217;m pleased to announce the first release of <a href="https://github.com/hpehl/totoe">Totoe</a>. Totoe is a XML parser for GWT
-which comes with XPath and namespace support. It originated from Piriti a JSON and XML mapper for GWT.<!-- more --></p>
-
-<p>Totoe uses <a href="http://dev.abiss.gr/sarissa/">Sarissa</a> for the XML parsing. Sarissa is a great cross browser XML parser
-for Javascript. Essentially Totoe is a GWT port of Sarissa with the goal to offer a similar API as the GWT XML module.
-Right now the focus is on parsing XML - there are no methods to create, insert or append documents, elements or nodes.
-Those features might come in later releases. The big advantage over the GWT XML module is IMHO a cleaner API and the
-support of XPath and namespaces.</p>
 ]]></content>
   </entry>
   

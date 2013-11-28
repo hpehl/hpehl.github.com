@@ -113,12 +113,16 @@
         <lastmod>2013-10-30T20:16:32+01:00</lastmod>
     </url>
     <url>
+        <loc>http://hpehl.info/wildfly-dockerfiles.html</loc>
+        <lastmod>2013-11-28T14:40:22+01:00</lastmod>
+    </url>
+    <url>
         <loc>http://hpehl.info/about/</loc>
         <lastmod>2013-05-22T14:56:59+02:00</lastmod>
     </url>
     <url>
         <loc>http://hpehl.info/blog/archives/</loc>
-        <lastmod>2013-10-30T20:16:32+01:00</lastmod>
+        <lastmod>2013-11-28T14:40:22+01:00</lastmod>
     </url>
     <url>
         <loc>http://hpehl.info/disclaimer/</loc>
@@ -126,7 +130,7 @@
     </url>
     <url>
         <loc>http://hpehl.info/</loc>
-        <lastmod>2013-10-30T20:16:32+01:00</lastmod>
+        <lastmod>2013-11-28T14:40:22+01:00</lastmod>
     </url>
     <url>
         <loc>http://hpehl.info/projects/</loc>

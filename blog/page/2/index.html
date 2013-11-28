@@ -9,8 +9,8 @@
   <meta name="author" content="Harald Pehl">
 
   
-  <meta name="description" content="We&#8217;re currently working on a new feature for the JBoss Admin Console. The console should become independent from the
-rest of the JBoss AS &hellip;">
+  <meta name="description" content="I was looking for a way to implement some kind of dynamic plug-in system in Dart. The idea was to load Dart code on
+demand into an isolate using &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -82,6 +82,43 @@ rest of the JBoss AS &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
+        
+        <h1 class="entry-title"><a href="/playing-around-with-dart-isolates.html">Playing Around With Dart Isolates<span class="readon" title="More...">&rarr;</span></a>
+
+
+
+
+
+
+
+
+
+
+
+  
+    <time datetime="2013-04-08T22:26:00+02:00" pubdate class="date"><span class="day">08</span><span class="month">Apr</span><span class="year">2013</span></time>
+
+
+</h1>
+      
+    
+  </header>
+
+
+  <div class="entry-content"><p>I was looking for a way to implement some kind of dynamic plug-in system in Dart. The idea was to load Dart code on
+demand into an isolate using <a href="http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnUri">spawnUri()</a>.
+It turns out that this function is implemented in the Dart VM but neither in Dartium nor does it compile down to
+JavaScript.</div>
+
+
+    </article>
   
   
     <article>
@@ -416,41 +453,6 @@ many different ways. </div>
   <div class="entry-content"><p>I&#8217;m pleased to announce Piriti 0.4. This is a major update which adds support for namespaces in XML document and XPath
 expressions. Please take a look at the <a href="https://github.com/hpehl/piriti/wiki/Releasenotes">release notes</a> for further info.</p>
 </div>
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        
-        <h1 class="entry-title"><a href="/new-xml-parser-for-gwt.html">New XML Parser for GWT<span class="readon" title="More...">&rarr;</span></a>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <time datetime="2010-07-07T13:31:00+02:00" pubdate class="date"><span class="day">07</span><span class="month">Jul</span><span class="year">2010</span></time>
-
-
-</h1>
-      
-    
-  </header>
-
-
-  <div class="entry-content"><p>I&#8217;m pleased to announce the first release of <a href="https://github.com/hpehl/totoe">Totoe</a>. Totoe is a XML parser for GWT
-which comes with XPath and namespace support. It originated from Piriti a JSON and XML mapper for GWT.</div>
 
 
     </article>

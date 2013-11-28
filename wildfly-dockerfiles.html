@@ -1,0 +1,366 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>WildFly Dockerfiles - Harald Pehl</title>
+  <meta name="author" content="Harald Pehl">
+
+  
+  <meta name="description" content="WildFly Dockerfiles 28Nov2013 For the last couple of days I have been playing with Docker. In a nutshell Docker is a tool
+that lets you create &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://hpehl.info/wildfly-dockerfiles.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/font-awesome.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href='http://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
+  <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js" type="text/javascript"></script>
+  <script src="/javascripts/ender.js" type="text/javascript"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Harald Pehl" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-40396539-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body>
+  <header>
+    <hgroup>
+        <h1><a href="/">Harald Pehl</a></h1>
+        
+        <h2>Developer notes written down before they get lost.</h2>
+        
+    </hgroup>
+    <div id="menu">
+        <nav role="navigation">
+    <ul class="main-navigation">
+        <li><a href="/">Blog</a></li>
+        <li><a href="/blog/archives">Archives</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/about">About</a></li>
+    </ul>
+</nav>
+<!--
+    
+    <form action="http://google.com/search" method="get">
+        <fieldset role="search">
+            <input type="hidden" name="q" value="site:hpehl.info" />
+            <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+        </fieldset>
+    </form>
+    
+-->
+
+    </div>
+</header>
+
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">WildFly Dockerfiles
+
+
+
+
+
+
+
+
+
+
+
+  
+    <time datetime="2013-11-28T14:40:00+01:00" pubdate class="date"><span class="day">28</span><span class="month">Nov</span><span class="year">2013</span></time>
+
+
+</h1>
+      
+    
+  </header>
+
+
+  <div class="entry-content"><p>For the last couple of days I have been playing with <a href="http://www.docker.io">Docker</a>. In a nutshell Docker is a tool
+that lets you create images and run so called containers. It uses <a href="http://lxc.sourceforge.net/">Linux Containers</a> (LXC)
+under the hood. What appears to be yet another virtualization solution, is in fact a very lightweight way to setup,
+manage and run &#8220;processes in a box&#8221;.<!-- more --></p>
+
+<p>Docker comes with a great <a href="http://www.docker.io/gettingstarted/">tutorial</a> and a
+reasonable <a href="http://docs.docker.io/en/latest/">documentation</a>. So I won&#8217;t go into any details here. There are also some
+very good <a href="http://goldmann.pl/blog/tags/docker/">posts</a> from <a href="http://goldmann.pl/blog/">Marek Goldmann</a> which helped
+me a lot getting started. In the remaining part of this post I will show you how to setup both a WildFly standalone
+server and a domain with multiple hosts and servers. Here we go!</p>
+
+<h1>Preperations</h1>
+
+<p>I assume you already have installed Docker. If not please refer to the
+<a href="http://www.docker.io/gettingstarted/#h_installation">offical documentation</a> on how to setup Docker on your machine.
+The following assumes you&#8217;re using Docker 0.7.0.</p>
+
+<p>I&#8217;ve put together a repository which is based on Ubuntu and contains Java7 and WildFly 8.0.0.Beta1. It does not contain
+any commands or entrypoints, but is intended to serve as a base repository for the other WildFly related repositories.
+You can grap it and use it as a starting point:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ docker pull hpehl/wildfly
+</span><span class='line'>$ docker run -i -t hpehl/wildfly /bin/bash</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Standalone</h1>
+
+<p>To quickly run a standalone server, I&#8217;ve put together the repository <code>hpehl/wildfly-standalone</code>. It is based on
+<code>hpehl/wildfly</code> and starts an unmodified standalone server. The standalone server exposes the following ports:</p>
+
+<ul>
+<li>8080 for HTTP</li>
+<li>9990 for HTTP based management and</li>
+<li>9999 for native management</li>
+</ul>
+
+
+<p>You can use the user <code>admin:passw0rd_</code> to access the management interfaces. Running it with</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>docker run -p 49080:8080 -p 49090:9990 -d hpehl/wildfly-standalone</span></code></pre></td></tr></table></div></figure>
+
+
+<p>will start the server. You can check the status with <code>docker logs &lt;CONTAINER_ID&gt;</code>. After a short while you should
+be able to access the server using http://localhost:49080</p>
+
+<p><figure class="centered"><img src="/images/posts/docker_wildfly_standalone.png" title="WildFly standalone server running inside a Docker container" ></figure></p>
+
+<h1>Domain</h1>
+
+<p>To setup a domain use the repository <code>hpehl/wildfly</code>. It contains different tags to start a domain controller and up to
+four hosts. Tags are a way to reference different images inside a repository. The syntax for tags is
+<code>&lt;repository&gt;:&lt;tag&gt;</code> When no tag is given, Docker uses the tag <code>latest</code>. The domain repository consists of these tags:</p>
+
+<ul>
+<li><code>hpehl/wildfly-domain:dc</code>: The domain controller with five servers. The domain controller defines three server groups:
+
+<ul>
+<li>deployment</li>
+<li>staging</li>
+<li>production</li>
+</ul>
+</li>
+<li><code>hpehl/wildfly-domain:hostA</code>: First host with three servers</li>
+<li><code>hpehl/wildfly-domain:hostB</code>: Second host with three servers</li>
+<li><code>hpehl/wildfly-domain:hostC</code>: Third host with two servers</li>
+<li><code>hpehl/wildfly-domain:hostD</code>: Fourth host with two servers</li>
+</ul>
+
+
+<p>Docker has a great feature which enables inter-container communication. This is done by specifying the <code>link</code>
+parameter. When linking two containers Docker will use the exposed ports of the container to create a secure tunnel
+for the parent to access. This feature is used in the WildFly domain for the communication between the domain
+controller and the hosts.</p>
+
+<p>In order to setup and run the domain, you have to first start the domain controller. After that you can start as many
+hosts as you like and link them to the domain controller. Be sure to use &#8220;dc&#8221; as name (using another name won&#8217;t work):</p>
+
+<pre><code>docker run -name wildfly-dc -d hpehl/wildfly-domain:dc
+docker run -name hostA -link wildfly-dc:dc -d hpehl/wildfly-domain:hostA
+docker run -name hostB -link wildfly-dc:dc -d hpehl/wildfly-domain:hostB
+docker run -name hostC -link wildfly-dc:dc -d hpehl/wildfly-domain:hostC
+docker run -name hostD -link wildfly-dc:dc -d hpehl/wildfly-domain:hostD
+</code></pre>
+
+<p>Some notes:</p>
+
+<ul>
+<li>The domain controller exposes the standard ports
+
+<ul>
+<li>8080 for HTTP</li>
+<li>9990 for HTTP based management and</li>
+<li>9999 for native management</li>
+</ul>
+</li>
+<li>The hosts expose just port 8080</li>
+<li>The domain controller defines the user <code>admin:passw0rd_</code>, which can be used for management</li>
+</ul>
+
+
+<h1>Troubleshooting</h1>
+
+<p>Unfortunately in the current WildFly Beta there&#8217;s a problem if you want to access the admin console of a WildFly
+instance running inside a Docker container. I assume this will be fixed once WildFly GA is available. For the time
+being you can only use the CLI.</p>
+
+<p>If you really do need the console, you can use the latest EAP 6.2 distribution which is not affected by this
+limitation. You can find <a href="https://github.com/hpehl/dockerfiles/tree/master/eap62">Dockerfiles</a> on my GitHub account
+using EAP. However please note that there&#8217;s no EAP distribution included. You have to provide one on your own.</p>
+
+<h1>Summary</h1>
+
+<p>Using Docker it is really easy to setup a WildFly domain. Adding / removing hosts is just a matter of
+starting / stopping Docker containers.</p>
+
+<p>Docker offers also a rich API. So setting up your domain could also be done using a nifty web front-end where you
+&#8216;click together&#8217; your server groups, hosts and servers. The Dockerfiles, images and containers would then be created
+based on your input - all fully automatically!</p>
+
+<h1>Resources</h1>
+
+<ul>
+<li>WildFly repositories on index.docker.io: https://index.docker.io/u/hpehl/</li>
+<li>Related Dockerfiles: https://github.com/hpehl/dockerfiles/tree/master/wildfly</li>
+</ul>
+
+</div>
+
+
+  <footer class="line">
+    <p class="meta">
+      <span>
+        
+
+<i title="Categories" class="categories icon-large icon-tags">
+  
+    <a class='category' href='/blog/categories/docker/'>docker</a>, <a class='category' href='/blog/categories/jboss/'>jboss</a>, <a class='category' href='/blog/categories/widfly/'>widfly</a>
+  
+</i>
+
+
+        
+          <a class="sharing tweet" title="Share on Twitter" href="http://twitter.com/share?url=http://hpehl.info/wildfly-dockerfiles.html"><i class="icon-large icon-twitter"></i></a>
+<a class="sharing gplus" title="Share on Google+" href="https://plus.google.com/share?url=http://hpehl.info/wildfly-dockerfiles.html"><i class="icon-large icon-google-plus-sign"></i></a>
+<a class="sharing facebook" title="Share on Facebook" href="http://www.facebook.com/sharer.php?u=http://hpehl.info/wildfly-dockerfiles.html"><i class="icon-large icon-facebook"></i></a>
+
+        
+      </span>
+      <span>
+        
+          <a class="articlenav" href="/jboss-one-day-talk.html" title="Previous Post: JBoss One Day Talk">&larr; JBoss One Day Talk</a>
+        
+        
+      </span>
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    Copyright &copy; 2013 - Harald Pehl - <a href="/disclaimer">Disclaimer</a>
+    <span class="basic-alignment right">
+        <a class="rss" href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS"><i class="icon-large icon-rss"></i></a>
+    </span>
+</p>
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'hpehl';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://hpehl.info/wildfly-dockerfiles.html';
+        var disqus_url = 'http://hpehl.info/wildfly-dockerfiles.html';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<script>
+    $('a[class*=facebook]').on('click', function(e) {
+        e.preventDefault();
+        var width  = 575,
+                height = 400,
+                left   = window.screenLeft + (window.innerWidth - width) / 2,
+                top    = window.screenTop + (window.innerHeight - height) / 2,
+                url    = this.href,
+                opts   = 'status=1' +
+                        ',width='  + width  +
+                        ',height=' + height +
+                        ',top='    + top    +
+                        ',left='   + left;
+        window.open(url, 'twitter', opts);
+    });
+</script>
+
+
+
+  <script type="text/javascript">
+      $('a[class*=gplus]').on('click', function(e) {
+          e.preventDefault();
+          var width  = 650,
+                  height = 300,
+                  left   = window.screenLeft + (window.innerWidth - width) / 2,
+                  top    = window.screenTop + (window.innerHeight - height) / 2,
+                  url    = this.href,
+                  opts   = 'status=1' +
+                          ',width='  + width  +
+                          ',height=' + height +
+                          ',top='    + top    +
+                          ',left='   + left;
+          window.open(url, 'twitter', opts);
+      });
+  </script>
+
+
+
+<script>
+    $('a[class*=tweet]').on('click', function(e) {
+        e.preventDefault();
+        var width  = 575,
+            height = 400,
+            left   = window.screenLeft + (window.innerWidth - width) / 2,
+            top    = window.screenTop + (window.innerHeight - height) / 2,
+            url    = this.href,
+            opts   = 'status=1' +
+                    ',width='  + width  +
+                    ',height=' + height +
+                    ',top='    + top    +
+                    ',left='   + left;
+        window.open(url, 'twitter', opts);
+    });
+</script>
+
+
+
+</body>
+</html>
