@@ -53,9 +53,9 @@ be able to access the server using http://localhost:49080
 
 # Domain
 
-To setup a domain use the repository `hpehl/wildfly`. It contains different tags to start a domain controller and up to
-four hosts. Tags are a way to reference different images inside a repository. The syntax for tags is
-`<repository>:<tag>` When no tag is given, Docker uses the tag `latest`. The domain repository consists of these tags:
+To setup a domain use the repository `hpehl/wildfly-domain`. It contains different tags to start a domain controller
+and up to four hosts. Tags are a way to reference different images inside a repository. The syntax for tags is
+`<repository>:<tag>`. When no tag is given, Docker uses the tag `latest`. The domain repository consists of these tags:
 
 - `hpehl/wildfly-domain:dc`: The domain controller with five servers. The domain controller defines three server groups:
   - deployment
@@ -95,7 +95,7 @@ Unfortunately in the current WildFly Beta there's a problem if you want to acces
 instance running inside a Docker container. I assume this will be fixed once WildFly GA is available. For the time
 being you can only use the CLI.
 
-If you really do need the console, you can use the latest EAP 6.2 distribution which is not affected by this
+If you need the console, you can use for instance EAP 6.2 which is not affected by this
 limitation. You can find [Dockerfiles](https://github.com/hpehl/dockerfiles/tree/master/eap62) on my GitHub account
 using EAP. However please note that there's no EAP distribution included. You have to provide one on your own.
 
