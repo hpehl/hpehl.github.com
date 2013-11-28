@@ -4,7 +4,7 @@
   <title><![CDATA[Category: widfly | Harald Pehl]]></title>
   <link href="http://hpehl.info/blog/categories/widfly/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2013-11-28T14:42:00+01:00</updated>
+  <updated>2013-11-28T15:33:59+01:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -69,9 +69,9 @@ be able to access the server using http://localhost:49080</p>
 
 <h1>Domain</h1>
 
-<p>To setup a domain use the repository <code>hpehl/wildfly</code>. It contains different tags to start a domain controller and up to
-four hosts. Tags are a way to reference different images inside a repository. The syntax for tags is
-<code>&lt;repository&gt;:&lt;tag&gt;</code> When no tag is given, Docker uses the tag <code>latest</code>. The domain repository consists of these tags:</p>
+<p>To setup a domain use the repository <code>hpehl/wildfly-domain</code>. It contains different tags to start a domain controller
+and up to four hosts. Tags are a way to reference different images inside a repository. The syntax for tags is
+<code>&lt;repository&gt;:&lt;tag&gt;</code>. When no tag is given, Docker uses the tag <code>latest</code>. The domain repository consists of these tags:</p>
 
 <ul>
 <li><code>hpehl/wildfly-domain:dc</code>: The domain controller with five servers. The domain controller defines three server groups:
@@ -126,7 +126,7 @@ docker run -name hostD -link wildfly-dc:dc -d hpehl/wildfly-domain:hostD
 instance running inside a Docker container. I assume this will be fixed once WildFly GA is available. For the time
 being you can only use the CLI.</p>
 
-<p>If you really do need the console, you can use the latest EAP 6.2 distribution which is not affected by this
+<p>If you need the console, you can use for instance EAP 6.2 which is not affected by this
 limitation. You can find <a href="https://github.com/hpehl/dockerfiles/tree/master/eap62">Dockerfiles</a> on my GitHub account
 using EAP. However please note that there's no EAP distribution included. You have to provide one on your own.</p>
 
