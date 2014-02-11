@@ -19,19 +19,21 @@
       li {
         margin: 0;
         font-size: 0.5em;
-        a {
+        a, i.fa-search {
           @include link-colors($nav-color, $nav-color-hover, $visited: $nav-color);
-          font-family: $sans;
-          text-decoration: none;
           font-size: 1em;
           line-height: 1.2em;
           padding: 0 .5em;
+        }
+        a {
+          font-family: $sans;
+          text-decoration: none;
           &:hover {
             text-decoration: underline;
           }
         }
       }
-    }
+    }    
   }
 }
 

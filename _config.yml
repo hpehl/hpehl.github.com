@@ -6,7 +6,6 @@ url: http://hpehl.info
 title: Harald Pehl
 subtitle: Developer notes written down before they get lost.
 author: Harald Pehl
-simple_search: http://google.com/search
 description:
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
@@ -93,3 +92,7 @@ google_analytics_tracking_id: UA-40396539-1
 
 # Facebook Like
 facebook_like: true
+
+#lunr-search
+lunr_search: true
+simple_search: #http://google.com/search

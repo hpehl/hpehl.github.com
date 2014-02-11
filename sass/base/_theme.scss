@@ -57,7 +57,7 @@ a {
 html {
   background: $main-bg;
 }
-body {
+.container {
   > header, > footer {
     background-color: $header-bg;
   }
@@ -81,6 +81,6 @@ body {
 
 @media only screen and (min-width: 550px) {
 
-  body > footer { margin-bottom: 3em; }
+  .container > footer { margin-bottom: 3em; }
 }
 

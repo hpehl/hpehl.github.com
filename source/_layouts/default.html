@@ -1,13 +1,18 @@
 {% capture root_url %}{{ site.root | strip_slash }}{% endcapture %}
 {% include head.html %}
 <body>
-  {% include header.html %}
-  <div id="main">
-    <div id="content">
-      {{ content | expand_urls: root_url }}
+  {% include search.html %}
+  <div class="container">
+    {% include header.html %}
+    <div id="main">
+      <div id="content">
+        {{ content | expand_urls: root_url }}
+      </div>
     </div>
+    <footer role="contentinfo">{% include footer.html %}</footer>
+    {% include after_footer.html %}
   </div>
-  <footer role="contentinfo">{% include footer.html %}</footer>
-  {% include after_footer.html %}
+  <div class="md-overlay"></div>
+  <script src="{{ root_url }}/javascripts/modalEffects.js"></script>
 </body>
 </html>

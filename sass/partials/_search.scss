@@ -1,0 +1,158 @@
+.container {
+  min-height: 100%;
+}
+
+.md-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 66%;
+  max-width: 800px;
+  min-width: 320px;
+  height: auto;
+  z-index: 2000;
+  visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.md-show {
+  visibility: visible;
+}
+
+.md-overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  opacity: 0;
+  @include transition(color .2s);
+}
+
+.md-show ~ .md-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+.md-content {
+  color: $title-color;
+  background-color: rgba($text-color, .8);
+  position: relative;
+  @include border-radius(5px);
+  margin: 0 auto;
+
+  .md-close {
+    float: right;
+    padding: 2px 4px;
+    cursor: pointer;
+  }
+
+  .query {
+    padding: 2em;
+  }
+  .search-entries {
+    padding: 0 2em;
+  }
+  .footer {
+    height: 2em;
+  }
+
+  #search-query {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    font-size: 1.8em;
+    padding: 5px;
+    color: $text-color;
+    background-color: title-color;
+    border: 1px solid $text-color-light;
+    @include border-radius(5px);
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .search-entries {
+    overflow-y: auto;
+
+    p, article, time, h1, footer {
+      margin: 0;
+      padding: 0;
+    }
+
+    p, h1 {
+      color: $title-color;
+      font-size: 1.2em;
+      font-weight: normal;
+    }
+
+    article {
+      .meta {
+        font-size: .8em;
+        color: $text-color-light;
+        time, footer {
+          display: inline;
+        }
+        time {
+          margin-right: .5em;
+        }
+      }
+      h1 > a {
+        text-decoration: none;
+        color: $title-color;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+    article {
+      margin-bottom: 1em;
+    }
+  }
+}
+
+/* Effect: Fade in, scale up and blur */
+.md-effect-1 .md-content {
+  -webkit-transform: scale(0.7);
+  -moz-transform: scale(0.7);
+  -ms-transform: scale(0.7);
+  transform: scale(0.7);
+  opacity: 0;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.md-show.md-effect-1 .md-content {
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+  opacity: 1;
+}
+
+.md-show.md-effect-1 ~ .container {
+  -webkit-filter: blur(3px);
+  -moz-filter: blur(3px);
+  filter: blur(3px);
+}
+
+.md-show.md-effect-1 ~ .container,
+.md-effect-1 .md-content {
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.disable-scrolling {
+  overflow: hidden;
+}

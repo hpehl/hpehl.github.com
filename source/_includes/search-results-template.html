@@ -1,0 +1,17 @@
+{% raw %}
+<script id="search-results-template" type="text/x-handlebars-template">
+  {{#entries}}
+    <article>
+        <h1><a href="{{url}}">{{title}}</a></h1>
+        <div class="meta">
+            <time datetime="{{date}}" pubdate>{{date}}</time>
+            {{#if categories}}
+                <footer>
+                    <span class="categories"><i class="fa fa-tags"></i> {{#each categories}}{{this}} {{/each}}</span>
+                </footer>
+            {{/if}}
+        </div>
+    </article>
+  {{/entries}}
+</script>
+{% endraw %}
