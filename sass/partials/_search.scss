@@ -56,11 +56,9 @@
   }
 
   .query {
-    padding: 2em;
+    padding: 2em 2em 1em 2em;
   }
-  .search-entries {
-    padding: 0 2em;
-  }
+
   .footer {
     height: 2em;
   }
@@ -89,33 +87,36 @@
       padding: 0;
     }
 
-    p, h1 {
+    p, article {
+      padding: 1em 2em;
+    }
+
+    article.results:hover {
+      background-color: rgba($text-color-light, .3);
+      cursor: pointer;
+    }
+
+    h1 {
       color: $title-color;
       font-size: 1.2em;
       font-weight: normal;
     }
 
-    article {
-      .meta {
-        font-size: .8em;
-        color: $text-color-light;
-        time, footer {
-          display: inline;
-        }
-        time {
-          margin-right: .5em;
-        }
-      }
-      h1 > a {
-        text-decoration: none;
-        color: $title-color;
-        &:hover {
-          text-decoration: underline;
-        }
-      }
+    h1 > a {
+      text-decoration: none;
+      color: $title-color;
     }
-    article {
-      margin-bottom: 1em;
+
+    .meta {
+      font-size: .8em;
+      color: $text-color-light;
+    }
+
+    time, footer {
+      display: inline;
+    }
+    time {
+      margin-right: .5em;
     }
   }
 }

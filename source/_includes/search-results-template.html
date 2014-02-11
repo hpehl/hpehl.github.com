@@ -1,7 +1,7 @@
 {% raw %}
 <script id="search-results-template" type="text/x-handlebars-template">
   {{#entries}}
-    <article>
+    <article class="results" onclick="location.href='{{url}}'">
         <h1><a href="{{url}}">{{title}}</a></h1>
         <div class="meta">
             <time datetime="{{date}}" pubdate>{{date}}</time>
