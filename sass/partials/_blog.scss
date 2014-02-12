@@ -102,6 +102,9 @@ article {
       }
       i.categories {
         color: lighten($text-color, 20);
+        a.category {
+          font-size: .85em;
+        }
       }
       a.sharing {
         text-decoration: none;
