@@ -1,0 +1,416 @@
+[
+  {
+    "id": 0,
+    "title": "Google AppEngine, Restlet & Guice",
+    "categories": [
+      "gae",
+      "restlet",
+      "guice"
+    ],
+    "tags": [
+
+    ],
+    "url": "/google-appengine-restlet-guice.html",
+    "content": "Currently I'm developing an application for time recording called Karaka. Karaka is deloyed on the Google AppEngine for \nJava (GAE/J) and uses inter alia the following stack:\n\n* [Guice 2.0](http://code.google.com/p/google-guice/)\n* [Restlet 2.0](http://www.restlet.org)\n\n<!-- more -->\nBasically there are two different ways to go when using the Restlet framework:\n\n1. Run as a standalone application\n2. Run in a servlet container\n\nFor the first approach there's \na [blog entry from Tim Peierls](http://tembrel.blogspot.com/2008/07/resource-dependency-injection-in.html) on how to \nconfigure your resources using Guice. As Karaka is deployed on the GAE/J, I'm using the second approach. Therefore I \ncreated a custom servlet in combination with custom Finder and Router classes. All classes are bind together with \nGuice. This post describes my setup and shows the relevant code. Let's start by looking at the web.xml:\n\n``` xml\n<web-app xmlns=\"http://java.sun.com/xml/ns/javaee\" version=\"2.5\">\n\n    <filter>\n        <filter-name>guiceFilter</filter-name>\n        <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>\n    </filter>\n    <filter-mapping>\n        <filter-name>guiceFilter</filter-name>\n        <url-pattern>/*</url-pattern>\n    </filter-mapping>\n\n    <listener>\n        <listener-class>name.pehl.karaka.server.servlet.ServletConfig</listener-class>\n    </listener>\n\n</web-app>\n```\n\nNothing special here. The main configuration happens in the ServletConfig class:\n\n``` java\npublic class ServletConfig extends GuiceServletContextListener\n{\n    @Override\n    protected Injector getInjector()\n    {\n        // Further modules are omitted...\n        return Guice.createInjector(new ServletModule(), new RestModule());\n    }\n}\n```\n\nI use two different modules: One for the servlet configuration and one for the setup of the resources. The servlet \nmodule registers the custom REST servlet:\n\n``` java\npublic class ServletModule extends com.google.inject.servlet.ServletModule\n{\n    @Override\n    protected void configureServlets()\n    {\n        serve(\"/rest/v1/*\").with(RestletServlet.class);\n    }\n}\n```\n\nAll REST requests are handled by the RestletServlet. The url mapping contains a version number. Using this approach \nyou can later on add another servlet with a different interface / version and maintain backward compatibility. \nNow let's look at the RestletServlet:\n\n``` java\n@Singleton\npublic class RestletServlet extends HttpServlet\n{\n    @Inject\n    private Injector injector;\n    private Context context;\n    private ServletAdapter adapter;\n\n    @Override\n    public void init() throws ServletException\n    {\n        context = new Context();\n        Application application = new Application();\n        application.setContext(context);\n        application.setInboundRoot(new GuiceRouter(injector, context)\n        {\n            @Override\n            protected void attachRoutes()\n            {\n                attach(\"/projects\", ProjectsResource.class);\n            }\n        });\n        adapter = new ServletAdapter(getServletContext());\n        adapter.setTarget(application);\n    }\n\n    @Override\n    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,\n            IOException\n    {\n        adapter.service(request, response);\n    }\n}\n```\n\nThe servlet is normal `HttpServlet`. The integration with the Restlet framework is not reached by inheritance but by \nusing the `ServletAdapter` class. The `ServletAdapter` is configured to use a new `Context`, `Application` and our own \n`GuiceRouter`.\n\nAnother important aspect is that a reference to the Injector is provided by Guice (see \"Injecting the injector\" in \nthe [Guice documentation](http://code.google.com/docreader/#p=google-guice&s=google-guice&t=ServletRegexKeyMapping)). \nWe will need the injector later in the `GuiceFinder` class.\n\nThe `GuiceRouter` is responsible for setting up the mappings between the urls and the resources. Therefore it has \nthe abstract method `attachRoutes()`. The `GuiceRouter` extends from `Router` from the Restlet framework and uses a \n`GuiceFinder` to create the resource instances:\n\n``` java \npublic abstract class GuiceRouter extends Router\n{\n    private final Injector injector;\n\n    public GuiceRouter(Injector injector, Context context)\n    {\n        super(context);\n        this.injector = injector;\n        attachRoutes();\n    }\n\n    @Override\n    public Finder createFinder(Class targetClass)\n    {\n        return new GuiceFinder(injector, getContext(), targetClass);\n    }\n\n    protected abstract void attachRoutes();\n\n    protected Injector getInjector()\n    {\n        return injector;\n    }\n}\n```\n\nThe `GuiceFinder` is the class where the resources are created. Therefore the method `create()` is overwritten. \nBy calling `Injector.getInstance(targetClass)` the resource is created and all its dependencies are injected by Guice:\n\n``` java\npublic class GuiceFinder extends Finder\n{\n    private final Injector injector;\n\n    public GuiceFinder(Injector injector, Context context, Class targetClass)\n    {\n        super(context, targetClass);\n        this.injector = injector;\n    }\n\n    @Override\n    public ServerResource create(Class targetClass, Request request, Response response)\n    {\n        return injector.getInstance(targetClass);\n    }\n}\n```\n\nThe following code shows one of the resource used in Karaka. The resource is bound to the url \"/projects\". So when \nthe url http://server/rest/v1/projects is called a new instance of the `ProjectsResource` is created by Guice and all \ndependencies are injected.\n\n``` java \npublic class ProjectsResource extends ServerResource\n{\n    private final ProjectService service;\n    private final TemplateConverter converter;\n\n    @Inject\n    public ProjectsResource(ProjectService service, TemplateConverter converter)\n    {\n        this.service = service;\n        this.converter = converter;\n    }\n\n    @Get(\"xml\")\n    public Representation represent()\n    {\n        Context context = new Context();\n        context.set(\"projects\", service.list());\n        String xml = converter.convert(\"templates/projects.vm\", context);\n        return new StringRepresentation(xml, MediaType.TEXT_XML);\n    }\n}\n```\n\nAs you can see, there's not much code necessary to integrate the Restlet framework with the GAE/J using the servlet \napproach. Feel free to comment and let me know if this is somewhat useful.",
+    "date": "2009-11-09T13:26:00+01:00"
+  },
+  {
+    "id": 1,
+    "title": "Google AppEngine, Restlet & Security",
+    "categories": [
+      "gae",
+      "restlet",
+      "guice",
+      "security"
+    ],
+    "tags": [
+
+    ],
+    "url": "/google-appengine-restlet-security.html",
+    "content": "I was wondering how to secure the resources in my current application. The application is deployed on the Google \nAppEngine and uses [Guice 2.0](https://code.google.com/p/google-guice/) and [Restlet 2.0](http://www.restlet.org). \nInspired by the post from [David M. Chandler](http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/) I \ndecided to use the AppEngine cookie named \"ACSID\" as a token in each and every url to secure my resources. This way \nthe url to the \"projects\" resource becomes http://karaka-d8.appspot.com/rest/v1/\\<ACSID\\>/projects.<!-- more -->\n\nTechnically I'm using an aspect together with a custom annotation to secure the resources. Here's the Guice module for \nthe security stuff:\n\n``` java\npublic class SecurityModule extends AbstractModule\n{\n    @Override\n    protected void configure()\n    {\n        SecurityInterceptor interceptor = new SecurityInterceptor();\n        bindInterceptor(Matchers.subclassesOf(ServerResource.class), Matchers.annotatedWith(Secured.class), interceptor);\n    }\n}\n```\n\nWith the above setup all methodes in subclasses of ServerResource which are annotated with the custom @Secured \nannotation are handled by the SecurityInterceptor. This class contains the logic to check whether there's a \nauthenticated user and whether the session cookie is correct (that's essentially the code from \n[David M. Chandlers post](http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/))\n\n``` java\npublic class SecurityInterceptor implements MethodInterceptor\n{\n    private static final String APPENGINE_COOKIE = \"ACSID\";\n\n    @Override\n    public Object invoke(MethodInvocation invocation) throws Throwable\n    {\n        UserService userService = UserServiceFactory.getUserService();\n        User user = userService.getCurrentUser();\n        if (user == null)\n        {\n            throw new SecurityException(\"No user\");\n        }\n\n        ServerResource resource = (ServerResource) invocation.getThis();\n        String token = (String) resource.getRequest().getAttributes().get(\"token\");\n        if (token == null || token.length() == 0)\n        {\n            throw new SecurityException(\"No security token\");\n        }\n\n        // Skip check on localhost so we can test in AppEngine local dev env\n        String sessionId = findSessionId(resource);\n        String serverName = resource.getReference().getHostDomain();\n        if (!(\"localhost\".equals(serverName)) &amp;&amp; !(token.equals(sessionId)))\n        {\n            throw new SecurityException(\"Security token invalid\");\n        }\n\n        return invocation.proceed();\n    }\n\n    private String findSessionId(ServerResource resource)\n    {\n        String result = null;\n        Series&lt;Cookie&gt; cookies = resource.getCookies();\n        for (Cookie cookie : cookies)\n        {\n            if (APPENGINE_COOKIE.equals(cookie.getName()))\n            {\n                result = cookie.getValue();\n                break;\n            }\n        }\n        return result;\n    }\n}\n```\n\nTo make this work the resource mappings have to include a {token} parameter. So inside your Router you should have \nsomething like that \n\n``` java\nattach(\"/{token}/projects\", ProjectsResource.class);\n``` \n\nFinally the methods you want to protect have to be annotated with the @Secured annotation:\n\n``` java \npublic class ProjectsResource extends ServerResource\n{\n    private final ProjectService service;\n    private final TemplateConverter converter;\n\n    @Inject\n    public ProjectsResource(ProjectService service, TemplateConverter converter)\n    {\n        this.service = service;\n        this.converter = converter;\n    }\n\n    @Secured\n    @Override\n    protected Representation get()\n    {\n        Context context = new Context();\n        context.set(\"projects\", service.list());\n        String xml = converter.convert(\"templates/projects.vm\", context);\n        return new StringRepresentation(xml, MediaType.TEXT_XML);\n    }\n}\n```\n\nOne last note: First I tried to use the @Get annotation from Restlet 2.0 instead of a custom annotation and configured \nthe SecurityInterceptor as follows:\n\n``` java\nbindInterceptor(Matchers.subclassesOf(ServerResource.class), Matchers.annotatedWith(Get.class), interceptor);\n```\n    \nUnfortunately that didn't work because the @Get annotation is not available in the generated AOP proxy. So Restlet \nhas no way to figure out what method to call for a GET request. Instead you have to override the get method.\n",
+    "date": "2009-11-24T17:06:00+01:00"
+  },
+  {
+    "id": 2,
+    "title": "XML Mapper for GWT",
+    "categories": [
+      "piriti"
+    ],
+    "tags": [
+
+    ],
+    "url": "/xml-mapper-for-gwt.html",
+    "content": "I'm a big fan of RESTful architectures. When using REST resources with XML representations in combination with GWT \nyou have to parse the XML and map it to the model used in the GWT client. The code therefore is tedious and \nerror-prone. So I decided to start a little framework called \"piriti\" (Maori for bridge). It is hosted on goolge code \nunder <https://github.com/hpehl/piriti>. The basic idea behind piriti is to use annotations on your model and generate \nthe parsing / mapping code with the help of deferred binding.<!-- more -->\n\nLet's assume you have a REST resource for a book which produces the following XML representation\n\n``` xml\n<book>\n    <isbn>978-0345417954</isbn>\n    <pages>432</pages>\n    <title>The Hotel New Hampshire</title>\n    <author>\n        <firstname>John</firstname>\n        <surname>Irving</surname>\n    </author>\n    <reviews>\n        <review>A hectic gaudy saga with the verve of a Marx Brothers movie.</review>\n        <review>Rejoice! John Irving has written another book according to your world. You must read this book.</review>\n        <review>Spellbinding, intensely human, a high-wire act of dazzling virtuosity.</review>\n    </reviews>\n</book>\n```\n\nOn the GWT client you have the following model classes\n\n``` java\npublic class Book\n{\n    String isbn;\n    int pages;\n    String title;\n    Author author;\n    List<String> reviews;\n}\n\npublic class Author\n{\n    String firstname;\n    String surname;\n}\n```\n\nTo map the XML to your model, all you have to do is annotate the relevant fields in your model and define an interface \nof type XmlReader<T>\n\n```\npublic class Book\n{\n    interface BookReader extends XmlReader<Book> {}\n    public static final BookReader XML = GWT.create(BookReader.class);\n\n    @XmlField String isbn;\n    @XmlField int pages;\n    @XmlField String title;\n    @XmlField Author author;\n    @XmlField(\"reviews/review\") List<String> reviews;\n}\n\npublic class Author\n{\n    interface AuthorReader extends XmlReader<Author> {}\n    public static final AuthorReader XML = GWT.create(AuthorReader.class);\n\n    @XmlField String firstname;\n    @XmlField String surname;\n}\n```\n\nNow you can map the XML to your model by calling\n\n``` java\nDocument document = ...; // XML representation of the book resource\nBook book = Book.XML.read(document);\n``` \n\nTo learn more about piriti take a look at <https://github.com/hpehl/piriti>.",
+    "date": "2010-01-14T17:41:00+01:00"
+  },
+  {
+    "id": 3,
+    "title": "Restlet and Google Guice",
+    "categories": [
+      "rest",
+      "taoki"
+    ],
+    "tags": [
+
+    ],
+    "url": "/restlet-and-google-guice.html",
+    "content": "In an earlier [post](/google-appengine-restlet-guice.html) I described how to configure resources with Google Guice. \nI decided to move the relevant code to a small library called \"Taoki\" (Maori for \"rest\").\n\nBesides the features described in the initial post, I added the possibility to configure security for resources. \nThe details will be described in a separated post.\n\nFor those interested, take a look at <https://github.com/hpehl/taoki>",
+    "date": "2010-02-15T17:33:00+01:00"
+  },
+  {
+    "id": 4,
+    "title": "JSON Mapping in Piriti",
+    "categories": [
+      "piriti"
+    ],
+    "tags": [
+
+    ],
+    "url": "/json-mapping-in-piriti.html",
+    "content": "Following a [proposal](http://restlet.tigris.org/ds/viewMessage.do?dsForumId=4447&dsMessageId=2450017) by Jerome \nLouvel, I added JSON mapping to Piriti. Piriti is a JSON / XML mapper for GWT based on annotations and deferred \nbinding.<!-- more -->\n\nTo map JSON data you have to annotate your model classes with @JsonField annotations. In case you have the following \nJSON structure:\n\n``` json\n{\n    isbn: \"978-0345417954\", \n    pages: 432,\n    title: \"The Hotel New Hampshire\",\n    author: {\n        firstname: \"John\",\n        surname: \"Irving\", \n    },\n    reviews: [\n        \"A hectic gaudy saga with the verve of a Marx Brothers movie.\", \n        \"Rejoice! John Irving has written another book according to your world.\", \n        \"Spellbinding, intensely human, a high-wire act of dazzling virtuosity.\"\n    ]\n}    \n```\n\nYou can use the following code to map the JSON data to your model:\n\n``` java\npublic class Book\n{\n    interface BookReader extends JsonReader&lt;Book&gt; {}\n    public static final BookReader JSON = GWT.create(BookReader.class);\n\n    @JsonField String isbn;\n    @JsonField int pages;\n    @JsonField String title;\n    @JsonField Author author;\n    @JsonField List&lt;String&gt; reviews;\n}\n\n...\n\npublic class Author\n{\n    interface AuthorReader extends JsonReader&lt;Author&gt; {}\n    public static final AuthorReader JSON = GWT.create(AuthorReader.class);\n\n    @JsonField String firstname;\n    @JsonField String surname;\n}\n\n...\n\nString jsonString = ...; // The JSON structure (see above) \nBook book = Book.JSON.read(jsonString);\n```\n\nTo learn more about piriti take a look at <https://github.com/hpehl/piriti>.",
+    "date": "2010-03-22T12:11:00+01:00"
+  },
+  {
+    "id": 5,
+    "title": "Restlet Extension for Piriti",
+    "categories": [
+      "piriti",
+      "rest"
+    ],
+    "tags": [
+
+    ],
+    "url": "/restlet-extension-for-piriti.html",
+    "content": "[Restlet](http://restlet.org) is a RESTful Web framework for Java. There's also a GWT edition available. The Piriti \nRestlet extensions is built on top of that edition. Therefore the 2.x version of Restlet is used. There are two \nrepresentations available which use the Piriti readers to convert JSON and XML data to your model (POJOs and/or \nGXT models).<!-- more -->\n\n### Read and convert JSON\nTo read the JSON data you need an instance of JsonReader<T>:\n\n``` java \npublic class Book\n{\n    interface BookReader extends JsonReader<Book> {}\n    public static final BookReader JSON = GWT.create(BookReader.class);\n\n    // Fields annotated with @JsonField\n    ...\n}\n```\n\nThen you can read the JSON data like this:\n\n``` java \nClientResource clientResource = \n    new ClientResource(\"/resource/with/json/representation\");\n    \nclientResource.setOnResponse(new Uniform()\n{\n    @Override\n    public void handle(Request request, Response response)\n    {\n        PiritiJsonRepresentation<Book> representation = \n            new PiritiJsonRepresentation<Book>(Book.JSON, response.getEntity());\n        try\n        {\n            // Depending whether there's one book or an array of books\n            // in your JSON data\n            List<Book> books = representation.getModels();\n            Book book = representation.getModel();\n        }\n        catch (IOException e)\n        {\n            e.printStackTrace();\n        }\n    }\n});\n\nclientResource.get(MediaType.APPLICATION_JSON);\n```\n\nThe entity returned by the resource has to be a valid JSON object. In case you want to read a list of books, the \nJSON object has to contain one key (name does not matter) with the array of books:\n\n``` json\n{books: [{isbn: \"0815\", title: \"Foo\"}, {isbn: \"1234\", title: \"Bar\"}]}\n``` \n\n### Read and convert XML\nTo read the XML data you need an instance of XmlReader<T>\n\n``` java\npublic class Book\n{\n    interface BookReader extends XmlReader<Book> {}\n    public static final BookReader XML = GWT.create(BookReader.class);\n\n    // Fields annotated with @XmlField\n    ...\n}\n``` \n\nThen you can read the XML data like this:\n\n``` java\nClientResource clientResource = \n    new ClientResource(\"/resource/with/xml/representation\");\n    \nclientResource.setOnResponse(new Uniform()\n{\n    @Override\n    public void handle(Request request, Response response)\n    {\n        PiritiXmlRepresentation<Book> representation = \n            new PiritiXmlRepresentation<Book>(Book.XML, response.getEntity());\n        try\n        {\n            // Depending whether there's one book element or a list of book\n            // elements in your XML data\n            List<Book> books = representation.getModels();\n            Book book = representation.getModel();\n        }\n        catch (IOException e)\n        {\n            e.printStackTrace();\n        }\n    }\n});\n\nclientResource.get(MediaType.TEXT_XML);\n```\n\nThe entity returned by the resource has to be a valid XML document. In case you want to read a list of books, the \ndocument must contain a list of book elements as direct children of the root element:\n\n``` xml\n<books>\n    <book>\n        <isbn>0815</isbn>\n        <title>Foo</title>\n    </book>\n    <book>\n        <isbn>1234</isbn>\n        <title>Bar</title>\n    </book>\n</books>\n``` \n\n### Further information\nIf you want to learn more about Piriti and its extensions, please feel free to take a look at it under \n<https://github.com/hpehl/piriti>",
+    "date": "2010-03-25T09:49:00+01:00"
+  },
+  {
+    "id": 6,
+    "title": "Announcement: Piriti 0.3.1",
+    "categories": [
+      "piriti"
+    ],
+    "tags": [
+
+    ],
+    "url": "/announcement-piriti-0-31.html",
+    "content": "I'm pleased to announce Piriti 0.3.1. Piriti is a JSON and XML mapper for GWT. It is based on annotations and \ndeferred binding. Here are some of the features:<!-- more -->\n\n* Built-in support for many types (primitives, String, Date, Enums, ..)\n* Possibility to specify date and number formats\n* Support for mapping arrays and collections\n* Flexible XML mapping using XPath expressions \n* GXT extension for mapping to GXT models \n* Restlet extension built on top of the Restlet GWT edition \n\nIf you want to learn more about Piriti here are some links where you can start:\n\n* Project page: <https://github.com/hpehl/piriti> \n* Wiki: <https://github.com/hpehl/piriti/wiki> \n",
+    "date": "2010-03-26T14:07:00+01:00"
+  },
+  {
+    "id": 7,
+    "title": "Announcement: Piriti 0.3.5",
+    "categories": [
+      "piriti"
+    ],
+    "tags": [
+
+    ],
+    "url": "/announcement-piriti-0-35.html",
+    "content": "I'm pleased to announce Piriti 0.3.5. This is a minor update which fixes some bugs and changes the way JSON data is \nparsed. Please take a look at the [release notes](https://github.com/hpehl/piriti/wiki/Releasenotes) for further \ninfo.<!-- more -->\n\nI'm still looking for a clever way to include namespace support into Piriti. So if there's anybody out there with a \nnamespace aware XPath implementation that works in IE, contact me!\n",
+    "date": "2010-06-18T17:19:00+02:00"
+  },
+  {
+    "id": 8,
+    "title": "New XML parser for GWT",
+    "categories": [
+      "xml",
+      "totoe"
+    ],
+    "tags": [
+
+    ],
+    "url": "/new-xml-parser-for-gwt.html",
+    "content": "I'm pleased to announce the first release of [Totoe](https://github.com/hpehl/totoe). Totoe is a XML parser for GWT \nwhich comes with XPath and namespace support. It originated from Piriti a JSON and XML mapper for GWT.<!-- more -->\n\nTotoe uses [Sarissa](http://dev.abiss.gr/sarissa/) for the XML parsing. Sarissa is a great cross browser XML parser \nfor Javascript. Essentially Totoe is a GWT port of Sarissa with the goal to offer a similar API as the GWT XML module. \nRight now the focus is on parsing XML - there are no methods to create, insert or append documents, elements or nodes. \nThose features might come in later releases. The big advantage over the GWT XML module is IMHO a cleaner API and the \nsupport of XPath and namespaces.",
+    "date": "2010-07-07T13:31:00+02:00"
+  },
+  {
+    "id": 9,
+    "title": "Announcement: Piriti 0.4",
+    "categories": [
+      "piriti"
+    ],
+    "tags": [
+
+    ],
+    "url": "/announcement-piriti-0-4.html",
+    "content": "I'm pleased to announce Piriti 0.4. This is a major update which adds support for namespaces in XML document and XPath \nexpressions. Please take a look at the [release notes](https://github.com/hpehl/piriti/wiki/Releasenotes) for further info.",
+    "date": "2010-07-07T16:28:00+02:00"
+  },
+  {
+    "id": 10,
+    "title": "Paging in Resources",
+    "categories": [
+      "rest"
+    ],
+    "tags": [
+
+    ],
+    "url": "/paging-in-resources.html",
+    "content": "A common requirement for resources which return large collections of records is paging. Paging can be implemented in \nmany different ways. <!-- more -->See the following pages as an entry point to the discussion:\n\n* [Stackoverflow](http://stackoverflow.com/questions/924472/paging-in-a-rest-collection)\n* [DOJO](http://docs.dojocampus.org/dojox/data/JsonRestStore#paging)\n\nIn the following sections I will introduce three different solutions. All of them are implemented in \n[Taoki](https://github.com/hpehl/taoki) - a small extension for [Restlet](http://www.restlet.org).\n\n### Template Parameter\nThis implementation uses parts of the url to carry the paging information:\n\n    GET /books\n    GET /books/0/50\n    GET /books/0/50/author/asc\n    \nThe advantage of this implementation is that the resource can be cached by proxies. The drawback is that a lot of \ntemplate parameters are \"wasted\". For example /books/report/{quarter} won't be available as route, since it is \noccupied by /books/{offset}/{pageSize}\n\n### Query Parameter\nThis implementation uses query parameter.\n\n    GET /books\n    GET /books?offset=0&amp;limit=50\n    GET /books?offset=0&amp;limit=50&amp;sortField=author&amp;sortDir=asc\n    \nMost proxies won't cache resources which include parameters, but there are no template parameters wasted.\n\n### Custom Header\nThis implementation uses the custom header Item-Range.\n\n    GET /books\n    GET /books\n    Item-Range: items=0-49\n    GET /books\n    Item-Range: items=0-49;author:desc\n\nIt combines the advantages of the other two implementations. A minor drawback of this solution is that the paging \ninformation is no longer visible in the URL.",
+    "date": "2010-09-13T11:21:00+02:00"
+  },
+  {
+    "id": 11,
+    "title": "Karaka - Time recording made easy",
+    "categories": [
+      "karaka"
+    ],
+    "tags": [
+
+    ],
+    "url": "/karaka-time-recording-made-easy.html",
+    "content": "Currently I'm developing a personal time recording tool based on GWT and deployed at Google App Engine. Besides being \nuseful I wanted to use the latest web techniques / frameworks in a real application. Karaka uses the following \nstack:<!-- more -->\n\n* [Google App Engine](http://code.google.com/appengine/)\n* [CDI (Weld)](http://seamframework.org/Weld) / [GIN](http://code.google.com/p/google-gin/)\n* [Objectify](http://code.google.com/p/objectify-appengine/)\n* [JAX-RS / RESTEasy](http://www.jboss.org/resteasy)\n* [GWT 2.5](http://code.google.com/webtoolkit/) \n  * [Cell Widgets](http://code.google.com/webtoolkit/doc/latest/DevGuideUiCellWidgets.html)\n  * [Editors](http://code.google.com/intl/de-DE/webtoolkit/doc/latest/DevGuideUiEditors.html)\n  * [Logging](http://code.google.com/webtoolkit/doc/latest/DevGuideLogging.html)\n* [GWTP](http://code.google.com/p/gwt-platform/)\n* [Totoe](http://hpehl.github.com/totoe/)\n* [Piriti](http://hpehl.github.com/piriti/)\n* [GWT Highcharts](http://www.moxiegroup.com/moxieapps/gwt-highcharts/)\n\nWork is still in progress. But you can take a first look at Karaka following the link below.\nOne last note: Karaka uses some of the new HTML5 / CSS3 features and therefore requires a modern browser. \n\n<a href=\"http://www.w3.org/html/logo/\"><img src=\"http://www.w3.org/html/logo/badge/html5-badge-h-css3-graphics-semantics.png\" width=\"197\" height=\"64\" title=\"HTML5 Powered with CSS3 / Styling, Graphics, 3D & Effects, and Semantics\"/></a>\n\n<http://karaka-d8.appspot.com/>\n",
+    "date": "2010-10-03T22:53:00+02:00"
+  },
+  {
+    "id": 12,
+    "title": "Announcement: Piriti 0.6",
+    "categories": [
+      "piriti"
+    ],
+    "tags": [
+
+    ],
+    "url": "/announcement-piriti-0-6.html",
+    "content": "I'm pleased to announce Piriti 0.6. This is a major update which adds support for JSONPath expressions. Please take \na look at the [release notes](https://github.com/hpehl/piriti/wiki/Releasenotes) for further info.",
+    "date": "2010-10-27T15:52:00+02:00"
+  },
+  {
+    "id": 13,
+    "title": "Taoki and Karaka Mentioned in GWT-GAE-Book",
+    "categories": [
+      "taoki",
+      "karaka"
+    ],
+    "tags": [
+
+    ],
+    "url": "/taoki-and-tire-mentioned-in-gwt-gae-book.html",
+    "content": "[Taoki](https://github.com/hpehl/taoki) and [Karaka](https://github.com/hpehl/karaka) are mentioned in the free online \nbook on GWT and AppEngine development by Marius Andreiana.\n\nThe book covers also a lot of [GWTP](https://github.com/ArcBees/GWTP) and its core examples are great illustrations \nfor many features of the framework! It also makes use of Gin, Guice, Twig-Persist, Mockito and many other useful tools.\n\nGo check it out: <http://code.google.com/p/gwt-gae-book/>\n\nMany thanks to Marius for such a valuable resource, and congratulations on publishing it!",
+    "date": "2010-12-03T08:48:00+01:00"
+  },
+  {
+    "id": 14,
+    "title": "Announcement: Piriti 0.7.0b1",
+    "categories": [
+      "piriti"
+    ],
+    "tags": [
+
+    ],
+    "url": "/announcement-piriti-0-70b1.html",
+    "content": "I'm pleased to announce the first beta of the upcoming Piriti 0.7.0 release. Piriti 0.7.0 is a major release with \nbreaking API changes, lots of new features and bugfixes.<!-- more -->\n\n### Breaking API Changes\n\n* Piriti requires GWT 2.2 and GIN 1.5\n* Dropped GXT support\n* Removed `@Json`, `@JsonMappings`, `@Xml` and `@XmlMappings` annotations\n\n### New Features\n\n* Devided Piriti into different modules:\n  * `name.pehl.piriti.commons.Commons`\n  * `name.pehl.piriti.converter.Converter`\n  * `name.pehl.piriti.json.JSON`\n  * `name.pehl.piriti.property.Property`\n  * `name.pehl.piriti.xml.XML`\n* Simplified mapping setup: All properties in a POJO hirarchy are now mapped by default\n* Added new annotations to overide default behaviour:\n  * `@Order`\n  * `@Path`\n  * `@Format`\n  * `@Native`\n  * `@Transient`\n  * `@CreateWith`\n  * `@MapUpTo`\n* Added `@Mappings` and `@Mapping` annotation for external mappings (JSON and XML)\n* Added support for polymorhic assoziations\n* Converters can now be used for any type\n* Added XML serialisation (not yet implemented, but scheduled for the 0.7.0 release)\n* Added support for IDs and IDREFs in JSON (not yet implemented, but scheduled for the 0.7.0 release)\n\n### Bugfixes\n\n* Fixed problems when mapping collection implementations\n* `GWT.create()` is now used instead of new operator\n* I also restructured the wiki and added a FAQ and a comparison to other JSON / XML mappers. Feel free to visit \n<https://github.com/hpehl/piriti/> and test the new release.",
+    "date": "2011-05-09T23:12:00+02:00"
+  },
+  {
+    "id": 15,
+    "title": "How to use Velocity to generate code in GWT",
+    "categories": [
+      "piriti"
+    ],
+    "tags": [
+
+    ],
+    "url": "/how-to-use-velocity-to-generate-code-in-gwt.html",
+    "content": "The JSON/XML mapper [Piriti](https://github.com/hpehl/piriti) is heavily based on deferred binding and code generation.\nAs I started to implement code generators in Piriti I looked around how other projects deal with it and read through\nthe [official documentation](https://developers.google.com/web-toolkit/doc/latest/DevGuideCodingBasicsDeferred) on the\nGWT site. The usual way to generate code is to extend `com.google.gwt.core.ext.Generator` and then call\n`GeneratorContext.tryCreate(TreeLogger, String, String)`. The returned PrintWriter is then often wrapped into\nsome kind of [IndentedWriter](https://code.google.com/p/google-web-toolkit/source/browse/trunk/user/src/com/google/gwt/uibinder/rebind/IndentedWriter.java)\nlike the one used by GWT itself. This class adds methods to indent and unindent code and supports `printf()` like\nbehaviour. Finally the writer is used to generate all code. <!-- more -->This in turn results in code which looks like that:\n\n``` java\nwriter.write(\"%s %s = null;\", parameterizedValueType, value);\nwriter.write(\"List<Element> %s = filterElements(element.selectNodes(\\\"%s\\\"));\",\n    elements, property.getPathOrName());\nwriter.write(\"if (!%s.isEmpty()) {\", elements);\nwriter.indent();\nwriter.write(\"%s = new %s<%s>();\", value, collectionImplementation, elementType);\nif (property.isConverter()) {\n  // even more writer.write() statements\n}\nwriter.write(\"for (Element currentElement : %s) {\", elements);\nwriter.indent();\nwriter.write(\"%s currentValue = null;\", elementType);\nwriter.write(\"XmlReader<%1$>; currentReader = xmlRegistry.getReader(%1$s.class);\", elementType);\nwriter.write(\"if (currentReader != null) {\");\nwriter.indent();\nwriter.write(\"currentValue = currentReader.read(currentElement);\");\nwriter.outdent();\nwriter.write(\"}\");\nwriter.write(\"if (currentValue != null) {\");\nwriter.indent();\nwriter.write(\"%s.add(currentValue);\", value);\nwriter.outdent();\nwriter.write(\"}\");\nwriter.outdent();\nwriter.write(\"}\");\nwriter.outdent();\nwriter.write(\"}\");\n```\n\nI can't help, but this code somehow reminds me of the old times, where we generated HTML code in servlets.\nThis approach might work as long as the amount of generated code is small. In Piriti the code generation process\nis somewhat complex and distributed over several classes. Changing the generated code became very difficult and\nerror-prone. Only the correct use of writer.indent() and writer.outdent() is not a trivial task. To some extent\nthis problem can be solved by the use of an abstract base class, which contains common code. The generated class\nwould extend from the abstract base class. But at the end of the day you have to generate some code in the concrete\nsubclass.\n\n# Velocity to the rescue\n[Velocity](http://velocity.apache.org/engine/releases/velocity-1.7/) is a Java-based template engine. It permits\nanyone to use a simple yet powerful template language to reference objects defined in Java code. Velocity supports\nfor loops, if-then-else conditions and custom macros. Templates can include other templates. This way you can put\ncommon code in extra templates and reuse it in other templates. Velocity is mainly used in web projects for HTML\ngeneration. Another common use case is to generate email bodies. But there's no reason not to use Velocity for code\ngeneration in GWT.\n\nDoing so the above code snippet becomes something like that:\n\n``` java\n$parameterizedValueType $value = null;\nList<Element> $elements = filterElements(element.selectNodes(\"$property.pathOrName\"));\nif (!${elements}.isEmpty()) {\n    $value = new $collectionImplementation&lt;$elementType&gt;();\n    #if ($property.converter) #createConverter() #end\n        for (Element currentElement : $elements) {\n        $elementType currentValue = null;\n        XmlReader<$elementType> currentReader = xmlRegistry.getReader(${elementType}.class);\n        if (currentReader != null) {\n            currentValue = currentReader.read(currentElement);\n        }\n        if (currentValue != null) {\n            ${value}.add(currentValue);\n        }\n    }\n}\n```\n\nIf you compare the two code snippets you get the idea! The velocity based code is much more readable. As you can see\nthe velocity template contains variable references like $elements. Before the template is rendered all necessary\nvariables must be put into the so-called Velocity context which is more or less a big map. If the variable refers to\na java object you can use its properties and even call methods.\n\nTo use Velocity for code generation you have to setup the Velocity engine, create the Velocity context and merge the\ntemplate. In Piriti the engine is configured with the following properties:\n\n```\nvelocimacro.library = name/pehl/piriti/rebind/propertyMacros.vm\nruntime.log.logsystem.class = name.pehl.piriti.rebind.VelocityLogger\ninput.encoding = UTF-8\noutput.encoding = UTF-8\nresource.manager.logwhenfound = true\nresource.manager.defaultcache.size = 0\nresource.loader = cp\ncp.resource.loader.class = org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader\ncp.resource.loader.cache = false\n```\n\nFinally the code generation process is reduced to the following lines:\n\n``` java\nPrintWriter printWriter = generatorContext.tryCreate(treeLogger, somePackage, implName);\nif (printWriter != null)\n{\n    VelocityContext context = new VelocityContext();\n    // Put all neccesarry objects into the velocity context\n    context.put(\"foo\", ...);\n\n    InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(\n        \"name/pehl/piriti/rebind/velocity.properties\");\n    Properties properties = new Properties();\n    properties.load(inputStream);\n    VelocityEngine velocityEngine = new VelocityEngine(properties);\n    velocityEngine.mergeTemplate(\"someTemplate.vm\", \"UTF-8\", context, printWriter);\n    generatorContext.commit(treeLogger, printWriter);\n}\n```\n\nIf you want to delve deeper into the code generation process in [Piriti](https://github.com/hpehl/piriti), check out\nthe trunk and take a look into the code.\n",
+    "date": "2012-01-28T21:44:00+01:00"
+  },
+  {
+    "id": 16,
+    "title": "New Job",
+    "categories": [
+      "redhat"
+    ],
+    "tags": [
+
+    ],
+    "url": "/new-job.html",
+    "content": "Today is my first day in my new job at RedHat. I'm excited to join the EAP core team and looking forward to the things to come...",
+    "date": "2012-10-02T12:52:00+02:00"
+  },
+  {
+    "id": 17,
+    "title": "Independent JBoss Admin Console",
+    "categories": [
+      "jboss",
+      "console"
+    ],
+    "tags": [
+
+    ],
+    "url": "/independent-jboss-admin-console.html",
+    "content": "We're currently working on a new feature for the JBoss Admin Console. The console should become independent from the\nrest of the JBoss AS distribution. As the console is built with GWT and \"merely\" consists of static resources like\nHTML, JavaScript and CSS, the idea is to have a dedicated host which serves these resources. When loading the console\nthe user can manage a list of server instances and chooses the one he likes to connect to. The server instances are\nstored in the browsers [local storage](http://www.w3.org/TR/webstorage/), so they will be available the next time the\nconsole is launched:<!-- more -->\n\n{% img centered /images/posts/select_server_instance.png Connect to server %}\n\nUsing this kind of setup brings us several advantages:\n\n* We can update the console independently from the rest of the AS code base\n* We can deploy the console to various (web)app stores like Firefox Marketplace or Chrome Web Store\n* We can have different console versions with different feature sets (nightly, beta, stable)\n* Using one console you can connect to different server instances running different setups (development, staging, production)\n\n# CORS\nThe console talks to the domain controller (DC) using the HTTP management API. Now when the console and the DC live\non different hosts, the [same origin policy](http://en.wikipedia.org/wiki/Same_origin_policy) (SOP) throws a monkey\nwrench in our efforts. Luckily we're not the first ones confronted with this problem. There are several ways to solve\nSOP restrictions:\n\n* Server Side Proxies\n* [JSON with padding](http://en.wikipedia.org/wiki/JSONP) (JSONP)\n* [Cross-Origin Resource Sharing](http://www.w3.org/TR/cors/) (CORS)\n\n## Client\nAccording to [caniuse.com](http://caniuse.com/#search=cors) CORS is implemented in most of the browsers. CORS knows\ntwo different types of requests.\n\n1. Simple requests:\n\n    A request that only uses `GET` or `POST`. If `POST` is used to send data to the server, the content type of the data\nsent to the server with the HTTP `POST` request is one of `application/x-www-form-urlencoded`, `multipart/form-data`\nor `text/plain`. The request must not contain custom headers (such as `X-Modified`, etc.)\n\n2. Preflighted requests\n\n    A request that uses methods other than `GET` or `POST`. Also, if `POST` is used to send request data with a\ncontent type other than `application/x-www-form-urlencoded`, `multipart/form-data` or `text/plain`, e.g. if the\n`POST` request sends an XML payload to the server using `application/xml` or `text/xml`, then the request is a\npreflighted request. Furthermore if the request contains custom headers, it's preflighted.\n\nUnlike simple requests, preflighted requests first send an HTTP `OPTIONS` request header to the resource on the other\ndomain, in order to determine whether the actual request is safe to send. Since the console uses `POST` with a\ncontent type of `application/dmr-encoded` all requests are preflighted requests. This will be important when looking\nat the server side.\n\nCommon to all requests is that the browser adds the request header `Origin`. The value of this header is the site\nthat served the page. For example, suppose a page on http://www.example-social-network.com attempts to access a\nuser's data in online-personal-calendar.com. If the browser implements CORS, the following request header would be sent:\n\n    Origin: http://www.example-social-network.com\n\n## Server\nIt is up to the server to decide which origins are allowed. When the server accepts cross-origin requests, it sends an\n`Access-Control-Allow-Origin` header in its response. The value of the header indicates what origin sites are allowed.\nFor example, a response to the previous request would contain the following:\n\n    Access-Control-Allow-Origin: http://www.example-social-network.com.\n\nFor the JBoss AS this implies changes to the class `org.jboss.as.domain.http.server.DomainApiHandler`. This class\nhandles HTTP requests to the management API. The modified version accepts preflighted `OPTIONS` requests and sets the\nrelevant response headers.\n\n## Authentication\nThe console uses digest authentication. This must continue to work when doing cross-origin requests. By default,\nin cross-origin `XMLHttpRequest` invocations, browsers will not send credentials. A specific flag called\n`withCredentials` has to be set on the `XMLHttpRequest` object when it is invoked. Unfortunately GWTs implementation\nof the JavaScript `XMLHttpRequest` object does\n[not yet implement](https://code.google.com/p/google-web-toolkit/issues/detail?id=7677) this flag. For the time being\nwe need to include `withCredentials` by ourselves.\n\nThe next challenge is to trigger the login dialog when accessing protected resources. Unfortunately when it comes to\nauthentication browsers handle CORS quite differently. There are some workarounds depending on which browser is used:\n\n* Chrome [prevents basic authentication from a different origin as a phishing attack](http://blog.chromium.org/2011/06/new-chromium-security-features-june.html) period.\nThe only way to get around that is to start Chrome using the command line option `--allow-cross-origin-auth-prompt`.\n* Firefox makes no problems when it comes to display the login dialog (well done guys!)\n* Safari won't show the login dialog. You can get around that by inserting a hidden `<iframe>` element linking to the\nprotected url. This will trigger the authentication popup and once the user has authenticated, you can execute direct\n`XMLHttpRequests` as usual.\n* Internet Explorer somewhat support CORS in IE8 and IE9 using the `XDomainRequest` object (but has limitations).\n\nFinally there's an issue related to preflighted `OPTIONS` requests on the server side. According to the specification\nthose requests must exclude user credentials:\n\n{% blockquote W3C CORS specification http://www.w3.org/TR/cors/#cross-origin-request-with-preflight-0 %}\nOtherwise, make a preflight request [...] with the following additional constraints:\n    - Exclude user credentials.\n{% endblockquote %}\n\nHence these requests are blocked by the server with \"401 Unauthorized\". As a workaround the authenticators in the AS\ncode base must let pass preflighted `OPTIONS` requests.\n\n## Status Quo\nAt the moment a first preview of an independent console is available at\nOpenShift: [https://console-hpehl.rhcloud.com](https://console-hpehl.rhcloud.com). Please note that you must have a\nCORS enabled server instance running in order to connect from the console. You can build one by yourself using the\n\"cors\" branch of the AS code base: [https://github.com/hpehl/wildfly/tree/cors](https://github.com/hpehl/wildfly/tree/cors).\nFollow the steps in the [README](https://github.com/hpehl/wildfly/tree/cors#readme) to build the server.\n\nDue to the limitations regarding authentication and CORS, the solution described here will only work in Firefox and\nSafari. If you want to use Chrome make sure to use the `--allow-cross-origin-auth-prompt` command line option.\n\n## Client Library\nI stumbled upon an interesting project on GitHub: <https://github.com/pazguille/CORS>. Seems to have support for IE8+, \noffers an easy to use API and hides the awkward implementation details. I will evaluate this and try to make a GWT port.\n",
+    "date": "2013-03-05T21:43:00+01:00"
+  },
+  {
+    "id": 18,
+    "title": "Playing around with Dart Isolates",
+    "categories": [
+      "dart"
+    ],
+    "tags": [
+
+    ],
+    "url": "/playing-around-with-dart-isolates.html",
+    "content": "I was looking for a way to implement some kind of dynamic plug-in system in Dart. The idea was to load Dart code on\ndemand into an isolate using [spawnUri()](http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnUri).\nIt turns out that this function is implemented in the Dart VM but neither in Dartium nor does it compile down to\nJavaScript.<!-- more -->\n\nFalling back to [spawnFunction()](http://api.dartlang.org/docs/releases/latest/dart_isolate.html#spawnFunction) works\nas expected in the browser but it turns out that isolates are not allowed to access / change the DOM. This reduces\nisolates to dumb worker functions. Plug-ins which make contributions to the UI are not possible using this approach.\n\nI created some test scripts for the browser and the VM to test the possibilities you have with isolates. You can\nfind them at GitHub: [https://github.com/hpehl/dart-isolates](https://github.com/hpehl/dart-isolates). Let me know what\nyou think.",
+    "date": "2013-04-08T22:26:00+02:00"
+  },
+  {
+    "id": 19,
+    "title": "Hosted CI Services",
+    "categories": [
+
+    ],
+    "tags": [
+
+    ],
+    "url": "/hosted-ci-services.html",
+    "content": "I was looking for a hosted continuous integration service to build my GitHub projects. My requirements are painless\nGitHub integration, easy setup and a simple and straightforward UI. I looked at two services:\n[Drone.io](http://drone.io/) and [Travis CI](https://travis-ci.org/). In this post I will outline my very personal\nexperience with it.<!-- more -->\n\nBoth Drone.io and Travis CI offer very good GitHub integration. It's fairly simple to connect your GitHub projects.\nEspecially Drone.io does a very good job. Link your GitHub account, choose your project and language and you're ready\nto go.\n\nUnfortunatley neither Drone.io nor Travis CI can deploy artifacts to external repositories like OSS Sonatype out of\nthe box (though there's a [workaround](https://gist.github.com/neothemachine/4060735) for Travis). By now I'm building\nand deploying dependent projects manually from my box.\n\nTo sum it up these are pros/cons for me:\n\n1. Drone.io\n    * Pros\n        - Very simple and easy to use UI.\n        - Great GitHub integration\n        - Supports alos BitBucket and GoogleCode\n    * Cons\n        - Once a job / project was setup you cannot delete it anymore (as least I don't know how?)\n        - Limited configuration options\n2. Travis CI\n    * Pros\n        - Powerful configuration options (.travis.yml)\n        - Great range of supported languages\n        - Supports multiple JVM\n    * Cons\n        - Some extra configuration steps to get started\n\nFeel free to totally disagree with me or comment your own experience.\n\n### Update\nYou can delete a project in Drone.io by going to your project's Settings &gt; Repository page. Thanks for the hint Brad.\n",
+    "date": "2013-04-09T15:31:00+02:00"
+  },
+  {
+    "id": 20,
+    "title": "Moved Blog to GitHub Pages",
+    "categories": [
+      "github"
+    ],
+    "tags": [
+
+    ],
+    "url": "/moved-blog-to-github-pages.html",
+    "content": "For over three years I was hosting my blog at Blogger.com. Although publishing was quite easy I never was really happy \nwith the layout and the support for customization.<!--more --> \n\nI was looking for a new provider to host my blog. In particular I wanted to \n \n* write my posts using [markdown](http://daringfireball.net/projects/markdown/)\n* be able to have regular pages (like projects, about me, ...)\n* have full control over the look and feel of my blog\n* have support for responsive design\n* host the blog with my own top level domain\n\nAfter some research I stumbled across [GitHub Pages](http://pages.github.com/) in combination \nwith [Jekyll](http://jekyllrb.com/) and [Octopress](http://octopress.org/). The setup is really easy and there are\nplenty of resources and documentation around Jekyll and Octopress. \n   \nAs my blog contains a manageable number of posts, I decided to manually migrate them to markdown. But there is also \nsupport for [automatic migration](https://github.com/mojombo/jekyll/wiki/blog-migrations#blogger-blogspot). I didn't \nmigrate the comments of my blog and started from scratch using [Disqus](http://disqus.com/).\n\nI invested quite some time on the look and feel for my new blog. To a great extent I was inspired by \nthe [darkstripes](https://github.com/amelandri/darkstripes) theme and the blog \nof [Alessandro Melandri](http://melandri.net/). My navigation was influenced by the website \nof [Thibault Jorge](http://www.thibaultjorge.com/en). \n\nThe result of the migration is what you're looking at. I hope you like it!",
+    "date": "2013-05-02T13:55:00+02:00"
+  },
+  {
+    "id": 21,
+    "title": "How to efficiently write GWT Generators",
+    "categories": [
+      "gwt"
+    ],
+    "tags": [
+
+    ],
+    "url": "/how-to-efficiently-write-gwt-generators.html",
+    "content": "",
+    "date": "2013-05-07T10:23:00+02:00"
+  },
+  {
+    "id": 22,
+    "title": "Web Components",
+    "categories": [
+      "web"
+    ],
+    "tags": [
+
+    ],
+    "url": "/web-components.html",
+    "content": "I recently watched [Eric Bidelmans](https://plus.google.com/+EricBidelman/) [presentation](http://www.youtube.com/watch?v=fqULJBBEVQE) on\nWeb Components at Google IO 13. [Web Components](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html) \nis an effort to bring true modularisation to web development. For the first time you'll have encapsulation at the \nbrowser level. No more mess with duplicate IDs or mixed CSS style rules. <!-- more -->The building blocks of Web \nComponents are\n\n- [Shadow DOM](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html)\n- [Templates](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/templates/index.html)\n- [Custom Elements](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html)\n- [HTML Imports](https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/imports/index.html)\n\nIf you think this is a long way of and available in a few years, then you're completely wrong! You can use Web Components \ntoday. And they are already used by the browser vendors under the hood. \nThis [article](http://glazkov.com/2011/01/14/what-the-heck-is-shadow-dom/) from \n[Dimitri Glazkov](http://glazkov.com/about/) opened my eyes. Many of the new HTML5 elements like \n`<input type=\"range\"/>`, `<input type=\"date\"/>` or `<video/>` are implemented using Web Compontents. You can see the \nmarkup behind those elements if you enable Shadow DOM in Chrome Canary. The screenshot below shows the internal markup \nof an `<input type=\"date\"/>` element:\n\n{% img centered /images/posts/input_type_date_shadow_dom.png %}\n\n# V-Card Sample\nIf you want to start creating your own Web Components, I strongly recommend to take a look at \n[Polymer](http://www.polymer-project.org/). It's a framework for developing Web Components today. It fills out missing \nbrowser implementation with so called polyfills. \n\nLet's jump into Web Component development and build a `v-card` element which renders a business card. The following \ncode shows the host page containing the custom `v-card` element. It expects a fullname, a title, several \nlinks and a logo. The parameters are wrapped in regular HTML elements. The class names are taken from the \n[hCard microformat](http://microformats.org/wiki/hcard) and are used later to select the relevant information.\n\n{% include_code Host Page lang:html webcomponents/host.html %}\n\nThe `v-card` implementation uses its own CSS styles and markup. Thanks to Shadow DOM they don't conflict with the \nhost page. The data for the business card is pulled from the host page using the `<content>` element and CSS selectors. \nFinally the call to `Polymer.register(this)` takes care of all the polyfill magic to make this work accross all \nmodern browsers. \n\n{% include_code Custom Element Implementation lang:html webcomponents/v-card.html %}\n\nBelow you can see the `v-card` Web Component in action. Please note that I'm unsing CSS3 flexbox to render the \nbusiness card. Support for flexbox is somewhat [limited](http://caniuse.com/#feat=flexbox). Chrome should make \nno problems, for Firefox you might have to enable `layout.css.flexbox.enabled` in about:config. All other browsers \nwill most likely have problems rendering the business card. If that's the case here's a \n[reference representation]({{ root_url }}/images/posts/v-card_reference.png).\n\n{% include post/v_card.html %}\n\nI hope this simple example shows the potential behind Web Components. I'm convinced Web Components are the future of \nclient side web development. If you want to dive deeper into the subject here is a list of useful resources:\n\n- [Web Components in Action](http://www.youtube.com/watch?v=0g0oOOT86NY): Google IO session about Polymer \n- [X-Tags](http://www.x-tags.org/): Polymer counterpart from Mozilla \n- [Web UI](http://www.dartlang.org/articles/web-ui/): Darts implementation for Web Components\n- Shadow DOM series on HTML5 Rocks:\n    - [Shadow DOM 101](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/)\n    - [Shadow DOM 201](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/): CSS and Styling\n    - [Shadow DOM 301](http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-301/): Advanced Concepts & DOM APIs\n- [Shadow DOM Visualizer](http://html5-demos.appspot.com/static/shadowdom-visualizer/index.html)\n",
+    "date": "2013-05-17T12:57:00+02:00"
+  },
+  {
+    "id": 23,
+    "title": "HTTP Caching",
+    "categories": [
+      "http",
+      "cache"
+    ],
+    "tags": [
+
+    ],
+    "url": "/http-caching.html",
+    "content": "I recently implemented caching for distinct operations of the \n[HTTP management API](https://docs.jboss.org/author/display/WFLY8/The+HTTP+management+API) in \n[WildFly](http://www.wildfly.org/). As a preparation I did some research on HTTP caching and how it's best \nimplemented on the server side. A really good introduction is the \n[caching tutorial](http://www.mnot.net/cache_docs/) by Mark Nottingham. I'll discuss the key points in this \nblog post.<!-- more -->\n \n# Terminology\nA cache sits between one or more servers (also known as _origin_ servers) and a client watching requests and saving \nresponses (also known as _representations_). There are different kind of caches: \n   \n- browser caches\n- proxy cahces\n- gateway caches\n\nThe cache I want to look at in more detail is the browser cache. Every browser uses a section of your hard disk \nto store representations that you've seen. The browser will check to make sure that the representations are fresh, \nusually once a session (that is, the once in the current invocation of the browser). \n\n# Rules for Caching\n\nThere are certain rules used to decide when to serve a representation from the cache. \n\n1. If the response’s headers tell the cache not to keep it, it won’t.\n3. A cached representation is considered fresh (that is, able to be sent to a client without checking with the origin server) if:\n\n\t- It has an expiry time or other age-controlling header set, and is still within the fresh period, or\n\t- If the cache has seen the representation recently, and it was modified relatively long ago.\n\t\n\tFresh representations are served directly from the cache, without checking with the origin server.\n4. If a representation is stale, the origin server will be asked to validate it, or tell the cache whether the copy that it has is still good.\n5. Under certain circumstances — for example, when it’s disconnected from a network — a cache can serve stale responses without checking with the origin server.\n\nThere are two key players when it comes to apply these rules: _freshness_ and _validation_. A fresh representation will \nbe available instantly from the cache, while a validated representation will avoid sending the entire representation \nover again if it hasn’t changed.\n\n# Freshness\n\nFreshness of a resource can be controlled using various HTTP _response_ headers. \n\n- `Pragma` &mdash; The HTTP sepcification does not set any guidelines for `Pragma` response headers; instead it \ndiscusses `Pragma` _request_ headers. Using this header will most likely have no effect and the recommendation is to \nuse the headers below.\n\n- `Expires` &mdash; Using the `Expires` header you can tell a cache how long the representation will be fresh. After \nthat time, caches will always check back with the origin server to see if a representation has changed. The only value \nvalid in an `Expires` header is a [HTTP date](http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1) which is \nbased by definition on GMT.\n\n    Because the `Expires` header includes an absolute date and time, the clocks on the origin server and the cache must \nbe in sync. If they have a different idea of the time, caches might consider stale representations as fresh. This is \nthe reason you're better off using the `Cache-Control` header.\n\n- `Cache-Control` &mdash; Starting with HTTP 1.1 you can use the `Cache-Control` header to manage caching. The header \nuses many different parameters. I will discuss the most common (see the \n[HTTP secification](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9) for a complete list of parameters):\n\n    - `max-age=[seconds]` &mdash; specifies the maximum amount of time that a representation will be considered fresh. \n      [seconds] is the number of seconds from the time of the request you wish the representation to be fresh for.\n    - `no-cache` &mdash; forces caches to submit the request to the origin server for validation before releasing a \n      cached copy, every time. This is useful to maintain rigid freshness, without sacrificing all of the benefits of \n      caching.\n    \nWhen both `Cache-Control` and `Expires` are present, `Cache-Control` takes precedence. Whenever possible, I recommend \nto use `Cache-Control`.\n\n# Validation\n\nValidation is used by the cache to check if a representation has changed. By using it, caches avoid having to download \nthe entire representation when they already have a copy locally, but they’re not sure if it’s still fresh. Validators \nare very important; if one isn’t present, and there isn’t any freshness information (`Expires` or `Cache-Control`) \navailable, caches will not store a representation at all.\n\nBasically there are two response headers for validating representations:\n\n- `Last-Modified` &mdash; A [HTTP date](http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1) stating the \nlast modification date of the representation. When a cache has a representation stored that includes a `Last-Modified` \nheader, it can use it to ask the server if the representation has changed since the last time it was seen, with an \n`If-Modified-Since` request. \n\n- `ETag` &mdash; An unique identified for the representation. Something kind of hashcode. The ETag must change every \ntime the representation does. The cache can ask the server using a `If-None-Match` header whether the representation \nhas changed. \n\nIf the representation did not change the origin server should respond with an empty 304 - not modified response.\n\n# References\n\nAll headers, parameters and rules for HTTP caching are described in great detail in an own chapter of \nthe [HTTP specification](http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html). If you plan to implement HTTP caching \nin one way or another it's a very useful reference.\n",
+    "date": "2013-05-27T21:14:00+02:00"
+  },
+  {
+    "id": 24,
+    "title": "Admin Apps",
+    "categories": [
+      "jboss",
+      "console",
+      "mobile"
+    ],
+    "tags": [
+
+    ],
+    "url": "/admin-apps.html",
+    "content": "If you ever wanted to administer your JBoss servers from your iOS or Andoird phone, checkout these great apps from \n[Christos Vasilakis](https://twitter.com/cvasilak): \n\n- Android: <https://github.com/cvasilak/JBoss-Admin-Android>\n- iOS: <http://www.cvasilak.org/JBossAdmin.html> <a href=\"https://itunes.apple.com/us/app/jboss-admin/id523516060?mt=8&uo=4\" target=\"itunes_store\"><img src=\"http://r.mzstatic.com/images/web/linkmaker/badge_appstore-sm.gif\" alt=\"JBoss Admin - Christos Vasilakis\" style=\"border: 0;\"/></a>\n\nKeep it up, Christos!\n",
+    "date": "2013-07-18T11:46:00+02:00"
+  },
+  {
+    "id": 25,
+    "title": "Send Mails from OpenShift",
+    "categories": [
+      "jboss",
+      "openshift",
+      "mail"
+    ],
+    "tags": [
+
+    ],
+    "url": "/send-mails-from-openshift.html",
+    "content": "OpenShift is a great place to host your applications. In this post I'm going to show you how you can easily send mails\nfrom your JEE applications running on JBoss. For sending mails I'm going to configure an external SMTP server. Any SMTP \nserver will do, I'm going to use GMail.<!-- more --> \n\nIn case you don't already have an application ready, create one selecting the JBoss AS 7 cartridge. Clone the git \nrepository and open the JBoss standalone configuration: `.openshift/config/standalone.xml`. Look for the mail subsystem \nwhich should look like this:\n\n```xml\n<subsystem xmlns=\"urn:jboss:domain:mail:1.0\">\n    <mail-session jndi-name=\"java:jboss/mail/Default\">\n        <smtp-server outbound-socket-binding-ref=\"mail-smtp\"/>\n    </mail-session>\n</subsystem>\n```\n\nWe're going to add another mail session / smtp server using GMail:\n\n```xml\n<subsystem xmlns=\"urn:jboss:domain:mail:1.0\">\n    ...\n    <mail-session jndi-name=\"java:/mail/Gmail\" from=\"your.name@gmail.com\">\n        <smtp-server ssl=\"true\" outbound-socket-binding-ref=\"gmail-smtp\">\n            <login name=\"your.name@gmail.com\" password=\"...\"/>\n        </smtp-server>\n    </mail-session>\n</subsystem>\n```\n\nEnter your credentials for the SMTP server you want to use. In case you have activated application specific passwords \nin your Google profile, the password is not your Google password, but an application specific one you have to create \nfirst.\n\nAs you can see we're referencing a named socket binding, which we're going to create now. Towards the end of the \nstandalone configuration you can see all configured socket bindings:\n\n```xml\n<socket-binding-group name=\"standard-sockets\" default-interface=\"public\" port-offset=\"0\">\n    <socket-binding name=\"http\" port=\"8080\"/>\n    <socket-binding name=\"jacorb\" interface=\"unsecure\" port=\"3528\"/>\n    <socket-binding name=\"jacorb-ssl\" interface=\"unsecure\" port=\"3529\"/>\n    <socket-binding name=\"jgroups-tcp\" port=\"7600\"/>\n    <socket-binding name=\"management-native\" interface=\"management\" port=\"9999\"/>\n    <socket-binding name=\"management-http\" interface=\"management\" port=\"9990\"/>\n    <socket-binding name=\"messaging\" port=\"5445\"/>\n    <socket-binding name=\"messaging-throughput\" port=\"5455\"/>\n    <socket-binding name=\"osgi-http\" interface=\"management\" port=\"8090\"/>\n    <socket-binding name=\"remoting\" port=\"4447\"/>\n    <socket-binding name=\"txn-recovery-environment\" port=\"4712\"/>\n    <socket-binding name=\"txn-status-manager\" port=\"4713\"/>\n    <outbound-socket-binding name=\"mail-smtp\">\n        <remote-destination host=\"localhost\" port=\"25\"/>\n    </outbound-socket-binding>\n</socket-binding-group>\n```\n\nAdd an outbound socket binding for you SMTP server: \n\n```xml\n<socket-binding-group name=\"standard-sockets\" default-interface=\"public\" port-offset=\"0\">\n    ...\n    <outbound-socket-binding name=\"gmail-smtp\" source-port=\"0\" fixed-source-port=\"false\">\n        <remote-destination host=\"smtp.gmail.com\" port=\"465\"/>\n    </outbound-socket-binding>\n</socket-binding-group>\n```\n\nWe're almost done! Now you can use the mail session in your application. In my case I'm using the mail session from an \n[Errai](http://www.jboss.org/errai) service, but any other server side class (REST endpoint, servlet, EJB, POJO) should \nwork also:\n\n```java\nimport static javax.mail.Message.RecipientType.TO;\n\nimport java.util.Date;\n\nimport javax.annotation.Resource;\nimport javax.mail.Address;\nimport javax.mail.MessagingException;\nimport javax.mail.Session;\nimport javax.mail.Transport;\nimport javax.mail.internet.InternetAddress;\nimport javax.mail.internet.MimeMessage;\n\nimport com.google.common.base.Optional;\n\nimport org.jboss.errai.bus.client.api.messaging.Message;\nimport org.jboss.errai.bus.client.api.messaging.MessageCallback;\nimport org.jboss.errai.bus.server.annotations.Service;\nimport org.jboss.errai.common.client.protocols.MessageParts;\n\n@Service\npublic class FeedbackService implements MessageCallback {\n\n    @Resource(mappedName = \"java:/mail/Gmail\") private Session mailSession;\n\n    @Override\n    public void callback(Message message) {\n    \n        // get data out of the message and persist feedback \n        String guest = Optional.fromNullable(message.get(String.class, \"guest\")).or(\"n/a\");\n        boolean commitment = Optional.fromNullable(message.get(Boolean.class, \"commitment\")).or(false);\n        saveFeedback(guest, commitment);\n        \n        // send response using the Errai message bus\n        // see http://docs.jboss.org/errai/2.4.0.Beta1/errai/reference/html_single/#sid-5931263 \n        // for more details\n        createConversation(message)\n                .subjectProvided()\n                .done()\n                .reply();\n\n        // sending the mail might take a moment, so this is done *after* sending the response to the client.\n        sendMail(guest, commitment);\n    }\n\n    private void saveFeedback(final String guest, final boolean commitment) {\n        ...\n    }\n\n    private void sendMail(final String guest, final boolean commitment) {\n        try {\n            MimeMessage message = new MimeMessage(mailSession);\n            Address[] to = new InternetAddress[]{new InternetAddress(\"your.name@gmail.com\")};\n            message.setRecipients(TO, to);\n            message.setSubject(\"Your subject\");\n            message.setContent(\"Your message\", \"text/plain\");\n            Transport.send(message);\n        } catch (MessagingException e) {\n            // error handling\n        }\n    }\n}\n```\n\nThat's all - any feedback, thoughts and objections are welcome.",
+    "date": "2013-08-04T19:42:00+02:00"
+  },
+  {
+    "id": 26,
+    "title": "Polyglot DMR",
+    "categories": [
+      "jboss",
+      "dmr",
+      "scala",
+      "dart",
+      "node.js"
+    ],
+    "tags": [
+
+    ],
+    "url": "/using-dmr-with-scala.html",
+    "content": "The __d__ynamic or __d__etyped __m__odel __r__epresentation (DMR) is an API to interact with the management model of a \nrunning WildFly instance. There's an Java API available at <https://github.com/jbossas/jboss-dmr> which is described in \nthe [WildFly Wiki](https://docs.jboss.org/author/display/WFLY8/Detyped+management+and+the+jboss-dmr+library). Though \nthe Java API is very rich and powerful it is somewhat hard to write scripts that perform useful tasks like\n\n- Periodically read the memory and send an SMS / tweet / email when a threshold is reached\n- Rollout a deployment over all servers in a cluster\n- Monitor the state of an application<!--more-->  \n\nTo address this challenges we created different client libraries for different languages:\n  \n# Scala\nThe scala library is hosted at [DMR.scala](https://github.com/hpehl/dmr.scala). The \n[DMR.repl](https://github.com/heiko-braun/dmr-repl) library leverages the Scala REPL to execute DMR operations in \na very interactive way.\n\n# Dart\nUsing [DMR.dart](https://github.com/hal/dmr.dart) you can run DRM operations in Dart. Both executing individual \noperations, as well as writing whole web applications is possible. \n\n# Node.js\nThe library for Node.js is called [DMR.js](https://github.com/hal/dmr.js).  \n\n# Ideas\nBringing the DMR library to different languages opens up many possibilities. We can think of a repository with \n(parameterized) management scripts, an integration with Gist / Paste.bin to quickly share your operations with \nyour co-workers, ... We'd love to heear your feedback and suggestions on this!\n\n# Open Issues\nOne of the main challenges when using the different client libraries is authentication. Right now there's a workaround \nto use a [CORS enables JBoss AS instance](/independent-jboss-admin-console.html) which is however a bit out of date. \nIMO the solution for this is to bring OAuth support to WildFly. For the time being the usage of the client libraries is \nsomewhat limeted and if any feasible when running on the same host. \n\n# Conclusion\nThe different libraries are very much work in progress, but we'd love to here your feedback!\n",
+    "date": "2013-09-28T00:20:00+02:00"
+  },
+  {
+    "id": 27,
+    "title": "JBoss One Day Talk",
+    "categories": [
+      "jboss",
+      "wildfly",
+      "scala"
+    ],
+    "tags": [
+
+    ],
+    "url": "/jboss-one-day-talk.html",
+    "content": "Yesterday I presented \"WildFly 8 - the artist formerly known as JBoss AS\" at the\n[JBoss One Day Talk](http://onedaytalk.org/) in Munich. Furthermore I had the chance to give a brief introduction to\n\"DMR.scala / DMR.repl\".\n\nI really enjoyed attending the conference. It was well organized and packed with great talks. Here are the slides of my talks (partly in German):\n\n- [WildFly 8 - the artist formerly known as JBoss AS](downloads/onedaytalk_wildfly8.pdf)\n- [DMR.scala / DMR.repl](http://slid.es/hpehl/dmrscala)\n",
+    "date": "2013-10-24T09:45:00+02:00"
+  },
+  {
+    "id": 28,
+    "title": "WildFly Dockerfiles",
+    "categories": [
+      "jboss",
+      "widfly",
+      "docker"
+    ],
+    "tags": [
+
+    ],
+    "url": "/wildfly-dockerfiles.html",
+    "content": "For the last couple of days I have been playing with [Docker](http://www.docker.io). In a nutshell Docker is a tool\nthat lets you create images and run so called containers. It uses [Linux Containers](http://lxc.sourceforge.net/) (LXC)\nunder the hood. What appears to be yet another virtualization solution, is in fact a very lightweight way to setup,\nmanage and run \"processes in a box\".<!-- more -->\n\nDocker comes with a great [tutorial](http://www.docker.io/gettingstarted/) and a\nreasonable [documentation](http://docs.docker.io/en/latest/). So I won't go into any details here. There are also some\nvery good [posts](http://goldmann.pl/blog/tags/docker/) from [Marek Goldmann](http://goldmann.pl/blog/) which helped\nme a lot getting started. In the remaining part of this post I will show you how to setup both a WildFly standalone\nserver and a domain with multiple hosts and servers. Here we go!\n\n# Preperations\n\nI assume you already have installed Docker. If not please refer to the\n[offical documentation](http://www.docker.io/gettingstarted/#h_installation) on how to setup Docker on your machine.\nThe following assumes you're using Docker 0.7.0.\n\nI've put together a repository which is based on Ubuntu and contains Java7 and WildFly 8.0.0.Beta1. It does not contain\nany commands or entrypoints, but is intended to serve as a base repository for the other WildFly related repositories.\nYou can grap it and use it as a starting point:\n\n```\n$ docker pull hpehl/wildfly\n$ docker run -i -t hpehl/wildfly /bin/bash\n```\n\n# Standalone\n\nTo quickly run a standalone server, I've put together the repository `hpehl/wildfly-standalone`. It is based on\n`hpehl/wildfly` and starts an unmodified standalone server. The standalone server exposes the following ports:\n\n- 8080 for HTTP\n- 9990 for HTTP based management and\n- 9999 for native management\n\nYou can use the user `admin:passw0rd_` to access the management interfaces. Running it with\n\n```\ndocker run -p 49080:8080 -p 49090:9990 -d hpehl/wildfly-standalone\n```\n\nwill start the server. You can check the status with `docker logs <CONTAINER_ID>`. After a short while you should\nbe able to access the server using http://localhost:49080\n\n{% img centered /images/posts/docker_wildfly_standalone.png WildFly standalone server running inside a Docker container %}\n\n# Domain\n\nTo setup a domain use the repository `hpehl/wildfly-domain`. It contains different tags to start a domain controller\nand up to four hosts. Tags are a way to reference different images inside a repository. The syntax for tags is\n`<repository>:<tag>`. When no tag is given, Docker uses the tag `latest`. The domain repository consists of these tags:\n\n- `hpehl/wildfly-domain:dc`: The domain controller with five servers. The domain controller defines three server groups:\n  - deployment\n  - staging\n  - production\n- `hpehl/wildfly-domain:hostA`: First host with three servers\n- `hpehl/wildfly-domain:hostB`: Second host with three servers\n- `hpehl/wildfly-domain:hostC`: Third host with two servers\n- `hpehl/wildfly-domain:hostD`: Fourth host with two servers\n\nDocker has a great feature which enables inter-container communication. This is done by specifying the `link`\nparameter. When linking two containers Docker will use the exposed ports of the container to create a secure tunnel\nfor the parent to access. This feature is used in the WildFly domain for the communication between the domain\ncontroller and the hosts.\n\nIn order to setup and run the domain, you have to first start the domain controller. After that you can start as many\nhosts as you like and link them to the domain controller. Be sure to use \"dc\" as name (using another name won't work):\n\n    docker run -name wildfly-dc -d hpehl/wildfly-domain:dc\n    docker run -name hostA -link wildfly-dc:dc -d hpehl/wildfly-domain:hostA\n    docker run -name hostB -link wildfly-dc:dc -d hpehl/wildfly-domain:hostB\n    docker run -name hostC -link wildfly-dc:dc -d hpehl/wildfly-domain:hostC\n    docker run -name hostD -link wildfly-dc:dc -d hpehl/wildfly-domain:hostD\n\nSome notes:\n\n- The domain controller exposes the standard ports\n  - 8080 for HTTP\n  - 9990 for HTTP based management and\n  - 9999 for native management\n- The hosts expose just port 8080\n- The domain controller defines the user `admin:passw0rd_`, which can be used for management\n\n# Troubleshooting\n\nUnfortunately in the current WildFly Beta there's a problem if you want to access the admin console of a WildFly\ninstance running inside a Docker container. I assume this will be fixed once WildFly GA is available. For the time\nbeing you can only use the CLI.\n\nIf you need the console, you can use for instance EAP 6.2 which is not affected by this\nlimitation. You can find [Dockerfiles](https://github.com/hpehl/dockerfiles/tree/master/eap62) on my GitHub account\nusing EAP. However please note that there's no EAP distribution included. You have to provide one on your own.\n\n# Summary\n\nUsing Docker it is really easy to setup a WildFly domain. Adding / removing hosts is just a matter of\nstarting / stopping Docker containers.\n\nDocker offers also a rich API. So setting up your domain could also be done using a nifty web front-end where you\n'click together' your server groups, hosts and servers. The Dockerfiles, images and containers would then be created\nbased on your input - all fully automatically!\n\n# Resources\n\n- WildFly repositories on index.docker.io: https://index.docker.io/u/hpehl/\n- Related Dockerfiles: https://github.com/hpehl/dockerfiles/tree/master/wildfly\n",
+    "date": "2013-11-28T14:40:00+01:00"
+  },
+  {
+    "id": 29,
+    "title": "Search using lunr.js",
+    "categories": [
+      "search",
+      "lunr"
+    ],
+    "tags": [
+
+    ],
+    "url": "/search-using-lunr-dot-js.html",
+    "content": "When I [moved](/moved-blog-to-github-pages.html) my blog from Blogger to Octopress back in May 2013, I always missed a powerful and well integrated search feature. Octopress is a static site generator and has no database to be queried for searches. The default search is just a redirection to Google Custom Search. This navigates away from the blog site and comes with Google Ads.<!-- more -->\n \nOnce in a while I was looking for an alternative for my blog. When we developed a local search for the WildFly Admin Console, we choosed [lunr.js](http://lunrjs.com/). Lunr.js is a simple full-text search in your browser. This seems also a reasonable fit for my blog. After some research I came accross [octopress-lunr-js-search](https://github.com/yortz/octopress-lunr-js-search). It's an Octopress plugin which generates a local search index. This index is used by a handful of scripts to implement a search-as-you-type feature.\n \nWhen implementing the search, I basically followed the [instructions](https://github.com/yortz/octopress-lunr-js-search#how-to-use) on the plugins website. However I did without the Jekyll asset plugin, because it would have meant a major reorganization of my blog. I decided to move the search to a modal dialog. This dialog is opened when you click on the little search icon in the header or press the shortcut (&#8984;+. / Ctrl+.). As you start typing, the search results will appear accordingly. \n  \nGive it a try and let me know if you like it!\n",
+    "date": "2014-02-11T21:44:00+01:00"
+  }
+]

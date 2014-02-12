@@ -98,6 +98,15 @@ function wrapFlashVideos() {
   });
 }
 
+function initLunr() {
+  return new LunrSearch('#search-query', {
+    indexUrl: "/search.json",
+    results: "#search-results",
+    entries: ".search-entries",
+    template: "#search-results-template"
+  });    
+}
+
 $.domReady(function() {
   testFeatures();
   wrapFlashVideos();
@@ -105,6 +114,7 @@ $.domReady(function() {
   addCodeLineNumbers();
   lockNav();
   getNav();
+  initLunr();
 });
 
 // iOS scaling bug fix

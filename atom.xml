@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2014-01-10T15:05:23+01:00</updated>
+  <updated>2014-02-12T09:11:53+01:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -12,6 +12,21 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Search using lunr.js]]></title>
+    <link href="http://hpehl.info/search-using-lunr-dot-js.html"/>
+    <updated>2014-02-11T21:44:00+01:00</updated>
+    <id>http://hpehl.info/search-using-lunr-dot-js</id>
+    <content type="html"><![CDATA[<p>When I <a href="http://hpehl.info/moved-blog-to-github-pages.html">moved</a> my blog from Blogger to Octopress back in May 2013, I always missed a powerful and well integrated search feature. Octopress is a static site generator and has no database to be queried for searches. The default search is just a redirection to Google Custom Search. This navigates away from the blog site and comes with Google Ads.<!-- more --></p>
+
+<p>Once in a while I was looking for an alternative for my blog. When we developed a local search for the WildFly Admin Console, we choosed <a href="http://lunrjs.com/">lunr.js</a>. Lunr.js is a simple full-text search in your browser. This seems also a reasonable fit for my blog. After some research I came accross <a href="https://github.com/yortz/octopress-lunr-js-search">octopress-lunr-js-search</a>. It&#8217;s an Octopress plugin which generates a local search index. This index is used by a handful of scripts to implement a search-as-you-type feature.</p>
+
+<p>When implementing the search, I basically followed the <a href="https://github.com/yortz/octopress-lunr-js-search#how-to-use">instructions</a> on the plugins website. However I did without the Jekyll asset plugin, because it would have meant a major reorganization of my blog. I decided to move the search to a modal dialog. This dialog is opened when you click on the little search icon in the header or press the shortcut (&#8984;+. / Ctrl+.). As you start typing, the search results will appear accordingly.</p>
+
+<p>Give it a try and let me know if you like it!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[WildFly Dockerfiles]]></title>
@@ -1489,16 +1504,6 @@ Item-Range: items=0-49;author:desc
 
 <p>It combines the advantages of the other two implementations. A minor drawback of this solution is that the paging
 information is no longer visible in the URL.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Announcement: Piriti 0.4]]></title>
-    <link href="http://hpehl.info/announcement-piriti-0-4.html"/>
-    <updated>2010-07-07T16:28:00+02:00</updated>
-    <id>http://hpehl.info/announcement-piriti-0-4</id>
-    <content type="html"><![CDATA[<p>I&#8217;m pleased to announce Piriti 0.4. This is a major update which adds support for namespaces in XML document and XPath
-expressions. Please take a look at the <a href="https://github.com/hpehl/piriti/wiki/Releasenotes">release notes</a> for further info.</p>
 ]]></content>
   </entry>
   
