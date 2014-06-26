@@ -11,5 +11,5 @@ Yesterday I presented "WildFly 8 - the artist formerly known as JBoss AS" at the
 
 I really enjoyed attending the conference. It was well organized and packed with great talks. Here are the slides of my talks (partly in German):
 
-- [WildFly 8 - the artist formerly known as JBoss AS](downloads/onedaytalk_wildfly8.pdf)
+- [WildFly 8 - the artist formerly known as JBoss AS](/downloads/onedaytalk_wildfly8.pdf)
 - [DMR.scala / DMR.repl](http://slid.es/hpehl/dmrscala)
