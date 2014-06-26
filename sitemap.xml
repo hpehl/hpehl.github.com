@@ -110,7 +110,7 @@
     </url>
     <url>
         <loc>http://hpehl.info/jboss-one-day-talk.html</loc>
-        <lastmod>2014-02-12T13:42:18+01:00</lastmod>
+        <lastmod>2014-06-26T11:58:33+02:00</lastmod>
     </url>
     <url>
         <loc>http://hpehl.info/wildfly-dockerfiles.html</loc>
@@ -121,12 +121,16 @@
         <lastmod>2014-02-12T13:42:18+01:00</lastmod>
     </url>
     <url>
+        <loc>http://hpehl.info/jug-frankfurt.html</loc>
+        <lastmod>2014-06-26T11:58:33+02:00</lastmod>
+    </url>
+    <url>
         <loc>http://hpehl.info/about/</loc>
         <lastmod>2014-02-12T13:42:18+01:00</lastmod>
     </url>
     <url>
         <loc>http://hpehl.info/blog/archives/</loc>
-        <lastmod>2014-02-12T13:42:18+01:00</lastmod>
+        <lastmod>2014-06-26T11:58:33+02:00</lastmod>
     </url>
     <url>
         <loc>http://hpehl.info/disclaimer/</loc>
@@ -134,7 +138,7 @@
     </url>
     <url>
         <loc>http://hpehl.info/</loc>
-        <lastmod>2014-02-12T13:42:18+01:00</lastmod>
+        <lastmod>2014-06-26T11:58:33+02:00</lastmod>
     </url>
     <url>
         <loc>http://hpehl.info/projects/</loc>
@@ -142,7 +146,7 @@
     </url>
     <url>
         <loc>http://hpehl.info/publications/</loc>
-        <lastmod>2014-02-12T13:42:18+01:00</lastmod>
+        <lastmod>2014-06-26T11:58:33+02:00</lastmod>
     </url>
     <url>
         <loc>http://hpehl.info/robots.txt</loc>

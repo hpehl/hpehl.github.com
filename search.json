@@ -381,7 +381,7 @@
 
     ],
     "url": "/jboss-one-day-talk.html",
-    "content": "Yesterday I presented \"WildFly 8 - the artist formerly known as JBoss AS\" at the\n[JBoss One Day Talk](http://onedaytalk.org/) in Munich. Furthermore I had the chance to give a brief introduction to\n\"DMR.scala / DMR.repl\".\n\nI really enjoyed attending the conference. It was well organized and packed with great talks. Here are the slides of my talks (partly in German):\n\n- [WildFly 8 - the artist formerly known as JBoss AS](downloads/onedaytalk_wildfly8.pdf)\n- [DMR.scala / DMR.repl](http://slid.es/hpehl/dmrscala)\n",
+    "content": "Yesterday I presented \"WildFly 8 - the artist formerly known as JBoss AS\" at the\n[JBoss One Day Talk](http://onedaytalk.org/) in Munich. Furthermore I had the chance to give a brief introduction to\n\"DMR.scala / DMR.repl\".\n\nI really enjoyed attending the conference. It was well organized and packed with great talks. Here are the slides of my talks (partly in German):\n\n- [WildFly 8 - the artist formerly known as JBoss AS](/downloads/onedaytalk_wildfly8.pdf)\n- [DMR.scala / DMR.repl](http://slid.es/hpehl/dmrscala)\n",
     "date": "2013-10-24T09:45:00+02:00"
   },
   {
@@ -412,5 +412,18 @@
     "url": "/search-using-lunr-dot-js.html",
     "content": "When I [moved](/moved-blog-to-github-pages.html) my blog from Blogger to Octopress back in May 2013, I always missed a powerful and well integrated search feature. Octopress is a static site generator and has no database to be queried for searches. The default search is just a redirection to Google Custom Search. This navigates away from the blog site and comes with Google Ads.<!-- more -->\n \nOnce in a while I was looking for an alternative for my blog. When we developed a local search for the WildFly Admin Console, we choosed [lunr.js](http://lunrjs.com/). Lunr.js is a simple full-text search in your browser. This seems also a reasonable fit for my blog. After some research I came accross [octopress-lunr-js-search](https://github.com/yortz/octopress-lunr-js-search). It's an Octopress plugin which generates a local search index. This index is used by a handful of scripts to implement a search-as-you-type feature.\n \nWhen implementing the search, I basically followed the [instructions](https://github.com/yortz/octopress-lunr-js-search#how-to-use) on the plugins website. However I did without the Jekyll asset plugin, because it would have meant a major reorganization of my blog. I decided to move the search to a modal dialog. This dialog is opened when you click on the little search icon in the header or press the shortcut (&#8984;+. / Ctrl+.). As you start typing, the search results will appear accordingly. \n  \nGive it a try and let me know if you like it!\n",
     "date": "2014-02-11T21:44:00+01:00"
+  },
+  {
+    "id": 30,
+    "title": "JUG Frankfurt",
+    "categories": [
+
+    ],
+    "tags": [
+
+    ],
+    "url": "/jug-frankfurt.html",
+    "content": "Yesterday I gave a talk about \"WildFly 8 - the artist formerly known as JBoss AS\" at the Java User Group Frankfurt. The venue was at the 4th floor of the \"Deutsche Nationalbibliothek\" in Frankfurt. I was quite impressed by the building and the nice meeting room! Afterwards we went to a nearby pub where I enjoyed \"Äpplewoi\" and a delicious \"Schnitzel mit Frankfurter Soß'\".\n\nI really enjoyed giving the presentation. Thanks for invitation!  \n  \nHere are the slides of my talk:\n\n- [WildFly 8 - the artist formerly known as JBoss AS](/downloads/jugf_wildfly8.pdf)\n",
+    "date": "2014-06-26T09:49:00+02:00"
   }
 ]
