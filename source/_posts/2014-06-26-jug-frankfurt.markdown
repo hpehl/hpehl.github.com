@@ -3,7 +3,7 @@ layout: post
 title: "JUG Frankfurt"
 date: 2014-06-26 09:49
 comments: true
-categories: 
+categories: jug
 ---
 Yesterday I gave a talk about "WildFly 8 - the artist formerly known as JBoss AS" at the Java User Group Frankfurt. The venue was at the 4th floor of the "Deutsche Nationalbibliothek" in Frankfurt. I was quite impressed by the building and the nice meeting room! Afterwards we went to a nearby pub where I enjoyed "Äpplewoi" and a delicious "Schnitzel mit Frankfurter Soß'".
 
