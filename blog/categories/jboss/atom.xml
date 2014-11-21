@@ -4,7 +4,7 @@
   <title><![CDATA[Category: jboss | Harald Pehl]]></title>
   <link href="http://hpehl.info/blog/categories/jboss/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2014-09-19T10:24:23+02:00</updated>
+  <updated>2014-11-21T15:01:47+01:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -12,6 +12,45 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Local Search in the Management Console]]></title>
+    <link href="http://hpehl.info/search_in_console.html"/>
+    <updated>2014-11-21T10:21:00+01:00</updated>
+    <id>http://hpehl.info/search_in_console</id>
+    <content type="html"><![CDATA[<p>Today <a href="http://wildfly.org/news/2014/11/20/WildFly82-Final-Released/">WildFly 8.2.0.Final</a> was released. It comes with a number of improvements and bug fixes over the last release, 8.1.0.Final. Regarding the management console, Heiko Braun already gave a glimpse of some of new features in his recent <a href="http://hbraun.info/2014/10/updated-management-console-in-wildfly-8-2/">blog post</a>. Today I'd like to introduce yet another feature which was introduced in WildFyl 8.2: Local Search.<!-- more --></p>
+
+<p>With every new feature added to WildFly, the number of screens and options in the management console grows as well. Sometimes it's hard to quickly find the right screen where you can modify your JMS topics or monitor that data source connection pool. That's why we added a search feature to the management console. It's built around the idea to have an index which contains reasonable keywords and the descriptions from the underlying <a href="http://wildscribe.github.io/">management model</a>.</p>
+
+<p>It's super fast, because the index is built and stored locally inside the browser. That's why you need a modern browser with support for <a href="http://caniuse.com/#search=localstorage">local storage</a> to use the search. Don't worry about the size of the index, it's quite compact: For WildFly 8.2 running in domain mode the index will be roughly 10 KByte large, so it's no a big deal to keep the index in local storage. For those who want to know all the nitty-gritty details, the local search is based on the JavaScript framework <a href="http://lunrjs.com/">lunr.js</a>. In a nutshell lunr.js is slimmed full-text search engine ready to be used in your browser. But enough with all these implementation details. Let's see how this all works:</p>
+
+<p>To enter the search press the search link in the upper right corner of the management console:</p>
+
+<p><figure class="centered"><img src="/images/posts/local_search_header.png" title="Local Search" ></figure></p>
+
+<p>The first time you enter the search, the index is automatically created based on the WildFly version, the operation mode (standalone or domain) and the language. During index creation the descriptions of the management model is fetched from the server side and stored in the index. Depending on your setup and network latency this make take a few seconds.</p>
+
+<p><figure class="centered"><img src="/images/posts/local_search_index_setup.png" title="Indexing..." ></figure></p>
+
+<p>Once the index is ready you can start searching. As you type your query the results will update dynamically:</p>
+
+<p>
+<div class="ratio-4-3 embed-video-container" onclick="var myAnchor = document.getElementById('wdb3W-G-9WI');var tmpDiv = document.createElement('div');tmpDiv.innerHTML = '&lt;iframe style=&quot;vertical-align:top;width:100%;height:100%;position:absolute;&quot; src=&quot;http://www.youtube.com/embed/wdb3W-G-9WI?autoplay=1&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;';myAnchor.parentNode.replaceChild(tmpDiv.firstChild, myAnchor);return false;" title="click here to play">
+<a class="youtube-lazy-link" style="width:100%;height:100%;background:#000 url(http://i2.ytimg.com/vi/wdb3W-G-9WI/0.jpg) center center no-repeat;background-size:contain;position:absolute" href="http://www.youtube.com/watch?v=wdb3W-G-9WI" id="wdb3W-G-9WI" onclick="return false;">
+<div class="youtube-lazy-link-div"></div>
+<div class="youtube-lazy-link-info">Local Search in the Management Console</div>
+</a>
+<div class="video-info" >Shows the local search in the WildFly Management Console in action.</div>
+</div>
+
+</p>
+
+<br/>
+
+
+<p>Give the new local search a try and let us know what you think!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[WildFly Dockerfiles]]></title>
@@ -376,24 +415,6 @@ private void sendMail(final String guest, final boolean commitment) {
 ```</p>
 
 <p>That's all - any feedback, thoughts and objections are welcome.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Admin Apps]]></title>
-    <link href="http://hpehl.info/admin-apps.html"/>
-    <updated>2013-07-18T11:46:00+02:00</updated>
-    <id>http://hpehl.info/admin-apps</id>
-    <content type="html"><![CDATA[<p>If you ever wanted to administer your JBoss servers from your iOS or Andoird phone, checkout these great apps from
-<a href="https://twitter.com/cvasilak">Christos Vasilakis</a>:</p>
-
-<ul>
-<li>Android: <a href="https://github.com/cvasilak/JBoss-Admin-Android">https://github.com/cvasilak/JBoss-Admin-Android</a></li>
-<li>iOS: <a href="http://www.cvasilak.org/JBossAdmin.html">http://www.cvasilak.org/JBossAdmin.html</a> <a href="https://itunes.apple.com/us/app/jboss-admin/id523516060?mt=8&uo=4" target="itunes_store"><img src="http://r.mzstatic.com/images/web/linkmaker/badge_appstore-sm.gif" alt="JBoss Admin - Christos Vasilakis" style="border: 0;"/></a></li>
-</ul>
-
-
-<p>Keep it up, Christos!</p>
 ]]></content>
   </entry>
   

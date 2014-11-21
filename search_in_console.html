@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Harald Pehl</title>
+  <title>Local Search in the Management Console - Harald Pehl</title>
   <meta name="author" content="Harald Pehl">
 
   
-  <meta name="description" content="I was wondering how to secure the resources in my current application. The application is deployed on the Google
-AppEngine and uses Guice 2.0 and &hellip;">
+  <meta name="description" content="Local Search in the Management Console 21Nov2014 Today WildFly 8.2.0.Final was released. It comes with a number of improvements and bug fixes over &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@ AppEngine and uses Guice 2.0 and &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://hpehl.info/blog/page/4/index.html">
+  <link rel="canonical" href="http://hpehl.info/search_in_console.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -117,17 +116,13 @@ AppEngine and uses Guice 2.0 and &hellip;">
 
     <div id="main">
       <div id="content">
-        <div class="blog-index">
+        <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        
-        <h1 class="entry-title"><a href="/google-appengine-restlet-security.html">Google AppEngine, Restlet & Security<span class="readon" title="More...">&rarr;</span></a>
+      
+        <h1 class="entry-title">Local Search in the Management Console
 
 
 
@@ -140,7 +135,7 @@ AppEngine and uses Guice 2.0 and &hellip;">
 
 
   
-    <time datetime="2009-11-24T17:06:00+01:00" pubdate class="date"><span class="day">24</span><span class="month">Nov</span><span class="year">2009</span></time>
+    <time datetime="2014-11-21T10:21:00+01:00" pubdate class="date"><span class="day">21</span><span class="month">Nov</span><span class="year">2014</span></time>
 
 
 </h1>
@@ -149,64 +144,74 @@ AppEngine and uses Guice 2.0 and &hellip;">
   </header>
 
 
-  <div class="entry-content"><p>I was wondering how to secure the resources in my current application. The application is deployed on the Google
-AppEngine and uses <a href="https://code.google.com/p/google-guice/">Guice 2.0</a> and <a href="http://www.restlet.org">Restlet 2.0</a>.
-Inspired by the post from <a href="http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/">David M. Chandler</a> I
-decided to use the AppEngine cookie named &#8220;ACSID&#8221; as a token in each and every url to secure my resources. This way
-the url to the &#8220;projects&#8221; resource becomes http://karaka-d8.appspot.com/rest/v1/&lt;ACSID>/projects.</div>
+  <div class="entry-content"><p>Today <a href="http://wildfly.org/news/2014/11/20/WildFly82-Final-Released/">WildFly 8.2.0.Final</a> was released. It comes with a number of improvements and bug fixes over the last release, 8.1.0.Final. Regarding the management console, Heiko Braun already gave a glimpse of some of new features in his recent <a href="http://hbraun.info/2014/10/updated-management-console-in-wildfly-8-2/">blog post</a>. Today I&#8217;d like to introduce yet another feature which was introduced in WildFyl 8.2: Local Search.<!-- more --></p>
 
+<p>With every new feature added to WildFly, the number of screens and options in the management console grows as well. Sometimes it&#8217;s hard to quickly find the right screen where you can modify your JMS topics or monitor that data source connection pool. That&#8217;s why we added a search feature to the management console. It&#8217;s built around the idea to have an index which contains reasonable keywords and the descriptions from the underlying <a href="http://wildscribe.github.io/">management model</a>.</p>
 
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        
-        <h1 class="entry-title"><a href="/google-appengine-restlet-guice.html">Google AppEngine, Restlet & Guice<span class="readon" title="More...">&rarr;</span></a>
+<p>It&#8217;s super fast, because the index is built and stored locally inside the browser. That&#8217;s why you need a modern browser with support for <a href="http://caniuse.com/#search=localstorage">local storage</a> to use the search. Don&#8217;t worry about the size of the index, it&#8217;s quite compact: For WildFly 8.2 running in domain mode the index will be roughly 10 KByte large, so it&#8217;s no a big deal to keep the index in local storage. For those who want to know all the nitty-gritty details, the local search is based on the JavaScript framework <a href="http://lunrjs.com/">lunr.js</a>. In a nutshell lunr.js is slimmed full-text search engine ready to be used in your browser. But enough with all these implementation details. Let&#8217;s see how this all works:</p>
 
+<p>To enter the search press the search link in the upper right corner of the management console:</p>
 
+<p><figure class="centered"><img src="/images/posts/local_search_header.png" title="Local Search" ></figure></p>
 
+<p>The first time you enter the search, the index is automatically created based on the WildFly version, the operation mode (standalone or domain) and the language. During index creation the descriptions of the management model is fetched from the server side and stored in the index. Depending on your setup and network latency this make take a few seconds.</p>
 
+<p><figure class="centered"><img src="/images/posts/local_search_index_setup.png" title="Indexing..." ></figure></p>
 
+<p>Once the index is ready you can start searching. As you type your query the results will update dynamically:</p>
 
-
-
-
-
-
-  
-    <time datetime="2009-11-09T13:26:00+01:00" pubdate class="date"><span class="day">09</span><span class="month">Nov</span><span class="year">2009</span></time>
-
-
-</h1>
-      
-    
-  </header>
-
-
-  <div class="entry-content"><p>Currently I&#8217;m developing an application for time recording called Karaka. Karaka is deloyed on the Google AppEngine for
-Java (GAE/J) and uses inter alia the following stack:</p>
-
-<ul>
-<li><a href="http://code.google.com/p/google-guice/">Guice 2.0</a></li>
-<li><a href="http://www.restlet.org">Restlet 2.0</a></li>
-</ul>
-
-
+<div class="ratio-4-3 embed-video-container" onclick="var myAnchor = document.getElementById('wdb3W-G-9WI');var tmpDiv = document.createElement('div');tmpDiv.innerHTML = '&lt;iframe style=&quot;vertical-align:top;width:100%;height:100%;position:absolute;&quot; src=&quot;http://www.youtube.com/embed/wdb3W-G-9WI?autoplay=1&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;';myAnchor.parentNode.replaceChild(tmpDiv.firstChild, myAnchor);return false;" title="click here to play">
+<a class="youtube-lazy-link" style="width:100%;height:100%;background:#000 url(http://i2.ytimg.com/vi/wdb3W-G-9WI/0.jpg) center center no-repeat;background-size:contain;position:absolute" href="http://www.youtube.com/watch?v=wdb3W-G-9WI" id="wdb3W-G-9WI" onclick="return false;">
+<div class="youtube-lazy-link-div"></div>
+<div class="youtube-lazy-link-info">Local Search in the Management Console</div>
+</a>
+<div class="video-info" >Shows the local search in the WildFly Management Console in action.</div>
 </div>
 
 
-    </article>
+
+
+<br/>
+
+
+<p>Give the new local search a try and let us know what you think!</p>
+</div>
+
+
+  <footer class="line">
+    <p class="meta">
+      <span>
+        
+
+<i title="Categories" class="categories fa fa-tags fa-lg">
   
-  <div class="pagination">
-    
-    
-    <a class="basic-alignment right" href="/blog/page/3/">Newer &rarr;</a>
-    
-  </div>
+    <a class='category' href='/blog/categories/console/'>console</a>, <a class='category' href='/blog/categories/hal/'>hal</a>, <a class='category' href='/blog/categories/jboss/'>jboss</a>, <a class='category' href='/blog/categories/search/'>search</a>
+  
+</i>
+
+
+        
+          <a class="sharing tweet" title="Share on Twitter" href="http://twitter.com/share?url=http://hpehl.info/search_in_console.html"><i class="fa fa-twitter fa-lg"></i></a>
+<a class="sharing gplus" title="Share on Google+" href="https://plus.google.com/share?url=http://hpehl.info/search_in_console.html"><i class="fa fa-google-plus-square fa-lg"></i></a>
+<a class="sharing facebook" title="Share on Facebook" href="http://www.facebook.com/sharer.php?u=http://hpehl.info/search_in_console.html"><i class="fa fa-facebook fa-lg"></i></a>
+
+        
+      </span>
+      <span>
+        
+          <a class="articlenav" href="/jug-frankfurt.html" title="Previous Post: JUG Frankfurt">&larr; JUG Frankfurt</a>
+        
+        
+      </span>
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
 </div>
 
       </div>
@@ -224,7 +229,10 @@ Java (GAE/J) and uses inter alia the following stack:</p>
       var disqus_shortname = 'hpehl';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://hpehl.info/search_in_console.html';
+        var disqus_url = 'http://hpehl.info/search_in_console.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

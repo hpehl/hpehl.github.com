@@ -9,8 +9,8 @@
   <meta name="author" content="Harald Pehl">
 
   
-  <meta name="description" content="A common requirement for resources which return large collections of records is paging. Paging can be implemented in
-many different ways. ">
+  <meta name="description" content="Currently I&#8217;m developing a personal time recording tool based on GWT and deployed at Google App Engine. Besides being
+useful I wanted to use &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -119,6 +119,42 @@ many different ways. ">
       <div id="content">
         <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
+        
+        <h1 class="entry-title"><a href="/karaka-time-recording-made-easy.html">Karaka - Time Recording Made Easy<span class="readon" title="More...">&rarr;</span></a>
+
+
+
+
+
+
+
+
+
+
+
+  
+    <time datetime="2010-10-03T22:53:00+02:00" pubdate class="date"><span class="day">03</span><span class="month">Oct</span><span class="year">2010</span></time>
+
+
+</h1>
+      
+    
+  </header>
+
+
+  <div class="entry-content"><p>Currently I&#8217;m developing a personal time recording tool based on GWT and deployed at Google App Engine. Besides being
+useful I wanted to use the latest web techniques / frameworks in a real application. Karaka uses the following
+stack:</div>
+
+
+    </article>
   
   
     <article>
@@ -445,44 +481,6 @@ you have to parse the XML and map it to the model used in the GWT client. The co
 error-prone. So I decided to start a little framework called &#8220;piriti&#8221; (Maori for bridge). It is hosted on goolge code
 under <a href="https://github.com/hpehl/piriti">https://github.com/hpehl/piriti</a>. The basic idea behind piriti is to use annotations on your model and generate
 the parsing / mapping code with the help of deferred binding.</div>
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        
-        <h1 class="entry-title"><a href="/google-appengine-restlet-security.html">Google AppEngine, Restlet & Security<span class="readon" title="More...">&rarr;</span></a>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <time datetime="2009-11-24T17:06:00+01:00" pubdate class="date"><span class="day">24</span><span class="month">Nov</span><span class="year">2009</span></time>
-
-
-</h1>
-      
-    
-  </header>
-
-
-  <div class="entry-content"><p>I was wondering how to secure the resources in my current application. The application is deployed on the Google
-AppEngine and uses <a href="https://code.google.com/p/google-guice/">Guice 2.0</a> and <a href="http://www.restlet.org">Restlet 2.0</a>.
-Inspired by the post from <a href="http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/">David M. Chandler</a> I
-decided to use the AppEngine cookie named &#8220;ACSID&#8221; as a token in each and every url to secure my resources. This way
-the url to the &#8220;projects&#8221; resource becomes http://karaka-d8.appspot.com/rest/v1/&lt;ACSID>/projects.</div>
 
 
     </article>
