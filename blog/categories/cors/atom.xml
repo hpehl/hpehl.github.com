@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: cors | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/cors/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2015-03-16T22:28:28+01:00</updated>
+  <id>http://hpehl.info/</id>
+  <author>
+    <name><![CDATA[Harald Pehl]]></name>
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Standalone Management Console]]></title>
+    <link href="http://hpehl.info/standalone-management-console.html"/>
+    <updated>2015-03-16T16:00:00+01:00</updated>
+    <id>http://hpehl.info/standalone-management-console</id>
+    <content type="html"><![CDATA[<p>Back in 2013 I wrote about an idea to have an <a href="/independent-jboss-admin-console.html">independent management console</a> which can connect to arbitrary servers. Starting with WildFly 9 we finally have the technical prerequisites to ship such a console. In this blog post I will describe how to configure and launch an independent management console.<!-- more --></p>
+
+<p>As you might know the management console is developed using GWT and compiles down to a bunch of HTML, JavaScript and CSS files. Until now these artifacts were a fixed module of each WildFly version. WildFly serves the console and the console talks to the same origin it was loaded from. This still holds true.</p>
+
+<p>However starting with WildFly 9 the HTTP endpoint for the management interface supports the configuration of so-called allowed origins. This list - which is empty by default - contains URLs which are allowed to access the management interface (see http://en.wikipedia.org/wiki/Cross-origin_resource_sharing for more details). This setup is necessary to cope with the <a href="http://en.wikipedia.org/wiki/Same_origin_policy">same origin policy</a> (SOP) when the console is served from origin A, but talks to the management interface at origin B.</p>
+
+<p>Equipped with these features we can now launch the management console from any URL and connect to any management interface which has this URL configured as an allowed origin. To make things simple, we've setup an <a href="http://access-halproject.rhcloud.com/">HAL build proxy</a> on OpenShift. This proxy is able to fetch any console version from the public JBoss maven repository and serve it using a distinct URL. It offers a list of simple HTTP endpoints:</p>
+
+<ul>
+<li><p><code>/latest</code><br/>
+Displays the version of the latest HAL release<br/>
+http://access-halproject.rhcloud.com/latest</p></li>
+<li><p><code>/releases</code><br/>
+Gets the list of supported HAL releases (w/o snapshots)<br/>
+http://access-halproject.rhcloud.com/releases</p></li>
+<li><p><code>/release/:version</code><br/>
+Serves a specific HAL version (only works with version > 2.6.x)<br/>
+http://access-halproject.rhcloud.com/release/2.6.5.Final</p></li>
+<li><p><code>/snapshot/:version</code><br/>
+Serves a specific HAL snapshot (only works with version > 2.6.x)<br/>
+http://access-halproject.rhcloud.com//snapshot/2.7.0-SNAPSHOT</p></li>
+</ul>
+
+
+<p>If you don't want to use the prebuilt proxy on OpenShift, you can also checkout the source code and run your own build proxy:</p>
+
+<ol>
+<li>Clone the registry from https://github.com/hal/mvn-repo-server</li>
+<li>Build the proxy with Maven: <code>mvn clean package</code> (requires Java 8)</li>
+<li>Start the proxy: <code>java -jar target/server-jar-with-dependencies.jar</code> (by default port 8080 is used)</li>
+<li>Open http://localhost:8080/</li>
+</ol>
+
+
+<h1>Allowed Origins Setup</h1>
+
+<p>Whether you use the prebuilt proxy on OpenShift or build your own, you have to add the URL of the standalone console to the list of allowed origins. Depending on the operation mode use one of the following CLI commands:</p>
+
+<ul>
+<li><p>standalone mode:</p>
+
+<pre><code>  /core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=http://access-halproject.rhcloud.com)
+  reload
+</code></pre></li>
+<li><p>domain mode:</p>
+
+<pre><code>  /host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=http://access-halproject.rhcloud.com)
+  reload --host=master
+</code></pre></li>
+</ul>
+
+
+<h1>Console Configuration</h1>
+
+<p>When you open the console it detects whether it is part of a WildFly instance or launched independently. In the latter case you need to specify a management interface you like to connect to. You can manage a list of different interfaces running on different WildFly instances. The configuration is stored in the browser's local storage, so it's available the next time you open the console.</p>
+
+<p>Say you want access your local WildFly instance using the HAL management console 2.6.5.Final served from the build proxy. In order to do so, follow these steps:</p>
+
+<ol>
+<li><p>Point your browser to http://access-halproject.rhcloud.com/release/2.6.5.Final</p></li>
+<li><p>Click 'Add' to configure a management endpoint.<br/>
+<img src="/images/posts/bootstrap_server_select_0.png" alt="Connect to Management Interface" /></p></li>
+<li><p>Add the hostname and port of you local WildFly instance. You can verify your settings using 'Ping'.<br/>
+<img src="/images/posts/bootstrap_server_select_1.png" alt="Connect to Management Interface" /></p></li>
+<li><p>Click 'Connect' to finish.<br/>
+<img src="/images/posts/bootstrap_server_select_2.png" alt="Connect to Management Interface" /></p></li>
+</ol>
+
+
+<p>You can use an existing configuration using the <code>connect</code> query parameter. For the above example this url is a shortcut and will skip the bootstrap dialogs: http://access-halproject.rhcloud.com/2.6.5.Final/App.html?connect=local</p>
+
+<h1>Outlook</h1>
+
+<p>In the future we'd like to use the new distribution model to provide different console versions with different feature sets (nightly, beta, stable). This gives us a way to share new features with the community as soon as possible and to get feedback earlier on.</p>
+
+<h1>Limitations and Known Problems</h1>
+
+<p>When using the standalone console there are some pitfalls and preconditions you should be aware of:</p>
+
+<ul>
+<li>The standalone console can only connect to WildFly 9.x and above.</li>
+<li>Make sure to configure the allowed origins before connecting from the standalone console.</li>
+<li>Don't use different schemes (https and http) for the standalone console and the WildFly instance you want to connect to.</li>
+<li>In rare cases it might be necessary to clear the cache or use the browser's private mode when switching between different WildFly instances.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
