@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: wildfly9 | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/wildfly9/atom.xml" rel="self"/>
+  <link href="http://hpehl.info/"/>
+  <updated>2015-03-17T16:19:21+01:00</updated>
+  <id>http://hpehl.info/</id>
+  <author>
+    <name><![CDATA[Harald Pehl]]></name>
+    <email><![CDATA[harald.pehl@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Updated management console in WildFly 9]]></title>
+    <link href="http://hpehl.info/updated-management-console-in-wildfly-9.html"/>
+    <updated>2015-03-16T22:44:00+01:00</updated>
+    <id>http://hpehl.info/updated-management-console-in-wildfly-9</id>
+    <content type="html"><![CDATA[<p>The upcoming WildFly 9 release will include an improved HAL management console based on the <a href="https://github.com/hal/core/tree/2.6.x">2.6.x branch</a> branch.</p>
+
+<p>The improvements at a glance:</p>
+
+<ul>
+<li>New subsystem configuration: Remoting</li>
+<li>Support for datasource templates.</li>
+<li>Provide all flush-* operations for connection pools</li>
+<li>Improved log viewer</li>
+<li>Enhanced model browser</li>
+<li>Get more details about applied patches</li>
+<li>Standalone console</li>
+</ul>
+
+
+<!-- More -->
+
+
+<h1>Remoting subsystem</h1>
+
+<p>The remoting subsystem was added to the console. You can now configure remote (http) connectors and outbound connections.</p>
+
+<p><figure class="centered"><img src="/images/posts/remoting_subsystem.png" title="Remoting subsystem" ></figure></p>
+
+<h1>Datasource Templates</h1>
+
+<p>The management console provides for the datasource most commonly used templates with reasonable default settings. These presets include JNDI names, driver settings, datasource properties and highly specific options like validation checkers and exception sorters.</p>
+
+<p><figure class="centered"><img src="/images/posts/datasource_templates.png" title="Datasource templates" ></figure></p>
+
+<h1>Improved Log Viewer</h1>
+
+<p>WildFly 8.2 featured a log viewer which allowed you to browse through or tail server logs. Now you can view the log file as a whole in the console and search for specific text. Optionally you can download the full log file and open it in an external editor of your choice.</p>
+
+<p><figure class="centered"><img src="/images/posts/improved_log_viewer.png" title="Improved log viewer" ></figure></p>
+
+<h1>Standalone Console</h1>
+
+<p>Starting with WildFly 9 and <a href="http://hal.gitbooks.io/dev/content/release-coordination/versions/2.6.5.Final.html">HAL 2.6.5.Final</a> the management console can be launched independently from WildFly. Take a look at my <a href="/standalone-management-console.html">last post</a> for more details.</p>
+]]></content>
+  </entry>
+  
+</feed>

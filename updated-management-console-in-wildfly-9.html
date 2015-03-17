@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Harald Pehl</title>
+  <title>Updated management console in WildFly 9 - Harald Pehl</title>
   <meta name="author" content="Harald Pehl">
 
   
-  <meta name="description" content="In an earlier post I described how to configure resources with Google Guice.
-I decided to move the relevant code to a small library called &#8220; &hellip;">
+  <meta name="description" content="Updated Management Console in WildFly 9 16Mar2015 The upcoming WildFly 9 release will include an improved HAL management console based on the 2.6.x &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@ I decided to move the relevant code to a small library called &#8220; &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://hpehl.info/blog/page/4/index.html">
+  <link rel="canonical" href="http://hpehl.info/updated-management-console-in-wildfly-9.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -117,17 +116,13 @@ I decided to move the relevant code to a small library called &#8220; &hellip;">
 
     <div id="main">
       <div id="content">
-        <div class="blog-index">
+        <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        
-        <h1 class="entry-title"><a href="/restlet-and-google-guice.html">Restlet and Google Guice</a>
+      
+        <h1 class="entry-title">Updated Management Console in WildFly 9
 
 
 
@@ -140,7 +135,7 @@ I decided to move the relevant code to a small library called &#8220; &hellip;">
 
 
   
-    <time datetime="2010-02-15T17:33:00+01:00" pubdate class="date"><span class="day">15</span><span class="month">Feb</span><span class="year">2010</span></time>
+    <time datetime="2015-03-16T22:44:00+01:00" pubdate class="date"><span class="day">16</span><span class="month">Mar</span><span class="year">2015</span></time>
 
 
 </h1>
@@ -149,143 +144,82 @@ I decided to move the relevant code to a small library called &#8220; &hellip;">
   </header>
 
 
-  <div class="entry-content"><p>In an earlier <a href="/google-appengine-restlet-guice.html">post</a> I described how to configure resources with Google Guice.
-I decided to move the relevant code to a small library called &#8220;Taoki&#8221; (Maori for &#8220;rest&#8221;).</p>
+  <div class="entry-content"><p>The upcoming WildFly 9 release will include an improved HAL management console based on the <a href="https://github.com/hal/core/tree/2.6.x">2.6.x branch</a> branch.</p>
 
-<p>Besides the features described in the initial post, I added the possibility to configure security for resources.
-The details will be described in a separated post.</p>
-
-<p>For those interested, take a look at <a href="https://github.com/hpehl/taoki">https://github.com/hpehl/taoki</a></p>
-</div>
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        
-        <h1 class="entry-title"><a href="/xml-mapper-for-gwt.html">XML Mapper for GWT<span class="readon" title="More...">&rarr;</span></a>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <time datetime="2010-01-14T17:41:00+01:00" pubdate class="date"><span class="day">14</span><span class="month">Jan</span><span class="year">2010</span></time>
-
-
-</h1>
-      
-    
-  </header>
-
-
-  <div class="entry-content"><p>I&#8217;m a big fan of RESTful architectures. When using REST resources with XML representations in combination with GWT
-you have to parse the XML and map it to the model used in the GWT client. The code therefore is tedious and
-error-prone. So I decided to start a little framework called &#8220;piriti&#8221; (Maori for bridge). It is hosted on goolge code
-under <a href="https://github.com/hpehl/piriti">https://github.com/hpehl/piriti</a>. The basic idea behind piriti is to use annotations on your model and generate
-the parsing / mapping code with the help of deferred binding.</div>
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        
-        <h1 class="entry-title"><a href="/google-appengine-restlet-security.html">Google AppEngine, Restlet & Security<span class="readon" title="More...">&rarr;</span></a>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <time datetime="2009-11-24T17:06:00+01:00" pubdate class="date"><span class="day">24</span><span class="month">Nov</span><span class="year">2009</span></time>
-
-
-</h1>
-      
-    
-  </header>
-
-
-  <div class="entry-content"><p>I was wondering how to secure the resources in my current application. The application is deployed on the Google
-AppEngine and uses <a href="https://code.google.com/p/google-guice/">Guice 2.0</a> and <a href="http://www.restlet.org">Restlet 2.0</a>.
-Inspired by the post from <a href="http://turbomanage.wordpress.com/2009/10/07/calling-appengine-securely-from-gwt-with-gwt-dispatch/">David M. Chandler</a> I
-decided to use the AppEngine cookie named &#8220;ACSID&#8221; as a token in each and every url to secure my resources. This way
-the url to the &#8220;projects&#8221; resource becomes http://karaka-d8.appspot.com/rest/v1/&lt;ACSID>/projects.</div>
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        
-        <h1 class="entry-title"><a href="/google-appengine-restlet-guice.html">Google AppEngine, Restlet & Guice<span class="readon" title="More...">&rarr;</span></a>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <time datetime="2009-11-09T13:26:00+01:00" pubdate class="date"><span class="day">09</span><span class="month">Nov</span><span class="year">2009</span></time>
-
-
-</h1>
-      
-    
-  </header>
-
-
-  <div class="entry-content"><p>Currently I&#8217;m developing an application for time recording called Karaka. Karaka is deloyed on the Google AppEngine for
-Java (GAE/J) and uses inter alia the following stack:</p>
+<p>The improvements at a glance:</p>
 
 <ul>
-<li><a href="http://code.google.com/p/google-guice/">Guice 2.0</a></li>
-<li><a href="http://www.restlet.org">Restlet 2.0</a></li>
+<li>New subsystem configuration: Remoting</li>
+<li>Support for datasource templates.</li>
+<li>Provide all flush-* operations for connection pools</li>
+<li>Improved log viewer</li>
+<li>Enhanced model browser</li>
+<li>Get more details about applied patches</li>
+<li>Standalone console</li>
 </ul>
 
 
+<!-- More -->
+
+
+<h1>Remoting subsystem</h1>
+
+<p>The remoting subsystem was added to the console. You can now configure remote (http) connectors and outbound connections.</p>
+
+<p><figure class="centered"><img src="/images/posts/remoting_subsystem.png" title="Remoting subsystem" ></figure></p>
+
+<h1>Datasource Templates</h1>
+
+<p>The management console provides for the datasource most commonly used templates with reasonable default settings. These presets include JNDI names, driver settings, datasource properties and highly specific options like validation checkers and exception sorters.</p>
+
+<p><figure class="centered"><img src="/images/posts/datasource_templates.png" title="Datasource templates" ></figure></p>
+
+<h1>Improved Log Viewer</h1>
+
+<p>WildFly 8.2 featured a log viewer which allowed you to browse through or tail server logs. Now you can view the log file as a whole in the console and search for specific text. Optionally you can download the full log file and open it in an external editor of your choice.</p>
+
+<p><figure class="centered"><img src="/images/posts/improved_log_viewer.png" title="Improved log viewer" ></figure></p>
+
+<h1>Standalone Console</h1>
+
+<p>Starting with WildFly 9 and <a href="http://hal.gitbooks.io/dev/content/release-coordination/versions/2.6.5.Final.html">HAL 2.6.5.Final</a> the management console can be launched independently from WildFly. Take a look at my <a href="/standalone-management-console.html">last post</a> for more details.</p>
 </div>
 
 
-    </article>
+  <footer class="line">
+    <p class="meta">
+      <span>
+        
+
+<i title="Categories" class="categories fa fa-tags fa-lg">
   
-  <div class="pagination">
-    
-    
-    <a class="basic-alignment right" href="/blog/page/3/">Newer &rarr;</a>
-    
-  </div>
+    <a class='category' href='/blog/categories/console/'>console</a>, <a class='category' href='/blog/categories/jboss/'>jboss</a>, <a class='category' href='/blog/categories/wildfly9/'>wildfly9</a>
+  
+</i>
+
+
+        
+          <a class="sharing tweet" title="Share on Twitter" href="http://twitter.com/share?url=http://hpehl.info/updated-management-console-in-wildfly-9.html"><i class="fa fa-twitter fa-lg"></i></a>
+<a class="sharing gplus" title="Share on Google+" href="https://plus.google.com/share?url=http://hpehl.info/updated-management-console-in-wildfly-9.html"><i class="fa fa-google-plus-square fa-lg"></i></a>
+<a class="sharing facebook" title="Share on Facebook" href="http://www.facebook.com/sharer.php?u=http://hpehl.info/updated-management-console-in-wildfly-9.html"><i class="fa fa-facebook fa-lg"></i></a>
+
+        
+      </span>
+      <span>
+        
+          <a class="articlenav" href="/standalone-management-console.html" title="Previous Post: Standalone Management Console">&larr; Standalone Management Console</a>
+        
+        
+      </span>
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
 </div>
 
       </div>
@@ -303,7 +237,10 @@ Java (GAE/J) and uses inter alia the following stack:</p>
       var disqus_shortname = 'hpehl';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://hpehl.info/updated-management-console-in-wildfly-9.html';
+        var disqus_url = 'http://hpehl.info/updated-management-console-in-wildfly-9.html';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
