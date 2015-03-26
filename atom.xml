@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2015-03-17T16:19:21+01:00</updated>
+  <updated>2015-03-26T21:14:27+01:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -12,6 +12,19 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[JUG Frankfurt 2]]></title>
+    <link href="http://hpehl.info/jug-frankfurt-2.html"/>
+    <updated>2015-03-26T20:59:00+01:00</updated>
+    <id>http://hpehl.info/jug-frankfurt-2</id>
+    <content type="html"><![CDATA[<p>Yesterday I gave a talk about &#8220;Errai - The browser as a platform&#8221; at the Java User Group Frankfurt. It was my second time at the JUG and it has been fun again! Most of the audience were surprised that GWT is still alive and very active. Even more they were impressed by the features of Errai and how easy it is to get up and running.</p>
+
+<p>As always everything was well organized and the &#8220;Äpplewoi&#8221; and the &#8220;Schnitzel mit Frankfurter Soß&#8217;&#8221; was delicious!</p>
+
+<p>Thanks for having me! Here are the slides of my talk: <a href="http://hpehl.info/talks/errai/index.html#/">Errai - The browser as a platform</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Updated management console in WildFly 9]]></title>
@@ -1517,69 +1530,6 @@ template. In Piriti the engine is configured with the following properties:</p>
 
 <p>If you want to delve deeper into the code generation process in <a href="https://github.com/hpehl/piriti">Piriti</a>, check out
 the trunk and take a look into the code.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Announcement: Piriti 0.7.0b1]]></title>
-    <link href="http://hpehl.info/announcement-piriti-0-70b1.html"/>
-    <updated>2011-05-09T23:12:00+02:00</updated>
-    <id>http://hpehl.info/announcement-piriti-0-70b1</id>
-    <content type="html"><![CDATA[<p>I&#8217;m pleased to announce the first beta of the upcoming Piriti 0.7.0 release. Piriti 0.7.0 is a major release with
-breaking API changes, lots of new features and bugfixes.<!-- more --></p>
-
-<h3>Breaking API Changes</h3>
-
-<ul>
-<li>Piriti requires GWT 2.2 and GIN 1.5</li>
-<li>Dropped GXT support</li>
-<li>Removed <code>@Json</code>, <code>@JsonMappings</code>, <code>@Xml</code> and <code>@XmlMappings</code> annotations</li>
-</ul>
-
-
-<h3>New Features</h3>
-
-<ul>
-<li>Devided Piriti into different modules:
-
-<ul>
-<li><code>name.pehl.piriti.commons.Commons</code></li>
-<li><code>name.pehl.piriti.converter.Converter</code></li>
-<li><code>name.pehl.piriti.json.JSON</code></li>
-<li><code>name.pehl.piriti.property.Property</code></li>
-<li><code>name.pehl.piriti.xml.XML</code></li>
-</ul>
-</li>
-<li>Simplified mapping setup: All properties in a POJO hirarchy are now mapped by default</li>
-<li>Added new annotations to overide default behaviour:
-
-<ul>
-<li><code>@Order</code></li>
-<li><code>@Path</code></li>
-<li><code>@Format</code></li>
-<li><code>@Native</code></li>
-<li><code>@Transient</code></li>
-<li><code>@CreateWith</code></li>
-<li><code>@MapUpTo</code></li>
-</ul>
-</li>
-<li>Added <code>@Mappings</code> and <code>@Mapping</code> annotation for external mappings (JSON and XML)</li>
-<li>Added support for polymorhic assoziations</li>
-<li>Converters can now be used for any type</li>
-<li>Added XML serialisation (not yet implemented, but scheduled for the 0.7.0 release)</li>
-<li>Added support for IDs and IDREFs in JSON (not yet implemented, but scheduled for the 0.7.0 release)</li>
-</ul>
-
-
-<h3>Bugfixes</h3>
-
-<ul>
-<li>Fixed problems when mapping collection implementations</li>
-<li><code>GWT.create()</code> is now used instead of new operator</li>
-<li>I also restructured the wiki and added a FAQ and a comparison to other JSON / XML mappers. Feel free to visit
-<a href="https://github.com/hpehl/piriti/">https://github.com/hpehl/piriti/</a> and test the new release.</li>
-</ul>
-
 ]]></content>
   </entry>
   

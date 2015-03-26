@@ -375,7 +375,8 @@
     "categories": [
       "jboss",
       "wildfly",
-      "scala"
+      "scala",
+      "talk"
     ],
     "tags": [
 
@@ -417,7 +418,8 @@
     "id": 30,
     "title": "JUG Frankfurt",
     "categories": [
-      "jug"
+      "jug",
+      "talk"
     ],
     "tags": [
 
@@ -471,5 +473,19 @@
     "url": "/updated-management-console-in-wildfly-9.html",
     "content": "The upcoming WildFly 9 release will include an improved HAL management console based on the [2.6.x branch](https://github.com/hal/core/tree/2.6.x) branch.\n\nThe improvements at a glance:\n\n- New subsystem configuration: Remoting\n- Support for datasource templates.\n- Provide all flush-* operations for connection pools\n- Improved log viewer\n- Enhanced model browser\n- Get more details about applied patches\n- Standalone console\n<!-- More -->\n\n# Remoting subsystem\n\nThe remoting subsystem was added to the console. You can now configure remote (http) connectors and outbound connections.\n\n{% img centered /images/posts/remoting_subsystem.png Remoting subsystem %}\n\n# Datasource Templates\n\nThe management console provides for the datasource most commonly used templates with reasonable default settings. These presets include JNDI names, driver settings, datasource properties and highly specific options like validation checkers and exception sorters.\n\n{% img centered /images/posts/datasource_templates.png Datasource templates %}\n\n# Improved Log Viewer\n\nWildFly 8.2 featured a log viewer which allowed you to browse through or tail server logs. Now you can view the log file as a whole in the console and search for specific text. Optionally you can download the full log file and open it in an external editor of your choice.\n\n{% img centered /images/posts/improved_log_viewer.png Improved log viewer %}\n\n# Standalone Console\n\nStarting with WildFly 9 and [HAL 2.6.5.Final](http://hal.gitbooks.io/dev/content/release-coordination/versions/2.6.5.Final.html) the management console can be launched independently from WildFly. Take a look at my [last post](/standalone-management-console.html) for more details.\n",
     "date": "2015-03-16T22:44:00+01:00"
+  },
+  {
+    "id": 34,
+    "title": "JUG Frankfurt 2",
+    "categories": [
+      "jug",
+      "talk"
+    ],
+    "tags": [
+
+    ],
+    "url": "/jug-frankfurt-2.html",
+    "content": "Yesterday I gave a talk about \"Errai - The browser as a platform\" at the Java User Group Frankfurt. It was my second time at the JUG and it has been fun again! Most of the audience were surprised that GWT is still alive and very active. Even more they were impressed by the features of Errai and how easy it is to get up and running.\n\nAs always everything was well organized and the \"Äpplewoi\" and the \"Schnitzel mit Frankfurter Soß'\" was delicious!\n\nThanks for having me! Here are the slides of my talk: [Errai - The browser as a platform](http://hpehl.info/talks/errai/index.html#/)\n",
+    "date": "2015-03-26T20:59:00+01:00"
   }
 ]
