@@ -4,7 +4,7 @@
   <title><![CDATA[Category: hal | Harald Pehl]]></title>
   <link href="http://hpehl.info/blog/categories/hal/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2015-03-26T21:14:27+01:00</updated>
+  <updated>2015-06-07T16:38:39+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -34,16 +34,10 @@
 
 <p>Once the index is ready you can start searching. As you type your query the results will update dynamically:</p>
 
-<p>
-<div class="ratio-4-3 embed-video-container" onclick="var myAnchor = document.getElementById('wdb3W-G-9WI');var tmpDiv = document.createElement('div');tmpDiv.innerHTML = '&lt;iframe style=&quot;vertical-align:top;width:100%;height:100%;position:absolute;&quot; src=&quot;http://www.youtube.com/embed/wdb3W-G-9WI?autoplay=1&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;';myAnchor.parentNode.replaceChild(tmpDiv.firstChild, myAnchor);return false;" title="click here to play">
-<a class="youtube-lazy-link" style="width:100%;height:100%;background:#000 url(http://i2.ytimg.com/vi/wdb3W-G-9WI/0.jpg) center center no-repeat;background-size:contain;position:absolute" href="http://www.youtube.com/watch?v=wdb3W-G-9WI" id="wdb3W-G-9WI" onclick="return false;">
-<div class="youtube-lazy-link-div"></div>
-<div class="youtube-lazy-link-info">Local Search in the Management Console</div>
-</a>
-<div class="video-info" >Shows the local search in the WildFly Management Console in action.</div>
-</div>
+<iframe width="420" height="315" src="https://www.youtube.com/embed/wdb3W-G-9WI" frameborder="0" allowfullscreen></iframe>
 
-</p>
+
+
 
 <br/>
 
