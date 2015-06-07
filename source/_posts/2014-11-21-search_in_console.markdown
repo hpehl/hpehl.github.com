@@ -21,7 +21,7 @@ The first time you enter the search, the index is automatically created based on
 
 Once the index is ready you can start searching. As you type your query the results will update dynamically:
 
-{% youtube wdb3W-G-9WI %}
+<iframe width="420" height="315" src="https://www.youtube.com/embed/wdb3W-G-9WI" frameborder="0" allowfullscreen></iframe>
 
 <br/>
 Give the new local search a try and let us know what you think!
