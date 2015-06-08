@@ -4,7 +4,7 @@
   <title><![CDATA[Category: console | Harald Pehl]]></title>
   <link href="http://hpehl.info/blog/categories/console/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2015-06-07T16:40:31+02:00</updated>
+  <updated>2015-06-08T13:01:25+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -89,7 +89,7 @@ driver-xa-datasource-class-name=com.mysql.jdbc.jdbc2.optional.MysqlXADataSource\
 
 <h1>Setup a Datasource</h1>
 
-<p>In order to setup a datasource open the management console and navigate to "Configuration / (Profile ...) / Datasources" and click "Add" to bring up the wizard for creating a (XA) datasource. The console already contains templates for the most common databases. The templates combine settings like connection url, validation checker and exception sorter implementations. Choose "MySQL Datasource" and adjust the settings as necessary. You should see the JDBC driver you've installed as module or deployment in the "JDBC Driver" step under "Detected Driver".  Before you exit the wizard you can test the connection using the button on the final step.</p>
+<p>In order to setup a datasource open the management console and navigate to "Configuration / (Profile ...) / Datasources" and click "Add" to bring up the wizard for creating a (XA) datasource. The console already contains templates for the most common databases. The templates combine settings like connection url, validation checker and exception sorter implementations. Choose "MySQL Datasource" and adjust the settings as necessary. You should see the JDBC driver you've installed as module or deployment in the "JDBC Driver" step under "Detected Driver".</p>
 
 <p>If you prefer to use the CLI to create the datasource use a command like this one (leave out <code>/profile=full</code> for standalone mode):</p>
 
