@@ -5,7 +5,7 @@ date: 2015-06-07 16:20
 comments: true
 categories: jboss wildfly console jdbc
 ---
-The installation of JDBC drivers and the setup of (xa)datasources is a common task for every JEE developer and administrator. This post describes the installation and setup of a MySQL driver and datasource using WildFly 9 in both standalone and domain mode.<!-- more --> If you use another database, you'll probably go through the same steps, but using different parameters.
+The installation of JDBC drivers and the setup of (xa)datasources is a common task for every JEE developer and administrator. This post describes the installation and setup of a MySQL driver and datasource using WildFly 9 in both standalone and domain mode.<!-- more --> The setup assumes a running MySQL database called `test` on localhost. If you use another database, you'll probably go through the same steps, but using different parameters.
  
  When installing a driver you basically have two options: install it as module or deploy it like any other application package. However when running domain mode you should choose to install the driver as module. Otherwise the driver won't be recognized by the `:installed-drivers-list` operation. Drivers deployed as application packages need a running server, which cannot be guaranteed in domain mode. Thus the recommendation is to *always* use the module option in domain mode. For standalone mode you are free to choose between module and deployment since both options will work. 
  
