@@ -62,7 +62,7 @@ The contained JDBC drivers will be automatically detected and registered (no nee
 
 # Setup a Datasource
 
-In order to setup a datasource open the management console and navigate to "Configuration / (Profile ...) / Datasources" and click "Add" to bring up the wizard for creating a (XA) datasource. The console already contains templates for the most common databases. The templates combine settings like connection url, validation checker and exception sorter implementations. Choose "MySQL Datasource" and adjust the settings as necessary. You should see the JDBC driver you've installed as module or deployment in the "JDBC Driver" step under "Detected Driver".  Before you exit the wizard you can test the connection using the button on the final step.  
+In order to setup a datasource open the management console and navigate to "Configuration / (Profile ...) / Datasources" and click "Add" to bring up the wizard for creating a (XA) datasource. The console already contains templates for the most common databases. The templates combine settings like connection url, validation checker and exception sorter implementations. Choose "MySQL Datasource" and adjust the settings as necessary. You should see the JDBC driver you've installed as module or deployment in the "JDBC Driver" step under "Detected Driver".  
 
 If you prefer to use the CLI to create the datasource use a command like this one (leave out `/profile=full` for standalone mode):
 
