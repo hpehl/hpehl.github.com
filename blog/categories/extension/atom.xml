@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: hal | Harald Pehl]]></title>
-  <link href="http://hpehl.info/blog/categories/hal/atom.xml" rel="self"/>
+  <title><![CDATA[Category: extension | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/extension/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
   <updated>2015-06-26T23:22:22+02:00</updated>
   <id>http://hpehl.info/</id>
@@ -335,39 +335,6 @@ public ExtensionMessages extensionMessages() {
 <h1>It's your turn</h1>
 
 <p>Now if you want to write your own extension, great - go ahead! If you have any questions or comments, please do not hesitate to <a href="http://hal.gitbooks.io/dev/content/community/index.html">contact</a> us.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Local Search in the Management Console]]></title>
-    <link href="http://hpehl.info/search_in_console.html"/>
-    <updated>2014-11-21T10:21:00+01:00</updated>
-    <id>http://hpehl.info/search_in_console</id>
-    <content type="html"><![CDATA[<p>Today <a href="http://wildfly.org/news/2014/11/20/WildFly82-Final-Released/">WildFly 8.2.0.Final</a> was released. It comes with a number of improvements and bug fixes over the last release, 8.1.0.Final. Regarding the management console, Heiko Braun already gave a glimpse of some of new features in his recent <a href="http://hbraun.info/2014/10/updated-management-console-in-wildfly-8-2/">blog post</a>. Today I'd like to introduce yet another feature which was introduced in WildFyl 8.2: Local Search.<!-- more --></p>
-
-<p>With every new feature added to WildFly, the number of screens and options in the management console grows as well. Sometimes it's hard to quickly find the right screen where you can modify your JMS topics or monitor that data source connection pool. That's why we added a search feature to the management console. It's built around the idea to have an index which contains reasonable keywords and the descriptions from the underlying <a href="http://wildscribe.github.io/">management model</a>.</p>
-
-<p>It's super fast, because the index is built and stored locally inside the browser. That's why you need a modern browser with support for <a href="http://caniuse.com/#search=localstorage">local storage</a> to use the search. Don't worry about the size of the index, it's quite compact: For WildFly 8.2 running in domain mode the index will be roughly 10 KByte large, so it's no a big deal to keep the index in local storage. For those who want to know all the nitty-gritty details, the local search is based on the JavaScript framework <a href="http://lunrjs.com/">lunr.js</a>. In a nutshell lunr.js is slimmed full-text search engine ready to be used in your browser. But enough with all these implementation details. Let's see how this all works:</p>
-
-<p>To enter the search press the search link in the upper right corner of the management console:</p>
-
-<p><figure class="centered"><img src="/images/posts/local_search_header.png" title="Local Search" ></figure></p>
-
-<p>The first time you enter the search, the index is automatically created based on the WildFly version, the operation mode (standalone or domain) and the language. During index creation the descriptions of the management model is fetched from the server side and stored in the index. Depending on your setup and network latency this make take a few seconds.</p>
-
-<p><figure class="centered"><img src="/images/posts/local_search_index_setup.png" title="Indexing..." ></figure></p>
-
-<p>Once the index is ready you can start searching. As you type your query the results will update dynamically:</p>
-
-<iframe width="420" height="315" src="https://www.youtube.com/embed/wdb3W-G-9WI" frameborder="0" allowfullscreen></iframe>
-
-
-
-
-<br/>
-
-
-<p>Give the new local search a try and let us know what you think!</p>
 ]]></content>
   </entry>
   

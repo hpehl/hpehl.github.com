@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2015-06-08T22:45:34+02:00</updated>
+  <updated>2015-06-26T23:22:22+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -12,6 +12,491 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Extending HAL Management Console]]></title>
+    <link href="http://hpehl.info/extending-hal-management-console.html"/>
+    <updated>2015-06-26T14:49:00+02:00</updated>
+    <id>http://hpehl.info/extending-hal-management-console</id>
+    <content type="html"><![CDATA[<p>The HAL management console provides the UI to configure almost any subsystem in WildFly. However for subsystems provided by 3rd party projects like <a href="http://picketlink.org/">PicketLink</a>, <a href="http://teiid.jboss.org/">Teiid</a> or <a href="http://keycloak.jboss.org/">Keycloak</a> there&#8217;s no way to configure the management resources. This is where the HAL extensions come into play. They provide an easy way to extend the console and provide a frontend to configure the related subsystem. This blog post will walk through the process from creating an extension to including it in the HAL release stream.<!-- more --></p>
+
+<h1>Background</h1>
+
+<p>Before we start let me give you some technical background. The HAL management console is a GWT web application. It uses a maven build and depends mainly on <a href="https://code.google.com/p/google-gin/">GIN</a> for dependency injection and <a href="http://dev.arcbees.com/gwtp/">GWTP</a> for MVP. Extensions need to use the same stack and must create a maven artifact which is used by the <a href="https://github.com/hal/release-stream">HAL release stream</a> at <em>compile time</em>. As a result the final management console is produced. This means that the final console might contain many extensions. However the extensions will only show up if the relevant subsystem is part of WildFly. Furthermore since the console uses <a href="http://www.gwtproject.org/doc/latest/DevGuideCodeSplitting.html">code splitting</a> the extension&#8217;s bits &amp; pieces will only be loaded on demand.</p>
+
+<h1>Get Started</h1>
+
+<p>As of today extensions need to be developed against HAL 2.8.0 or greater. This in turn requires WildFly 10.x as target platform. To get started quickly we provide a <a href="https://github.com/hal/archetypes/tree/master/subsystem-extension">maven archetype</a>. The archetype creates an extension with a presenter / view tuple to edit the top level attributes of a given subsystem.</p>
+
+<p>Besides the regular maven coordinates like <code>groupId</code>, <code>artifactId</code> et al the archetypes uses the following parameters:</p>
+
+<ul>
+<li><code>extensionName</code>: The name / title of the extension as it appears in the UI. Should be a human friendly term which can contains spaces.</li>
+<li><code>gwtModule</code> The name of the GWT module w/o the <code>.gwt.xml</code> suffix. Must not contain whitespace.</li>
+<li><code>subsystem</code>: The name of the subsystem. The extension will only show up in the UI if the subsystem is configured in standalone mode or is part of the selected profile in domain mode.</li>
+<li><code>nameToken</code>: An unique name token used to identify the extension&#8217;s page in the UI. Should be an all lowercase string separated with dashes. Defaults to the subsystem name. See the <a href="http://dev.arcbees.com/gwtp/features/PlaceManager.html">GWTP documentation</a> for more infos about place management.</li>
+</ul>
+
+
+<p>The archetype is deployed to the <a href="https://repository.jboss.org/nexus/index.html#welcome">JBoss Maven Repository</a>. In order to use it, make sure to specify the catalog flag <code>-DarchetypeCatalog=https://repository.jboss.org</code>.</p>
+
+<h2>Request Controller</h2>
+
+<p>Let&#8217;s say we want to develop an extension for the subsystem <code>request-comntroller</code>. This subsystem is used for request limiting and graceful shutdown and is currently not covered in the HAL management console. Open a shell and execute</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mvn archetype:generate \
+</span><span class='line'>    -DarchetypeCatalog=https://repository.jboss.org \
+</span><span class='line'>    -DarchetypeGroupId=org.jboss.hal.archetypes \
+</span><span class='line'>    -DarchetypeArtifactId=hal-subsystem-extension-archetype</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After providing all required parameters you should end up with a new maven project which consists of two sub modules:</p>
+
+<ul>
+<li><code>gui</code>: Contains the GWT code for the extension</li>
+<li><code>app</code>: Provides a GWT module to run and test the extension</li>
+</ul>
+
+
+<p>Before we dive into the details, here&#8217;s a preview of what the extension is going to look like in the navigation, read-only and edit mode:</p>
+
+<p><figure class="centered"><img src="http://hpehl.info/images/posts/extension_1.png" title="&#34;Navigation&#34;" alt="&#34;Navigation&#34;"></figure>
+<figure class="centered"><img src="http://hpehl.info/images/posts/extension_2.png" title="&#34;Read-only mode&#34;" alt="&#34;Read-only mode&#34;"></figure>
+<figure class="centered"><img src="http://hpehl.info/images/posts/extension_3.png" title="&#34;Edit mode&#34;" alt="&#34;Edit mode&#34;"></figure></p>
+
+<h1>Develop</h1>
+
+<p>The development of the extension happens in the <code>gui</code> module. The archetype creates all necessary building blocks:</p>
+
+<ul>
+<li>a presenter / view tuple</li>
+<li>the GIN / GWTP mixins</li>
+<li>i18n helper classes</li>
+</ul>
+
+
+<h2>Presenter / View Tuple</h2>
+
+<p>The GWTP presenter includes the proxy interface which carries the <code>@SubsystemExtension</code> annotation. This annotation marks the enclosing presenter as extension. The view interface defines one method to update the view with the subsystem data. Finally there are two methods to load and save the subsystem attributes.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExtensionPresenter</span>
+</span><span class='line'>        <span class="kd">extends</span> <span class="n">Presenter</span><span class="o">&lt;</span><span class="n">ExtensionPresenter</span><span class="o">.</span><span class="na">MyView</span><span class="o">,</span> <span class="n">ExtensionPresenter</span><span class="o">.</span><span class="na">MyProxy</span><span class="o">&gt;</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">ROOT_RESOURCE</span> <span class="o">=</span> <span class="s">&quot;{selected.profile}/subsystem=request-controller&quot;</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">AddressTemplate</span> <span class="n">ROOT_RESOURCE_ADDRESS</span> <span class="o">=</span> <span class="n">AddressTemplate</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">ROOT_RESOURCE</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@ProxyCodeSplit</span>
+</span><span class='line'>    <span class="nd">@NameToken</span><span class="o">(</span><span class="s">&quot;request-controller&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="nd">@RequiredResources</span><span class="o">(</span><span class="n">resources</span> <span class="o">=</span> <span class="n">ROOT_RESOURCE</span><span class="o">)</span>
+</span><span class='line'>    <span class="nd">@SearchIndex</span><span class="o">(</span><span class="n">keywords</span> <span class="o">=</span> <span class="o">{</span><span class="s">&quot;request-controller&quot;</span><span class="o">})</span>
+</span><span class='line'>    <span class="nd">@SubsystemExtension</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Request Controller&quot;</span><span class="o">,</span> <span class="n">group</span> <span class="o">=</span> <span class="s">&quot;Extensions&quot;</span><span class="o">,</span> <span class="n">key</span> <span class="o">=</span> <span class="s">&quot;request-controller&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MyProxy</span> <span class="kd">extends</span> <span class="n">ProxyPlace</span><span class="o">&lt;</span><span class="n">ExtensionPresenter</span><span class="o">&gt;</span> <span class="o">{}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MyView</span> <span class="kd">extends</span> <span class="n">View</span><span class="o">,</span> <span class="n">HasPresenter</span><span class="o">&lt;</span><span class="n">ExtensionPresenter</span><span class="o">&gt;</span> <span class="o">{</span>
+</span><span class='line'>        <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="n">ModelNode</span> <span class="n">data</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">StatementContext</span> <span class="n">statementContext</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">DispatchAsync</span> <span class="n">dispatcher</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">CrudOperationDelegate</span> <span class="n">operationDelegate</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">I18n</span> <span class="n">i18n</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Inject</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="nf">ExtensionPresenter</span><span class="o">(</span><span class="kd">final</span> <span class="n">EventBus</span> <span class="n">eventBus</span><span class="o">,</span> <span class="kd">final</span> <span class="n">MyView</span> <span class="n">view</span><span class="o">,</span> <span class="kd">final</span> <span class="n">MyProxy</span> <span class="n">proxy</span><span class="o">,</span>
+</span><span class='line'>            <span class="kd">final</span> <span class="n">StatementContext</span> <span class="n">statementContext</span><span class="o">,</span> <span class="kd">final</span> <span class="n">DispatchAsync</span> <span class="n">dispatcher</span><span class="o">,</span> <span class="kd">final</span> <span class="n">I18n</span> <span class="n">i18n</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="kd">super</span><span class="o">(</span><span class="n">eventBus</span><span class="o">,</span> <span class="n">view</span><span class="o">,</span> <span class="n">proxy</span><span class="o">,</span> <span class="n">MainLayoutPresenter</span><span class="o">.</span><span class="na">TYPE_MainContent</span><span class="o">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">statementContext</span> <span class="o">=</span> <span class="n">statementContext</span><span class="o">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">dispatcher</span> <span class="o">=</span> <span class="n">dispatcher</span><span class="o">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">i18n</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">operationDelegate</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CrudOperationDelegate</span><span class="o">(</span><span class="n">statementContext</span><span class="o">,</span> <span class="n">dispatcher</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="o">[...]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">loadSubsystem</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">Operation</span> <span class="n">operation</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Operation</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="n">READ_RESOURCE_OPERATION</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">ROOT_RESOURCE_ADDRESS</span><span class="o">.</span><span class="na">resolve</span><span class="o">(</span><span class="n">statementContext</span><span class="o">)).</span><span class="na">build</span><span class="o">();</span>
+</span><span class='line'>        <span class="n">dispatcher</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="k">new</span> <span class="n">DMRAction</span><span class="o">(</span><span class="n">operation</span><span class="o">),</span> <span class="k">new</span> <span class="n">SimpleCallback</span><span class="o">&lt;</span><span class="n">DMRResponse</span><span class="o">&gt;()</span> <span class="o">{</span>
+</span><span class='line'>            <span class="nd">@Override</span>
+</span><span class='line'>            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="kd">final</span> <span class="n">DMRResponse</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>                <span class="n">ModelNode</span> <span class="n">body</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+</span><span class='line'>                <span class="k">if</span> <span class="o">(</span><span class="n">body</span><span class="o">.</span><span class="na">isFailure</span><span class="o">())</span> <span class="o">{</span>
+</span><span class='line'>                    <span class="n">Console</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="n">i18n</span><span class="o">.</span><span class="na">extensionConstants</span><span class="o">().</span><span class="na">load_failed</span><span class="o">(),</span> <span class="n">body</span><span class="o">.</span><span class="na">getFailureDescription</span><span class="o">());</span>
+</span><span class='line'>                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>                    <span class="n">getView</span><span class="o">().</span><span class="na">update</span><span class="o">(</span><span class="n">body</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">RESULT</span><span class="o">));</span>
+</span><span class='line'>                <span class="o">}</span>
+</span><span class='line'>            <span class="o">}</span>
+</span><span class='line'>        <span class="o">});</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSaveResource</span><span class="o">(</span><span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">changedValues</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">operationDelegate</span><span class="o">.</span><span class="na">onSaveResource</span><span class="o">(</span><span class="n">ROOT_RESOURCE_ADDRESS</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">changedValues</span><span class="o">,</span>
+</span><span class='line'>                <span class="k">new</span> <span class="n">CrudOperationDelegate</span><span class="o">.</span><span class="na">Callback</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>                    <span class="nd">@Override</span>
+</span><span class='line'>                    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFailure</span><span class="o">(</span><span class="kd">final</span> <span class="n">AddressTemplate</span> <span class="n">addressTemplate</span><span class="o">,</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="kd">final</span> <span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>                        <span class="n">Console</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="n">i18n</span><span class="o">.</span><span class="na">consoleMessages</span><span class="o">().</span><span class="na">modificationFailed</span><span class="o">(</span><span class="s">&quot;subsystem &#39;request-controller&#39;&quot;</span><span class="o">),</span>
+</span><span class='line'>                                <span class="n">t</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>
+</span><span class='line'>                    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="nd">@Override</span>
+</span><span class='line'>                    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="o">(</span><span class="kd">final</span> <span class="n">AddressTemplate</span> <span class="n">addressTemplate</span><span class="o">,</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>                        <span class="n">Console</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="n">i18n</span><span class="o">.</span><span class="na">consoleMessages</span><span class="o">().</span><span class="na">modified</span><span class="o">(</span><span class="s">&quot;subsystem &#39;request-controller&#39;&quot;</span><span class="o">));</span>
+</span><span class='line'>                        <span class="n">loadSubsystem</span><span class="o">();</span>
+</span><span class='line'>                    <span class="o">}</span>
+</span><span class='line'>                <span class="o">});</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The view creates a form based on the subsystem metadata. When the user clicks save, control is delegated to the presenter which executes the relevant DMR operations to store the updated attributes in the management model.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExtensionView</span> <span class="kd">extends</span> <span class="n">SuspendableViewImpl</span> <span class="kd">implements</span> <span class="n">ExtensionPresenter</span><span class="o">.</span><span class="na">MyView</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ResourceDescriptionRegistry</span> <span class="n">descriptionRegistry</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">SecurityFramework</span> <span class="n">securityFramework</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">ExtensionPresenter</span> <span class="n">presenter</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">ModelNodeForm</span> <span class="n">form</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Inject</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="nf">ExtensionView</span><span class="o">(</span><span class="kd">final</span> <span class="n">ResourceDescriptionRegistry</span> <span class="n">descriptionRegistry</span><span class="o">,</span>
+</span><span class='line'>            <span class="kd">final</span> <span class="n">SecurityFramework</span> <span class="n">securityFramework</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">securityFramework</span> <span class="o">=</span> <span class="n">securityFramework</span><span class="o">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">descriptionRegistry</span> <span class="o">=</span> <span class="n">descriptionRegistry</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">Widget</span> <span class="nf">createWidget</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">SecurityContext</span> <span class="n">securityContext</span> <span class="o">=</span> <span class="n">securityFramework</span><span class="o">.</span><span class="na">getSecurityContext</span><span class="o">(</span><span class="n">presenter</span><span class="o">.</span><span class="na">getProxy</span><span class="o">().</span><span class="na">getNameToken</span><span class="o">());</span>
+</span><span class='line'>        <span class="n">ResourceDescription</span> <span class="n">resourceDescription</span> <span class="o">=</span> <span class="n">descriptionRegistry</span><span class="o">.</span><span class="na">lookup</span><span class="o">(</span>
+</span><span class='line'>                <span class="n">ExtensionPresenter</span><span class="o">.</span><span class="na">ROOT_RESOURCE_ADDRESS</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">ModelNodeFormBuilder</span><span class="o">.</span><span class="na">FormAssets</span> <span class="n">formAssets</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ModelNodeFormBuilder</span><span class="o">()</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">setConfigOnly</span><span class="o">()</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">setResourceDescription</span><span class="o">(</span><span class="n">resourceDescription</span><span class="o">)</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">setSecurityContext</span><span class="o">(</span><span class="n">securityContext</span><span class="o">)</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">form</span> <span class="o">=</span> <span class="n">formAssets</span><span class="o">.</span><span class="na">getForm</span><span class="o">();</span>
+</span><span class='line'>        <span class="n">form</span><span class="o">.</span><span class="na">setToolsCallback</span><span class="o">(</span><span class="k">new</span> <span class="n">FormCallback</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>            <span class="nd">@Override</span>
+</span><span class='line'>            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSave</span><span class="o">(</span><span class="n">Map</span> <span class="n">changedValues</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>                <span class="n">presenter</span><span class="o">.</span><span class="na">onSaveResource</span><span class="o">(</span><span class="n">changedValues</span><span class="o">);</span>
+</span><span class='line'>            <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nd">@Override</span>
+</span><span class='line'>            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCancel</span><span class="o">(</span><span class="n">Object</span> <span class="n">entity</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>                <span class="n">form</span><span class="o">.</span><span class="na">cancel</span><span class="o">();</span>
+</span><span class='line'>            <span class="o">}</span>
+</span><span class='line'>        <span class="o">});</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="k">new</span> <span class="nf">SimpleLayout</span><span class="o">()</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">setPlain</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">setHeadline</span><span class="o">(</span><span class="s">&quot;Request Controller&quot;</span><span class="o">)</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">setDescription</span><span class="o">(</span><span class="n">SafeHtmlUtils</span><span class="o">.</span><span class="na">fromString</span><span class="o">(</span><span class="n">resourceDescription</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">DESCRIPTION</span><span class="o">).</span><span class="na">asString</span><span class="o">()))</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">addContent</span><span class="o">(</span><span class="s">&quot;Attributes&quot;</span><span class="o">,</span> <span class="n">formAssets</span><span class="o">.</span><span class="na">asWidget</span><span class="o">())</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="o">[...]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="kd">final</span> <span class="n">ModelNode</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">form</span><span class="o">.</span><span class="na">edit</span><span class="o">(</span><span class="n">data</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>GIN / GWTP Mixins</h2>
+
+<p>These mixins are needed to extend the dependency injection scope and wire up the presenters / view tuples. A mixin is declared both as a binding and model extension. The <code>@GinExtension</code> value refers the GWT module descriptor used with the extension.</p>
+
+<p>The injection points:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@GinExtension</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Extension</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">AsyncProvider</span><span class="o">&lt;</span><span class="n">ExtensionPresenter</span><span class="o">&gt;</span> <span class="nf">getExtensionPresenter</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The actual binding:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@GinExtensionBinding</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExtensionBinding</span> <span class="kd">extends</span> <span class="n">AbstractPresenterModule</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">configure</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">bindPresenter</span><span class="o">(</span><span class="n">ExtensionPresenter</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">ExtensionPresenter</span><span class="o">.</span><span class="na">MyView</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">ExtensionView</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">ExtensionPresenter</span><span class="o">.</span><span class="na">MyProxy</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Helper Classes</h2>
+
+<p>Finally the archetype creates some helper classes to deal with i18n constants and messages. It provides both access to HAL&#8217;s constants and messages and to the resources defined by the extension:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">I18n</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">UIConstants</span> <span class="n">consoleConstants</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">UIMessages</span> <span class="n">consoleMessages</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ExtensionConstants</span> <span class="n">extensionConstants</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ExtensionMessages</span> <span class="n">extensionMessages</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@Inject</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="nf">I18n</span><span class="o">(</span><span class="kd">final</span> <span class="n">UIConstants</span> <span class="n">consoleConstants</span><span class="o">,</span> <span class="kd">final</span> <span class="n">UIMessages</span> <span class="n">consoleMessages</span><span class="o">,</span>
+</span><span class='line'>            <span class="kd">final</span> <span class="n">ExtensionConstants</span> <span class="n">extensionConstants</span><span class="o">,</span> <span class="kd">final</span> <span class="n">ExtensionMessages</span> <span class="n">extensionMessages</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">consoleConstants</span> <span class="o">=</span> <span class="n">consoleConstants</span><span class="o">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">consoleMessages</span> <span class="o">=</span> <span class="n">consoleMessages</span><span class="o">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">extensionConstants</span> <span class="o">=</span> <span class="n">extensionConstants</span><span class="o">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">extensionMessages</span> <span class="o">=</span> <span class="n">extensionMessages</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">UIConstants</span> <span class="nf">consoleConstants</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">consoleConstants</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">UIMessages</span> <span class="nf">consoleMessages</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">consoleMessages</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">ExtensionConstants</span> <span class="nf">extensionConstants</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">extensionConstants</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">ExtensionMessages</span> <span class="nf">extensionMessages</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">extensionMessages</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Run</h1>
+
+<p>To launch the extension, switch to the <code>app</code> directory and execute one of the following:</p>
+
+<ul>
+<li><code>mvn gwt:run</code> for GWT SuperDevMode</li>
+<li><code>mvn gwt:run|debug -Dgwt.superDevMode=false</code> to use the old DevMode. Please note that you&#8217;ll need <a href="http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/26.0/">Firefox &lt;= 26</a> and the <a href="http://www.gwtproject.org/missing-plugin/">GWT plugin</a> to use DevMode.</li>
+</ul>
+
+
+<p>You&#8217;ll need a running WildFly instance which is configured to allow access from http://localhost:8888. Use one of the following CLI commands to configure the management endpoint:</p>
+
+<ul>
+<li><p>standalone mode:</p>
+
+<pre><code>  /core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=http://localhost:8888)
+  reload
+</code></pre></li>
+<li><p>domain mode:</p>
+
+<pre><code>  /host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=http://localhost:8888)
+  reload --host=master
+</code></pre></li>
+</ul>
+
+
+<p>Please note that the extension will only show up in the UI if the subsystem is configured in standalone mode or is part of the selected profile in domain mode.</p>
+
+<h1>Include</h1>
+
+<p>The <a href="https://github.com/hal/release-stream">HAL release stream</a> is a maven build which combines different extensions at <em>compile time</em> and generates a final management console. You can clone its repository to test the build with your extension. Please contact us if you want to include your extension into the release stream.</p>
+
+<h1>Resources</h1>
+
+<p>Most of the topics in this blog post are also covered in the <a href="http://hal.gitbooks.io/dev/content/">official HAL documentation</a>. See the section <a href="http://hal.gitbooks.io/dev/content/building-blocks/extensions.html">Building Blocks / Extensions</a> for more details.</p>
+
+<h1>It&#8217;s your turn</h1>
+
+<p>Now if you want to write your own extension, great - go ahead! If you have any questions or comments, please do not hesitate to <a href="http://hal.gitbooks.io/dev/content/community/index.html">contact</a> us.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[JDBC Driver Setup]]></title>
@@ -1466,15 +1951,6 @@ Safari. If you want to use Chrome make sure to use the <code>--allow-cross-origi
 
 <p>I stumbled upon an interesting project on GitHub: <a href="https://github.com/pazguille/CORS">https://github.com/pazguille/CORS</a>. Seems to have support for IE8+,
 offers an easy to use API and hides the awkward implementation details. I will evaluate this and try to make a GWT port.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[New Job]]></title>
-    <link href="http://hpehl.info/new-job.html"/>
-    <updated>2012-10-02T12:52:00+02:00</updated>
-    <id>http://hpehl.info/new-job</id>
-    <content type="html"><![CDATA[<p>Today is my first day in my new job at RedHat. I&#8217;m excited to join the EAP core team and looking forward to the things to come&#8230;</p>
 ]]></content>
   </entry>
   

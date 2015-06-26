@@ -4,7 +4,7 @@
   <title><![CDATA[Category: console | Harald Pehl]]></title>
   <link href="http://hpehl.info/blog/categories/console/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2015-06-08T22:45:34+02:00</updated>
+  <updated>2015-06-26T23:22:22+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -12,6 +12,331 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Extending HAL Management Console]]></title>
+    <link href="http://hpehl.info/extending-hal-management-console.html"/>
+    <updated>2015-06-26T14:49:00+02:00</updated>
+    <id>http://hpehl.info/extending-hal-management-console</id>
+    <content type="html"><![CDATA[<p>The HAL management console provides the UI to configure almost any subsystem in WildFly. However for subsystems provided by 3rd party projects like <a href="http://picketlink.org/">PicketLink</a>, <a href="http://teiid.jboss.org/">Teiid</a> or <a href="http://keycloak.jboss.org/">Keycloak</a> there's no way to configure the management resources. This is where the HAL extensions come into play. They provide an easy way to extend the console and provide a frontend to configure the related subsystem. This blog post will walk through the process from creating an extension to including it in the HAL release stream.<!-- more --></p>
+
+<h1>Background</h1>
+
+<p>Before we start let me give you some technical background. The HAL management console is a GWT web application. It uses a maven build and depends mainly on <a href="https://code.google.com/p/google-gin/">GIN</a> for dependency injection and <a href="http://dev.arcbees.com/gwtp/">GWTP</a> for MVP. Extensions need to use the same stack and must create a maven artifact which is used by the <a href="https://github.com/hal/release-stream">HAL release stream</a> at <em>compile time</em>. As a result the final management console is produced. This means that the final console might contain many extensions. However the extensions will only show up if the relevant subsystem is part of WildFly. Furthermore since the console uses <a href="http://www.gwtproject.org/doc/latest/DevGuideCodeSplitting.html">code splitting</a> the extension's bits &amp; pieces will only be loaded on demand.</p>
+
+<h1>Get Started</h1>
+
+<p>As of today extensions need to be developed against HAL 2.8.0 or greater. This in turn requires WildFly 10.x as target platform. To get started quickly we provide a <a href="https://github.com/hal/archetypes/tree/master/subsystem-extension">maven archetype</a>. The archetype creates an extension with a presenter / view tuple to edit the top level attributes of a given subsystem.</p>
+
+<p>Besides the regular maven coordinates like <code>groupId</code>, <code>artifactId</code> et al the archetypes uses the following parameters:</p>
+
+<ul>
+<li><code>extensionName</code>: The name / title of the extension as it appears in the UI. Should be a human friendly term which can contains spaces.</li>
+<li><code>gwtModule</code> The name of the GWT module w/o the <code>.gwt.xml</code> suffix. Must not contain whitespace.</li>
+<li><code>subsystem</code>: The name of the subsystem. The extension will only show up in the UI if the subsystem is configured in standalone mode or is part of the selected profile in domain mode.</li>
+<li><code>nameToken</code>: An unique name token used to identify the extension's page in the UI. Should be an all lowercase string separated with dashes. Defaults to the subsystem name. See the <a href="http://dev.arcbees.com/gwtp/features/PlaceManager.html">GWTP documentation</a> for more infos about place management.</li>
+</ul>
+
+
+<p>The archetype is deployed to the <a href="https://repository.jboss.org/nexus/index.html#welcome">JBoss Maven Repository</a>. In order to use it, make sure to specify the catalog flag <code>-DarchetypeCatalog=https://repository.jboss.org</code>.</p>
+
+<h2>Request Controller</h2>
+
+<p>Let's say we want to develop an extension for the subsystem <code>request-comntroller</code>. This subsystem is used for request limiting and graceful shutdown and is currently not covered in the HAL management console. Open a shell and execute</p>
+
+<p>```
+mvn archetype:generate \</p>
+
+<pre><code>-DarchetypeCatalog=https://repository.jboss.org \
+-DarchetypeGroupId=org.jboss.hal.archetypes \
+-DarchetypeArtifactId=hal-subsystem-extension-archetype
+</code></pre>
+
+<p>```</p>
+
+<p>After providing all required parameters you should end up with a new maven project which consists of two sub modules:</p>
+
+<ul>
+<li><code>gui</code>: Contains the GWT code for the extension</li>
+<li><code>app</code>: Provides a GWT module to run and test the extension</li>
+</ul>
+
+
+<p>Before we dive into the details, here's a preview of what the extension is going to look like in the navigation, read-only and edit mode:</p>
+
+<p><figure class="centered"><img src="/images/posts/extension_1.png" title="&#34;Navigation&#34;" alt="&#34;Navigation&#34;"></figure>
+<figure class="centered"><img src="/images/posts/extension_2.png" title="&#34;Read-only mode&#34;" alt="&#34;Read-only mode&#34;"></figure>
+<figure class="centered"><img src="/images/posts/extension_3.png" title="&#34;Edit mode&#34;" alt="&#34;Edit mode&#34;"></figure></p>
+
+<h1>Develop</h1>
+
+<p>The development of the extension happens in the <code>gui</code> module. The archetype creates all necessary building blocks:</p>
+
+<ul>
+<li>a presenter / view tuple</li>
+<li>the GIN / GWTP mixins</li>
+<li>i18n helper classes</li>
+</ul>
+
+
+<h2>Presenter / View Tuple</h2>
+
+<p>The GWTP presenter includes the proxy interface which carries the <code>@SubsystemExtension</code> annotation. This annotation marks the enclosing presenter as extension. The view interface defines one method to update the view with the subsystem data. Finally there are two methods to load and save the subsystem attributes.</p>
+
+<p>```java
+public class ExtensionPresenter</p>
+
+<pre><code>    extends Presenter&lt;ExtensionPresenter.MyView, ExtensionPresenter.MyProxy&gt; {
+
+public final static String ROOT_RESOURCE = "{selected.profile}/subsystem=request-controller";
+public final static AddressTemplate ROOT_RESOURCE_ADDRESS = AddressTemplate.of(ROOT_RESOURCE);
+
+
+@ProxyCodeSplit
+@NameToken("request-controller")
+@RequiredResources(resources = ROOT_RESOURCE)
+@SearchIndex(keywords = {"request-controller"})
+@SubsystemExtension(name = "Request Controller", group = "Extensions", key = "request-controller")
+public interface MyProxy extends ProxyPlace&lt;ExtensionPresenter&gt; {}
+
+
+public interface MyView extends View, HasPresenter&lt;ExtensionPresenter&gt; {
+    void update(ModelNode data);
+}
+
+
+private final StatementContext statementContext;
+private final DispatchAsync dispatcher;
+private final CrudOperationDelegate operationDelegate;
+private final I18n i18n;
+
+@Inject
+public ExtensionPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
+        final StatementContext statementContext, final DispatchAsync dispatcher, final I18n i18n) {
+    super(eventBus, view, proxy, MainLayoutPresenter.TYPE_MainContent);
+    this.statementContext = statementContext;
+    this.dispatcher = dispatcher;
+    this.i18n = i18n;
+    this.operationDelegate = new CrudOperationDelegate(statementContext, dispatcher);
+}
+
+[...]
+
+private void loadSubsystem() {
+    Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
+            ROOT_RESOURCE_ADDRESS.resolve(statementContext)).build();
+    dispatcher.execute(new DMRAction(operation), new SimpleCallback&lt;DMRResponse&gt;() {
+        @Override
+        public void onSuccess(final DMRResponse response) {
+            ModelNode body = response.get();
+            if (body.isFailure()) {
+                Console.error(i18n.extensionConstants().load_failed(), body.getFailureDescription());
+            } else {
+                getView().update(body.get(RESULT));
+            }
+        }
+    });
+}
+
+public void onSaveResource(final Map&lt;String, Object&gt; changedValues) {
+    operationDelegate.onSaveResource(ROOT_RESOURCE_ADDRESS, null, changedValues,
+            new CrudOperationDelegate.Callback() {
+                @Override
+                public void onFailure(final AddressTemplate addressTemplate, final String name, final Throwable t) {
+                    Console.error(i18n.consoleMessages().modificationFailed("subsystem 'request-controller'"),
+                            t.getMessage());
+                }
+
+                @Override
+                public void onSuccess(final AddressTemplate addressTemplate, final String name) {
+                    Console.info(i18n.consoleMessages().modified("subsystem 'request-controller'"));
+                    loadSubsystem();
+                }
+            });
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The view creates a form based on the subsystem metadata. When the user clicks save, control is delegated to the presenter which executes the relevant DMR operations to store the updated attributes in the management model.</p>
+
+<p>```java
+public class ExtensionView extends SuspendableViewImpl implements ExtensionPresenter.MyView {</p>
+
+<pre><code>private final ResourceDescriptionRegistry descriptionRegistry;
+private final SecurityFramework securityFramework;
+
+private ExtensionPresenter presenter;
+private ModelNodeForm form;
+
+@Inject
+public ExtensionView(final ResourceDescriptionRegistry descriptionRegistry,
+        final SecurityFramework securityFramework) {
+    this.securityFramework = securityFramework;
+    this.descriptionRegistry = descriptionRegistry;
+}
+
+@Override
+public Widget createWidget() {
+    SecurityContext securityContext = securityFramework.getSecurityContext(presenter.getProxy().getNameToken());
+    ResourceDescription resourceDescription = descriptionRegistry.lookup(
+            ExtensionPresenter.ROOT_RESOURCE_ADDRESS);
+
+    ModelNodeFormBuilder.FormAssets formAssets = new ModelNodeFormBuilder()
+            .setConfigOnly()
+            .setResourceDescription(resourceDescription)
+            .setSecurityContext(securityContext)
+            .build();
+
+    form = formAssets.getForm();
+    form.setToolsCallback(new FormCallback() {
+        @Override
+        public void onSave(Map changedValues) {
+            presenter.onSaveResource(changedValues);
+        }
+
+        @Override
+        public void onCancel(Object entity) {
+            form.cancel();
+        }
+    });
+
+    return new SimpleLayout()
+            .setPlain(true)
+            .setHeadline("Request Controller")
+            .setDescription(SafeHtmlUtils.fromString(resourceDescription.get(DESCRIPTION).asString()))
+            .addContent("Attributes", formAssets.asWidget())
+            .build();
+}
+
+[...]
+
+@Override
+public void update(final ModelNode data) {
+    form.edit(data);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>GIN / GWTP Mixins</h2>
+
+<p>These mixins are needed to extend the dependency injection scope and wire up the presenters / view tuples. A mixin is declared both as a binding and model extension. The <code>@GinExtension</code> value refers the GWT module descriptor used with the extension.</p>
+
+<p>The injection points:</p>
+
+<p>```java
+@GinExtension
+public interface Extension {</p>
+
+<pre><code>AsyncProvider&lt;ExtensionPresenter&gt; getExtensionPresenter();
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The actual binding:</p>
+
+<p>```java
+@GinExtensionBinding
+public class ExtensionBinding extends AbstractPresenterModule {</p>
+
+<pre><code>@Override
+protected void configure() {
+    bindPresenter(ExtensionPresenter.class,
+            ExtensionPresenter.MyView.class,
+            ExtensionView.class,
+            ExtensionPresenter.MyProxy.class);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>Helper Classes</h2>
+
+<p>Finally the archetype creates some helper classes to deal with i18n constants and messages. It provides both access to HAL's constants and messages and to the resources defined by the extension:</p>
+
+<p>```java
+public class I18n {</p>
+
+<pre><code>private final UIConstants consoleConstants;
+private final UIMessages consoleMessages;
+private final ExtensionConstants extensionConstants;
+private final ExtensionMessages extensionMessages;
+
+@Inject
+public I18n(final UIConstants consoleConstants, final UIMessages consoleMessages,
+        final ExtensionConstants extensionConstants, final ExtensionMessages extensionMessages) {
+    this.consoleConstants = consoleConstants;
+    this.consoleMessages = consoleMessages;
+    this.extensionConstants = extensionConstants;
+    this.extensionMessages = extensionMessages;
+}
+
+public UIConstants consoleConstants() {
+    return consoleConstants;
+}
+
+public UIMessages consoleMessages() {
+    return consoleMessages;
+}
+
+public ExtensionConstants extensionConstants() {
+    return extensionConstants;
+}
+
+public ExtensionMessages extensionMessages() {
+    return extensionMessages;
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<h1>Run</h1>
+
+<p>To launch the extension, switch to the <code>app</code> directory and execute one of the following:</p>
+
+<ul>
+<li><code>mvn gwt:run</code> for GWT SuperDevMode</li>
+<li><code>mvn gwt:run|debug -Dgwt.superDevMode=false</code> to use the old DevMode. Please note that you'll need <a href="http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/26.0/">Firefox &lt;= 26</a> and the <a href="http://www.gwtproject.org/missing-plugin/">GWT plugin</a> to use DevMode.</li>
+</ul>
+
+
+<p>You'll need a running WildFly instance which is configured to allow access from http://localhost:8888. Use one of the following CLI commands to configure the management endpoint:</p>
+
+<ul>
+<li><p>standalone mode:</p>
+
+<pre><code>  /core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=http://localhost:8888)
+  reload
+</code></pre></li>
+<li><p>domain mode:</p>
+
+<pre><code>  /host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=http://localhost:8888)
+  reload --host=master
+</code></pre></li>
+</ul>
+
+
+<p>Please note that the extension will only show up in the UI if the subsystem is configured in standalone mode or is part of the selected profile in domain mode.</p>
+
+<h1>Include</h1>
+
+<p>The <a href="https://github.com/hal/release-stream">HAL release stream</a> is a maven build which combines different extensions at <em>compile time</em> and generates a final management console. You can clone its repository to test the build with your extension. Please contact us if you want to include your extension into the release stream.</p>
+
+<h1>Resources</h1>
+
+<p>Most of the topics in this blog post are also covered in the <a href="http://hal.gitbooks.io/dev/content/">official HAL documentation</a>. See the section <a href="http://hal.gitbooks.io/dev/content/building-blocks/extensions.html">Building Blocks / Extensions</a> for more details.</p>
+
+<h1>It's your turn</h1>
+
+<p>Now if you want to write your own extension, great - go ahead! If you have any questions or comments, please do not hesitate to <a href="http://hal.gitbooks.io/dev/content/community/index.html">contact</a> us.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[JDBC Driver Setup]]></title>
@@ -308,24 +633,6 @@ http://access-halproject.rhcloud.com//snapshot/2.7.0-SNAPSHOT</p></li>
 
 
 <p>Give the new local search a try and let us know what you think!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Admin Apps]]></title>
-    <link href="http://hpehl.info/admin-apps.html"/>
-    <updated>2013-07-18T11:46:00+02:00</updated>
-    <id>http://hpehl.info/admin-apps</id>
-    <content type="html"><![CDATA[<p>If you ever wanted to administer your JBoss servers from your iOS or Andoird phone, checkout these great apps from
-<a href="https://twitter.com/cvasilak">Christos Vasilakis</a>:</p>
-
-<ul>
-<li>Android: <a href="https://github.com/cvasilak/JBoss-Admin-Android">https://github.com/cvasilak/JBoss-Admin-Android</a></li>
-<li>iOS: <a href="http://www.cvasilak.org/JBossAdmin.html">http://www.cvasilak.org/JBossAdmin.html</a> <a href="https://itunes.apple.com/us/app/jboss-admin/id523516060?mt=8&uo=4" target="itunes_store"><img src="http://r.mzstatic.com/images/web/linkmaker/badge_appstore-sm.gif" alt="JBoss Admin - Christos Vasilakis" style="border: 0;"/></a></li>
-</ul>
-
-
-<p>Keep it up, Christos!</p>
 ]]></content>
   </entry>
   

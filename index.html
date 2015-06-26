@@ -9,7 +9,7 @@
   <meta name="author" content="Harald Pehl">
 
   
-  <meta name="description" content="The installation of JDBC drivers and the setup of (xa)datasources is a common task for every JEE developer and administrator. This post describes the &hellip;">
+  <meta name="description" content="The HAL management console provides the UI to configure almost any subsystem in WildFly. However for subsystems provided by 3rd party projects like &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -118,6 +118,40 @@
       <div id="content">
         <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
+        
+        <h1 class="entry-title"><a href="/extending-hal-management-console.html">Extending HAL Management Console<span class="readon" title="More...">&rarr;</span></a>
+
+
+
+
+
+
+
+
+
+
+
+  
+    <time datetime="2015-06-26T14:49:00+02:00" pubdate class="date"><span class="day">26</span><span class="month">Jun</span><span class="year">2015</span></time>
+
+
+</h1>
+      
+    
+  </header>
+
+
+  <div class="entry-content"><p>The HAL management console provides the UI to configure almost any subsystem in WildFly. However for subsystems provided by 3rd party projects like <a href="http://picketlink.org/">PicketLink</a>, <a href="http://teiid.jboss.org/">Teiid</a> or <a href="http://keycloak.jboss.org/">Keycloak</a> there&#8217;s no way to configure the management resources. This is where the HAL extensions come into play. They provide an easy way to extend the console and provide a frontend to configure the related subsystem. This blog post will walk through the process from creating an extension to including it in the HAL release stream.</div>
+
+
+    </article>
   
   
     <article>
@@ -465,48 +499,6 @@ manage and run &#8220;processes in a box&#8221;.</div>
 </ul>
 
 </div>
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <!-- Now we're back to normal posts. Note the links used under href in both headers.-->
-        
-        <h1 class="entry-title"><a href="/using-dmr-with-scala.html">Polyglot DMR<span class="readon" title="More...">&rarr;</span></a>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <time datetime="2013-09-28T00:20:00+02:00" pubdate class="date"><span class="day">28</span><span class="month">Sep</span><span class="year">2013</span></time>
-
-
-</h1>
-      
-    
-  </header>
-
-
-  <div class="entry-content"><p>The <strong>d</strong>ynamic or <strong>d</strong>etyped <strong>m</strong>odel <strong>r</strong>epresentation (DMR) is an API to interact with the management model of a
-running WildFly instance. There&#8217;s an Java API available at <a href="https://github.com/jbossas/jboss-dmr">https://github.com/jbossas/jboss-dmr</a> which is described in
-the <a href="https://docs.jboss.org/author/display/WFLY8/Detyped+management+and+the+jboss-dmr+library">WildFly Wiki</a>. Though
-the Java API is very rich and powerful it is somewhat hard to write scripts that perform useful tasks like</p>
-
-<ul>
-<li>Periodically read the memory and send an SMS / tweet / email when a threshold is reached</li>
-<li>Rollout a deployment over all servers in a cluster</li>
-<li>Monitor the state of an application</div>
 
 
     </article>
