@@ -56,7 +56,7 @@ The development of the extension happens in the `gui` module. The archetype crea
 
 ## Presenter / View Tuple
 
-The GWTP presenter includes the proxy interface which carries the `@SubsystemExtension` annotation. This annotation marks the enclosing presenter as extension. The view interface defines one method to update the view with the subsystem data. Finally there are two methods to load and save the subsystem attributes. 
+The GWTP presenter includes the proxy interface which carries the `@SubsystemExtension` annotation. This annotation marks the enclosing presenter as an extension. The view interface defines a method to update the view with the subsystem data. Finally there are two methods to load and save the subsystem attributes. 
 
 ```java 
 public class ExtensionPresenter
@@ -193,7 +193,7 @@ public class ExtensionView extends SuspendableViewImpl implements ExtensionPrese
 
 ## GIN / GWTP Mixins
 
-These mixins are needed to extend the dependency injection scope and wire up the presenters / view tuples. A mixin is declared both as a binding and model extension. The `@GinExtension` value refers the GWT module descriptor used with the extension.
+These mixins are needed to extend the dependency injection scope and wire up the presenter / view tuples. A mixin is declared both as a binding and model extension. The `@GinExtension` value refers the GWT module descriptor used with the extension.
 
 The injection points:
 
