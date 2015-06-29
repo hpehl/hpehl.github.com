@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2015-06-29T09:35:30+02:00</updated>
+  <updated>2015-06-29T09:40:46+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -81,7 +81,7 @@
 
 <h2>Presenter / View Tuple</h2>
 
-<p>The GWTP presenter includes the proxy interface which carries the <code>@SubsystemExtension</code> annotation. This annotation marks the enclosing presenter as extension. The view interface defines one method to update the view with the subsystem data. Finally there are two methods to load and save the subsystem attributes.</p>
+<p>The GWTP presenter includes the proxy interface which carries the <code>@SubsystemExtension</code> annotation. This annotation marks the enclosing presenter as an extension. The view interface defines a method to update the view with the subsystem data. Finally there are two methods to load and save the subsystem attributes.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -343,7 +343,7 @@
 
 <h2>GIN / GWTP Mixins</h2>
 
-<p>These mixins are needed to extend the dependency injection scope and wire up the presenters / view tuples. A mixin is declared both as a binding and model extension. The <code>@GinExtension</code> value refers the GWT module descriptor used with the extension.</p>
+<p>These mixins are needed to extend the dependency injection scope and wire up the presenter / view tuples. A mixin is declared both as a binding and model extension. The <code>@GinExtension</code> value refers the GWT module descriptor used with the extension.</p>
 
 <p>The injection points:</p>
 
