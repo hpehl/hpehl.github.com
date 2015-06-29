@@ -26,7 +26,7 @@ The archetype is deployed to the [JBoss Maven Repository](https://repository.jbo
 
 ## Request Controller
 
-Let's say we want to develop an extension for the subsystem `request-comntroller`. This subsystem is used for request limiting and graceful shutdown and is currently not covered in the HAL management console. Open a shell and execute   
+Let's say we want to develop an extension for the subsystem `request-controller`. This subsystem is used for request limiting and graceful shutdown and is currently not covered in the HAL management console. Open a shell and execute   
 
 ```
 mvn archetype:generate \
