@@ -4,7 +4,7 @@
   <title><![CDATA[Category: extension | Harald Pehl]]></title>
   <link href="http://hpehl.info/blog/categories/extension/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2015-06-26T23:22:22+02:00</updated>
+  <updated>2015-06-29T09:35:30+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -42,7 +42,7 @@
 
 <h2>Request Controller</h2>
 
-<p>Let's say we want to develop an extension for the subsystem <code>request-comntroller</code>. This subsystem is used for request limiting and graceful shutdown and is currently not covered in the HAL management console. Open a shell and execute</p>
+<p>Let's say we want to develop an extension for the subsystem <code>request-controller</code>. This subsystem is used for request limiting and graceful shutdown and is currently not covered in the HAL management console. Open a shell and execute</p>
 
 <p>```
 mvn archetype:generate \</p>
