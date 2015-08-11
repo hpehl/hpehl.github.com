@@ -10,7 +10,7 @@ categories: gwt elemental
 - Builder like API to easily create arbitrary large element hierarchies
 - HTML templates, declarative event handling and support for [handlebar](http://handlebarsjs.com/)-like expressions
 - Support for dependency injection with [GIN](https://code.google.com/p/google-gin/)
-- Helper methods to mix and match GWT Elemental elements and GWT widgets
+- Helper methods to mix and match GWT Elemental and GWT Widgets
 
 In this blog post I will give a short introduction to some of Element's features.<!-- more -->
 
