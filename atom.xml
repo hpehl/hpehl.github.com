@@ -4,7 +4,7 @@
   <title><![CDATA[Harald Pehl]]></title>
   <link href="http://hpehl.info/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
-  <updated>2015-06-29T09:40:46+02:00</updated>
+  <updated>2015-08-11T15:54:30+02:00</updated>
   <id>http://hpehl.info/</id>
   <author>
     <name><![CDATA[Harald Pehl]]></name>
@@ -12,6 +12,340 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[GWT Elemento]]></title>
+    <link href="http://hpehl.info/gwt-elemento.html"/>
+    <updated>2015-08-11T12:32:00+02:00</updated>
+    <id>http://hpehl.info/gwt-elemento</id>
+    <content type="html"><![CDATA[<p><a href="https://github.com/hpehl/elemento">GWT Elemento</a> is a library which tries to make working with GWT <a href="http://www.gwtproject.org/articles/elemental.html">Elemental</a> as easy as possible. In a nutshell Elemento brings the following features to the table:</p>
+
+<ul>
+<li>Builder like API to easily create arbitrary large element hierarchies</li>
+<li>HTML templates, declarative event handling and support for <a href="http://handlebarsjs.com/">handlebar</a>-like expressions</li>
+<li>Support for dependency injection with <a href="https://code.google.com/p/google-gin/">GIN</a></li>
+<li>Helper methods to mix and match GWT Elemental elements and GWT widgets</li>
+</ul>
+
+
+<p>In this blog post I will give a short introduction to some of Element&#8217;s features.<!-- more --></p>
+
+<h1>Builder API</h1>
+
+<p>When working with GWT Elemental it is often awkward and cumbersome to create an hierarchy of elements. Even simple structures like</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;main&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">&quot;toggle-all&quot;</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;toggle-all&quot;</span><span class="nt">&gt;</span>Mark all as complete<span class="nt">&lt;/label&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">&quot;todo-list&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;view&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">&quot;toggle&quot;</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span> <span class="na">checked</span><span class="nt">&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;label&gt;</span>Taste Elemento<span class="nt">&lt;/label&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;button</span> <span class="na">class=</span><span class="s">&quot;destroy&quot;</span><span class="nt">&gt;&lt;/button&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">&quot;edit&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'><span class="nt">&lt;/section&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>lead to a vast amount of <code>Document.createXXXElement()</code> and chained <code>Element.appendChild()</code> calls. However using Elemento&#8217;s builder API, creating the above structure is as easy as</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">jboss</span><span class="o">.</span><span class="na">gwt</span><span class="o">.</span><span class="na">elemento</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">InputType</span><span class="o">.</span><span class="na">checkbox</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">jboss</span><span class="o">.</span><span class="na">gwt</span><span class="o">.</span><span class="na">elemento</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">InputType</span><span class="o">.</span><span class="na">text</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// @formatter:off</span>
+</span><span class='line'><span class="n">Element</span> <span class="n">element</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Elements</span><span class="o">.</span><span class="na">Builder</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">.</span><span class="na">section</span><span class="o">().</span><span class="na">css</span><span class="o">(</span><span class="s">&quot;main&quot;</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">.</span><span class="na">input</span><span class="o">(</span><span class="n">checkbox</span><span class="o">).</span><span class="na">css</span><span class="o">(</span><span class="s">&quot;toggle-all&quot;</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">.</span><span class="na">label</span><span class="o">().</span><span class="na">attr</span><span class="o">(</span><span class="s">&quot;for&quot;</span><span class="o">,</span> <span class="s">&quot;toggle-all&quot;</span><span class="o">).</span><span class="na">innerText</span><span class="o">(</span><span class="s">&quot;Mark all as complete&quot;</span><span class="o">).</span><span class="na">end</span><span class="o">()</span>
+</span><span class='line'>        <span class="o">.</span><span class="na">ul</span><span class="o">().</span><span class="na">css</span><span class="o">(</span><span class="s">&quot;todo-list&quot;</span><span class="o">)</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">li</span><span class="o">()</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">div</span><span class="o">().</span><span class="na">css</span><span class="o">(</span><span class="s">&quot;view&quot;</span><span class="o">)</span>
+</span><span class='line'>                    <span class="o">.</span><span class="na">input</span><span class="o">(</span><span class="n">checkbox</span><span class="o">).</span><span class="na">css</span><span class="o">(</span><span class="s">&quot;toggle&quot;</span><span class="o">)</span>
+</span><span class='line'>                    <span class="o">.</span><span class="na">label</span><span class="o">().</span><span class="na">innerText</span><span class="o">(</span><span class="s">&quot;Taste Elemento&quot;</span><span class="o">).</span><span class="na">end</span><span class="o">()</span>
+</span><span class='line'>                    <span class="o">.</span><span class="na">button</span><span class="o">().</span><span class="na">css</span><span class="o">(</span><span class="s">&quot;destroy&quot;</span><span class="o">).</span><span class="na">end</span><span class="o">()</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">end</span><span class="o">()</span>
+</span><span class='line'>                <span class="o">.</span><span class="na">input</span><span class="o">(</span><span class="n">text</span><span class="o">).</span><span class="na">css</span><span class="o">(</span><span class="s">&quot;edit&quot;</span><span class="o">)</span>
+</span><span class='line'>            <span class="o">.</span><span class="na">end</span><span class="o">()</span>
+</span><span class='line'>        <span class="o">.</span><span class="na">end</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">.</span><span class="na">end</span><span class="o">().</span><span class="na">build</span><span class="o">();</span>
+</span><span class='line'><span class="c1">// @formatter:on</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Templates</h1>
+
+<p>Elemento provides an easy way to take existing HTML content and use it in your GWT application. Templates can be either HTML snippets or full HTML documents where you select an element and its children. This allows you to preview your templates more easily during design without running the application.</p>
+
+<p>Elemento leverages annotation processors to generate code which picks the HTML content from your template. Let&#8217;s say you&#8217;ve got the following HTML document called <code>Todo.html</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="cp">&lt;!doctype html&gt;</span>
+</span><span class='line'><span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;head&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;&lt;path-to&gt;/node_modules/todomvc-common/base.css&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;&lt;path-to&gt;/node_modules/todomvc-app-css/index.css&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;/head&gt;</span>
+</span><span class='line'><span class="nt">&lt;body&gt;</span>
+</span><span class='line'><span class="nt">&lt;section</span> <span class="na">data-element=</span><span class="s">&quot;todos&quot;</span> <span class="na">class=</span><span class="s">&quot;todoapp&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;header</span> <span class="na">class=</span><span class="s">&quot;header&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;h1&gt;</span>todos<span class="nt">&lt;/h1&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;input</span> <span class="na">data-element=</span><span class="s">&quot;newTodo&quot;</span> <span class="na">class=</span><span class="s">&quot;new-todo&quot;</span> <span class="na">placeholder=</span><span class="s">&quot;What needs to be done?&quot;</span> <span class="na">autofocus</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/header&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;section</span> <span class="na">data-element=</span><span class="s">&quot;main&quot;</span> <span class="na">class=</span><span class="s">&quot;main&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;input</span> <span class="na">data-element=</span><span class="s">&quot;toggleAll&quot;</span> <span class="na">class=</span><span class="s">&quot;toggle-all&quot;</span> <span class="na">id=</span><span class="s">&quot;toggle-all&quot;</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;toggle-all&quot;</span><span class="nt">&gt;</span>Mark all as complete<span class="nt">&lt;/label&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;ul</span> <span class="na">data-element=</span><span class="s">&quot;list&quot;</span> <span class="na">class=</span><span class="s">&quot;todo-list&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="c">&lt;!-- Todo items are mapped to an extra template class --&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;footer</span> <span class="na">data-element=</span><span class="s">&quot;footer&quot;</span> <span class="na">class=</span><span class="s">&quot;footer&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;span</span> <span class="na">data-element=</span><span class="s">&quot;count&quot;</span> <span class="na">class=</span><span class="s">&quot;todo-count&quot;</span><span class="nt">&gt;&lt;strong&gt;</span>0<span class="nt">&lt;/strong&gt;</span> item left<span class="nt">&lt;/span&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">&quot;filters&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">data-element=</span><span class="s">&quot;all&quot;</span> <span class="na">href=</span><span class="s">&quot;#/&quot;</span><span class="nt">&gt;</span>All<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">data-element=</span><span class="s">&quot;active&quot;</span> <span class="na">href=</span><span class="s">&quot;#/active&quot;</span><span class="nt">&gt;</span>Active<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">data-element=</span><span class="s">&quot;completed&quot;</span> <span class="na">href=</span><span class="s">&quot;#/completed&quot;</span><span class="nt">&gt;</span>Completed<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;button</span> <span class="na">data-element=</span><span class="s">&quot;clearCompleted&quot;</span> <span class="na">class=</span><span class="s">&quot;clear-completed&quot;</span><span class="nt">&gt;</span>Clear completed<span class="nt">&lt;/button&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/footer&gt;</span>
+</span><span class='line'><span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>[...]
+</span><span class='line'><span class="nt">&lt;/body&gt;</span>
+</span><span class='line'><span class="nt">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The HTML is enriched with <code>data-element</code> attributes. Elemento needs these attributes to select the root element and to map specific HTML elements to fields in the template class. To create a template class which maps to the <code>&lt;section/&gt;</code> element, create an abstract class and annotate it with <code>@Templated</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Templated</span><span class="o">(</span><span class="s">&quot;Todo.html#todos&quot;</span><span class="o">)</span>
+</span><span class='line'><span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Todos</span> <span class="kd">implements</span> <span class="n">IsElement</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">static</span> <span class="n">Todos</span> <span class="nf">create</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">new</span> <span class="nf">Templated_Todos</span><span class="o">();</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@DataElement</span> <span class="n">InputElement</span> <span class="n">newTodo</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@DataElement</span> <span class="n">Element</span> <span class="n">main</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@DataElement</span> <span class="n">InputElement</span> <span class="n">toggleAll</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@DataElement</span> <span class="n">Element</span> <span class="n">list</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@DataElement</span> <span class="n">Element</span> <span class="n">footer</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@DataElement</span> <span class="n">Element</span> <span class="n">count</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@DataElement</span><span class="o">(</span><span class="s">&quot;all&quot;</span><span class="o">)</span> <span class="n">Element</span> <span class="n">filterAll</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@DataElement</span><span class="o">(</span><span class="s">&quot;active&quot;</span><span class="o">)</span> <span class="n">Element</span> <span class="n">filterActive</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@DataElement</span><span class="o">(</span><span class="s">&quot;completed&quot;</span><span class="o">)</span> <span class="n">Element</span> <span class="n">filterCompleted</span><span class="o">;</span>
+</span><span class='line'>    <span class="nd">@DataElement</span> <span class="n">ButtonElement</span> <span class="n">clearCompleted</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@EventHandler</span><span class="o">(</span><span class="n">element</span> <span class="o">=</span> <span class="s">&quot;newTodo&quot;</span><span class="o">,</span> <span class="n">on</span> <span class="o">=</span> <span class="n">keydown</span><span class="o">)</span>
+</span><span class='line'>    <span class="kt">void</span> <span class="nf">newTodo</span><span class="o">(</span><span class="n">KeyboardEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="o">[...]</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@EventHandler</span><span class="o">(</span><span class="n">element</span> <span class="o">=</span> <span class="s">&quot;clearCompleted&quot;</span><span class="o">,</span> <span class="n">on</span> <span class="o">=</span> <span class="n">click</span><span class="o">)</span>
+</span><span class='line'>    <span class="kt">void</span> <span class="nf">clearCompleted</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="o">[...]</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To map specific elements from the HTML to your template class use the <code>@DataElement</code> annotation. If no value is provided for the <code>@DataElement</code> annotation, the name of the field / method is taken as default.</p>
+
+<p>It&#8217;s also possible to register event handlers for elements marked with <code>data-element=&lt;name&gt;</code>. It does not matter whether the HTML element is mapped with <code>@DataElement</code>. Attaching the event handler will work in any case.</p>
+
+<p>If you want to learn more about HTML templates take a look at the <a href="https://github.com/hpehl/elemento#templates">official documentation</a>.</p>
+
+<h1>Goodies</h1>
+
+<p>Elemento contains a small set of static helper methods to make working with elements easier. One set of methods can be used to convert between <code>Element</code> and <code>Widget</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Converts from {@link IsElement} &amp;rarr; {@link Widget}.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">Widget</span> <span class="nf">asWidget</span><span class="o">(</span><span class="n">IsElement</span> <span class="n">element</span><span class="o">)</span> <span class="o">{...}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Converts from {@link Element} &amp;rarr; {@link Widget}.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">Widget</span> <span class="nf">asWidget</span><span class="o">(</span><span class="n">Element</span> <span class="n">element</span><span class="o">)</span> <span class="o">{...}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Converts from {@link IsWidget} &amp;rarr; {@link Element}.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">Element</span> <span class="nf">asElement</span><span class="o">(</span><span class="n">IsWidget</span> <span class="n">widget</span><span class="o">)</span> <span class="o">{...}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Converts from {@link Widget} &amp;rarr; {@link Element}.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">Element</span> <span class="nf">asElement</span><span class="o">(</span><span class="n">Widget</span> <span class="n">widget</span><span class="o">)</span> <span class="o">{...}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Converts from {@link com.google.gwt.dom.client.Element} &amp;rarr; {@link Element}.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">Element</span> <span class="nf">asElement</span><span class="o">(</span><span class="n">com</span><span class="o">.</span><span class="na">google</span><span class="o">.</span><span class="na">gwt</span><span class="o">.</span><span class="na">dom</span><span class="o">.</span><span class="na">client</span><span class="o">.</span><span class="na">Element</span> <span class="n">element</span><span class="o">)</span> <span class="o">{...}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Finally there are methods to iterate over the children of an element using the Java collection classes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Returns an iterator over the children of the given parent element. The iterator supports the {@link</span>
+</span><span class='line'><span class="cm"> * Iterator#remove()} operation which removes the current element from its parent.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">Iterator</span><span class="o">&lt;</span><span class="n">Element</span><span class="o">&gt;</span> <span class="nf">iterator</span><span class="o">(</span><span class="n">Element</span> <span class="n">parent</span><span class="o">)</span> <span class="o">{...}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Returns an iterable collection for the children of the given parent element.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">Iterable</span><span class="o">&lt;</span><span class="n">Element</span><span class="o">&gt;</span> <span class="nf">children</span><span class="o">(</span><span class="n">Element</span> <span class="n">parent</span><span class="o">)</span> <span class="o">{...}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Take a look at the <a href="http://rawgit.com/hpehl/elemento/site/apidocs/org/jboss/gwt/elemento/core/Elements.html">API documentation</a> for more details.</p>
+
+<h2>Samples</h2>
+
+<p>Elemento comes with three different <a href="http://hpehl.github.io/elemento/index.html">implementations</a> of the <a href="http://todomvc.com/">TodoMVC</a> sample app.</p>
+
+<ul>
+<li>Builder API: <a href="https://github.com/hpehl/elemento/tree/develop/samples/builder">Source</a> | <a href="http://hpehl.github.io/elemento/builder/index.html">Demo</a></li>
+<li>Plain HTML templates: <a href="https://github.com/hpehl/elemento/tree/develop/samples/templated">Source</a> | <a href="http://hpehl.github.io/elemento/templated/index.html">Demo</a></li>
+<li>HTML templates with GIN support: <a href="https://github.com/hpehl/elemento/tree/develop/samples/gin">Source</a> | <a href="http://hpehl.github.io/elemento/gin/index.html">Demo</a></li>
+</ul>
+
+
+<p>All three samples are using the same key to persist the todo items in the local storage. So you can switch between the samples and continue working on your tasks seamlessly ;-)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Extending HAL Management Console]]></title>
@@ -1818,139 +2152,6 @@ isolates to dumb worker functions. Plug-ins which make contributions to the UI a
 <p>I created some test scripts for the browser and the VM to test the possibilities you have with isolates. You can
 find them at GitHub: <a href="https://github.com/hpehl/dart-isolates">https://github.com/hpehl/dart-isolates</a>. Let me know what
 you think.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Independent JBoss Admin Console]]></title>
-    <link href="http://hpehl.info/independent-jboss-admin-console.html"/>
-    <updated>2013-03-05T21:43:00+01:00</updated>
-    <id>http://hpehl.info/independent-jboss-admin-console</id>
-    <content type="html"><![CDATA[<p>We&#8217;re currently working on a new feature for the JBoss Admin Console. The console should become independent from the
-rest of the JBoss AS distribution. As the console is built with GWT and &#8220;merely&#8221; consists of static resources like
-HTML, JavaScript and CSS, the idea is to have a dedicated host which serves these resources. When loading the console
-the user can manage a list of server instances and chooses the one he likes to connect to. The server instances are
-stored in the browsers <a href="http://www.w3.org/TR/webstorage/">local storage</a>, so they will be available the next time the
-console is launched:<!-- more --></p>
-
-<p><figure class="centered"><img src="http://hpehl.info/images/posts/select_server_instance.png" title="Connect to server" ></figure></p>
-
-<p>Using this kind of setup brings us several advantages:</p>
-
-<ul>
-<li>We can update the console independently from the rest of the AS code base</li>
-<li>We can deploy the console to various (web)app stores like Firefox Marketplace or Chrome Web Store</li>
-<li>We can have different console versions with different feature sets (nightly, beta, stable)</li>
-<li>Using one console you can connect to different server instances running different setups (development, staging, production)</li>
-</ul>
-
-
-<h1>CORS</h1>
-
-<p>The console talks to the domain controller (DC) using the HTTP management API. Now when the console and the DC live
-on different hosts, the <a href="http://en.wikipedia.org/wiki/Same_origin_policy">same origin policy</a> (SOP) throws a monkey
-wrench in our efforts. Luckily we&#8217;re not the first ones confronted with this problem. There are several ways to solve
-SOP restrictions:</p>
-
-<ul>
-<li>Server Side Proxies</li>
-<li><a href="http://en.wikipedia.org/wiki/JSONP">JSON with padding</a> (JSONP)</li>
-<li><a href="http://www.w3.org/TR/cors/">Cross-Origin Resource Sharing</a> (CORS)</li>
-</ul>
-
-
-<h2>Client</h2>
-
-<p>According to <a href="http://caniuse.com/#search=cors">caniuse.com</a> CORS is implemented in most of the browsers. CORS knows
-two different types of requests.</p>
-
-<ol>
-<li><p>Simple requests:</p>
-
-<p> A request that only uses <code>GET</code> or <code>POST</code>. If <code>POST</code> is used to send data to the server, the content type of the data
-sent to the server with the HTTP <code>POST</code> request is one of <code>application/x-www-form-urlencoded</code>, <code>multipart/form-data</code>
-or <code>text/plain</code>. The request must not contain custom headers (such as <code>X-Modified</code>, etc.)</p></li>
-<li><p>Preflighted requests</p>
-
-<p> A request that uses methods other than <code>GET</code> or <code>POST</code>. Also, if <code>POST</code> is used to send request data with a
-content type other than <code>application/x-www-form-urlencoded</code>, <code>multipart/form-data</code> or <code>text/plain</code>, e.g. if the
-<code>POST</code> request sends an XML payload to the server using <code>application/xml</code> or <code>text/xml</code>, then the request is a
-preflighted request. Furthermore if the request contains custom headers, it&#8217;s preflighted.</p></li>
-</ol>
-
-
-<p>Unlike simple requests, preflighted requests first send an HTTP <code>OPTIONS</code> request header to the resource on the other
-domain, in order to determine whether the actual request is safe to send. Since the console uses <code>POST</code> with a
-content type of <code>application/dmr-encoded</code> all requests are preflighted requests. This will be important when looking
-at the server side.</p>
-
-<p>Common to all requests is that the browser adds the request header <code>Origin</code>. The value of this header is the site
-that served the page. For example, suppose a page on http://www.example-social-network.com attempts to access a
-user&#8217;s data in online-personal-calendar.com. If the browser implements CORS, the following request header would be sent:</p>
-
-<pre><code>Origin: http://www.example-social-network.com
-</code></pre>
-
-<h2>Server</h2>
-
-<p>It is up to the server to decide which origins are allowed. When the server accepts cross-origin requests, it sends an
-<code>Access-Control-Allow-Origin</code> header in its response. The value of the header indicates what origin sites are allowed.
-For example, a response to the previous request would contain the following:</p>
-
-<pre><code>Access-Control-Allow-Origin: http://www.example-social-network.com.
-</code></pre>
-
-<p>For the JBoss AS this implies changes to the class <code>org.jboss.as.domain.http.server.DomainApiHandler</code>. This class
-handles HTTP requests to the management API. The modified version accepts preflighted <code>OPTIONS</code> requests and sets the
-relevant response headers.</p>
-
-<h2>Authentication</h2>
-
-<p>The console uses digest authentication. This must continue to work when doing cross-origin requests. By default,
-in cross-origin <code>XMLHttpRequest</code> invocations, browsers will not send credentials. A specific flag called
-<code>withCredentials</code> has to be set on the <code>XMLHttpRequest</code> object when it is invoked. Unfortunately GWTs implementation
-of the JavaScript <code>XMLHttpRequest</code> object does
-<a href="https://code.google.com/p/google-web-toolkit/issues/detail?id=7677">not yet implement</a> this flag. For the time being
-we need to include <code>withCredentials</code> by ourselves.</p>
-
-<p>The next challenge is to trigger the login dialog when accessing protected resources. Unfortunately when it comes to
-authentication browsers handle CORS quite differently. There are some workarounds depending on which browser is used:</p>
-
-<ul>
-<li>Chrome <a href="http://blog.chromium.org/2011/06/new-chromium-security-features-june.html">prevents basic authentication from a different origin as a phishing attack</a> period.
-The only way to get around that is to start Chrome using the command line option <code>--allow-cross-origin-auth-prompt</code>.</li>
-<li>Firefox makes no problems when it comes to display the login dialog (well done guys!)</li>
-<li>Safari won&#8217;t show the login dialog. You can get around that by inserting a hidden <code>&lt;iframe&gt;</code> element linking to the
-protected url. This will trigger the authentication popup and once the user has authenticated, you can execute direct
-<code>XMLHttpRequests</code> as usual.</li>
-<li>Internet Explorer somewhat support CORS in IE8 and IE9 using the <code>XDomainRequest</code> object (but has limitations).</li>
-</ul>
-
-
-<p>Finally there&#8217;s an issue related to preflighted <code>OPTIONS</code> requests on the server side. According to the specification
-those requests must exclude user credentials:</p>
-
-<blockquote><p>Otherwise, make a preflight request [&#8230;] with the following additional constraints:<br/>    - Exclude user credentials.</p><footer><strong>W3C CORS specification</strong> <cite><a href='http://www.w3.org/TR/cors/#cross-origin-request-with-preflight-0'>www.w3.org/TR/cors/&hellip;</a></cite></footer></blockquote>
-
-
-<p>Hence these requests are blocked by the server with &#8220;401 Unauthorized&#8221;. As a workaround the authenticators in the AS
-code base must let pass preflighted <code>OPTIONS</code> requests.</p>
-
-<h2>Status Quo</h2>
-
-<p>At the moment a first preview of an independent console is available at
-OpenShift: <a href="https://console-hpehl.rhcloud.com">https://console-hpehl.rhcloud.com</a>. Please note that you must have a
-CORS enabled server instance running in order to connect from the console. You can build one by yourself using the
-&#8220;cors&#8221; branch of the AS code base: <a href="https://github.com/hpehl/wildfly/tree/cors">https://github.com/hpehl/wildfly/tree/cors</a>.
-Follow the steps in the <a href="https://github.com/hpehl/wildfly/tree/cors#readme">README</a> to build the server.</p>
-
-<p>Due to the limitations regarding authentication and CORS, the solution described here will only work in Firefox and
-Safari. If you want to use Chrome make sure to use the <code>--allow-cross-origin-auth-prompt</code> command line option.</p>
-
-<h2>Client Library</h2>
-
-<p>I stumbled upon an interesting project on GitHub: <a href="https://github.com/pazguille/CORS">https://github.com/pazguille/CORS</a>. Seems to have support for IE8+,
-offers an easy to use API and hides the awkward implementation details. I will evaluate this and try to make a GWT port.</p>
 ]]></content>
   </entry>
   

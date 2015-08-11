@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: gwt | Harald Pehl]]></title>
-  <link href="http://hpehl.info/blog/categories/gwt/atom.xml" rel="self"/>
+  <title><![CDATA[Category: elemental | Harald Pehl]]></title>
+  <link href="http://hpehl.info/blog/categories/elemental/atom.xml" rel="self"/>
   <link href="http://hpehl.info/"/>
   <updated>2015-08-11T15:54:30+02:00</updated>
   <id>http://hpehl.info/</id>
@@ -229,15 +229,6 @@ public static Iterable<Element> children(Element parent) {...}
 
 
 <p>All three samples are using the same key to persist the todo items in the local storage. So you can switch between the samples and continue working on your tasks seamlessly ;-)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[How to efficiently write GWT Generators]]></title>
-    <link href="http://hpehl.info/how-to-efficiently-write-gwt-generators.html"/>
-    <updated>2013-05-07T10:23:00+02:00</updated>
-    <id>http://hpehl.info/how-to-efficiently-write-gwt-generators</id>
-    <content type="html"><![CDATA[
 ]]></content>
   </entry>
   
