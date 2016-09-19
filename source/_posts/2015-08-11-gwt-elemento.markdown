@@ -5,7 +5,7 @@ date: 2015-08-11 12:32
 comments: true
 categories: gwt elemental
 ---
-[GWT Elemento](https://github.com/hpehl/elemento) is a library which tries to make working with GWT [Elemental](http://www.gwtproject.org/articles/elemental.html) as easy as possible. In a nutshell Elemento brings the following features to the table:
+[GWT Elemento](https://github.com/hal/elemento) is a library which tries to make working with GWT [Elemental](http://www.gwtproject.org/articles/elemental.html) as easy as possible. In a nutshell Elemento brings the following features to the table:
                                                                                                                                            
 - Builder like API to easily create arbitrary large element hierarchies
 - HTML templates, declarative event handling and support for [handlebar](http://handlebarsjs.com/)-like expressions
@@ -135,7 +135,7 @@ To map specific elements from the HTML to your template class use the `@DataElem
 
 It's also possible to register event handlers for elements marked with `data-element=<name>`. It does not matter whether the HTML element is mapped with `@DataElement`. Attaching the event handler will work in any case.
 
-If you want to learn more about HTML templates take a look at the [official documentation](https://github.com/hpehl/elemento#templates). 
+If you want to learn more about HTML templates take a look at the [official documentation](https://github.com/hal/elemento#templates). 
 
 # Goodies
 Elemento contains a small set of static helper methods to make working with elements easier. One set of methods can be used to convert between `Element` and `Widget`: 
@@ -182,13 +182,13 @@ public static Iterator<Element> iterator(Element parent) {...}
 public static Iterable<Element> children(Element parent) {...}
 ```
 
-Take a look at the [API documentation](http://rawgit.com/hpehl/elemento/site/apidocs/org/jboss/gwt/elemento/core/Elements.html) for more details.  
+Take a look at the [API documentation](http://rawgit.com/hal/elemento/site/apidocs/org/jboss/gwt/elemento/core/Elements.html) for more details.  
 
 ## Samples
-Elemento comes with three different [implementations](http://hpehl.github.io/elemento/index.html) of the [TodoMVC](http://todomvc.com/) sample app. 
+Elemento comes with three different [implementations](http://hal.github.io/elemento/index.html) of the [TodoMVC](http://todomvc.com/) sample app. 
 
-- Builder API: [Source](https://github.com/hpehl/elemento/tree/develop/samples/builder) | [Demo](http://hpehl.github.io/elemento/builder/index.html)
-- Plain HTML templates: [Source](https://github.com/hpehl/elemento/tree/develop/samples/templated) | [Demo](http://hpehl.github.io/elemento/templated/index.html)
-- HTML templates with GIN support: [Source](https://github.com/hpehl/elemento/tree/develop/samples/gin) | [Demo](http://hpehl.github.io/elemento/gin/index.html)
+- Builder API: [Source](https://github.com/hal/elemento/tree/develop/samples/builder) | [Demo](http://hal.github.io/elemento/builder/index.html)
+- Plain HTML templates: [Source](https://github.com/hal/elemento/tree/develop/samples/templated) | [Demo](http://hal.github.io/elemento/templated/index.html)
+- HTML templates with GIN support: [Source](https://github.com/hal/elemento/tree/develop/samples/gin) | [Demo](http://hal.github.io/elemento/gin/index.html)
 
 All three samples are using the same key to persist the todo items in the local storage. So you can switch between the samples and continue working on your tasks seamlessly ;-)
